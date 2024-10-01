@@ -27,8 +27,11 @@ INSTALLED_APPS = [
 
 # Add External Apps Here
 EXTERNAL_APPS = [
-    "accounts.apps.AccountsConfig",  # Example - Need to Remove
+    "accounts.apps.AccountsConfig",
+    "inventory.apps.InventoryConfig"
 ]
+
+AUTH_USER_MODEL = "accounts.User"
 
 INSTALLED_APPS += EXTERNAL_APPS
 
