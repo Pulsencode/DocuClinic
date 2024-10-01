@@ -3,10 +3,40 @@
     Login
 {% endblock title %}
 {% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="col-md-4 col-sm-8">
+        <div class="card shadow-sm" style="background-color: #00929c; border: none;">
+            <div class="card-header text-center" style="background-color: #259bdf; color: white;">
+                <h4>Clinic Management Login</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block" style="background-color: #50a2ff; color: white;">Login</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center" style="background-color: #029ea3; border-top: none;">
+                <small>&copy; {{ current_year }} Clinic Management System</small>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="text-center">
     <h2>Log In</h2>
     <form method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit">Log In</button>
     </form>
+</div> -->
 {% endblock content %}
