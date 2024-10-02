@@ -3,83 +3,43 @@
     Sign up
 {% endblock title %}
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="col-md-6 col-sm-8">
-        <div class="card shadow-sm" style="background-color: #07879e; border: none;">
-            <div class="card-header text-center" style="background-color: #4a90e2; color: white;">
-                <h4>Clinic Management Signup</h4>
-            </div>
-            <div class="card-body p-4">
-
-                <!-- Success and Error Messages -->
-                {% if messages %}
-                    <div class="alert alert-danger" role="alert">
-                        {% for message in messages %}
-                            <p>{{ message }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <form method="POST">
-                    {% csrf_token %}
-
-                    <div class="form-group mb-3">
-                        <label for="id_username" class="form-label">Username</label>
-                        {{ form.username }}  <!-- Render username field -->
-                        <small class="form-text text-muted"></small>
-                        {% if form.username.errors %}
-                            <div class="text-danger">{{ form.username.errors.as_text }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="id_email" class="form-label">Email</label>
-                        {{ form.email }}  <!-- Render email field -->
-                        <small class="form-text text-muted"></small>
-                        {% if form.email.errors %}
-                            <div class="text-danger">{{ form.email.errors.as_text }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="id_phone_number" class="form-label">Phone Number</label>
-                        {{ form.phone_number }}  <!-- Render phone number field -->
-                        <small class="form-text text-muted"></small>
-                        {% if form.phone_number.errors %}
-                            <div class="text-danger">{{ form.phone_number.errors.as_text }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="id_password1" class="form-label">Password</label>
-                        {{ form.password1 }}  <!-- Render password field -->
-                        <small class="form-text text-muted">Choose a strong password.</small>
-                        {% if form.password1.errors %}
-                            <div class="text-danger">{{ form.password1.errors.as_text }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mb-4">
-                        <label for="id_password2" class="form-label">Confirm Password</label>
-                        {{ form.password2 }}  <!-- Render confirm password field -->
-                        <small class="form-text text-muted">Re-enter your password.</small>
-                        {% if form.password2.errors %}
-                            <div class="text-danger">{{ form.password2.errors.as_text }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-block" style="background-color: #4a90e2; color: white;">Sign Up</button>
-                    </div>
-                </form>
-                <a class=" btn btn-link" href="{% url 'login' %}" style="color: #000000;">Log In</a>
-            </div>
-            <div class="card-footer text-center" style="background-color: #0e92b3; border-top: none;">
-                <small>&copy; {{ current_year }} Clinic Management System</small>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0">Sign Up</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Username" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Email address" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" placeholder="Phone Number" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Confirm Password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">CREATE ACCOUNT</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <a href="{% url 'login' %}" class="text-decoration-none">Have an account? Go to login</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
     {% comment %} <h2>Signup</h2>
     <form method="post">
         {% csrf_token %}

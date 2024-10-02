@@ -3,35 +3,70 @@
     Login
 {% endblock title %}
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="col-md-4 col-sm-8">
-        <div class="card shadow-sm" style="background-color: #00929c; border: none;">
-            <div class="card-header text-center" style="background-color: #259bdf; color: white;">
-                <h4>Clinic Management Login</h4>
-            </div>
-            <div class="card-body p-4">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+    <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div class="row w-100 justify-content-center">
+            <div class="col-md-8 col-lg-5">
+                <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-header bg-gradient text-white text-center"
+                         style="background-color: #1a73e8">
+                        <h3 class="font-weight-light my-2">Clinic Management System</h3>
                     </div>
-                    <div class="form-group mb-4">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <img src=""
+                                 alt="Clinic Logo"
+                                 class="img-fluid mb-3"
+                                 style="max-width: 150px">
+                            <h4 class="text-muted">Welcome back!</h4>
+                        </div>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                                     role="alert">
+                                    {{ message }}
+                                    <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="POST" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            {{ form.username.label_tag }}
+                            <div class="form-floating mb-3">
+                                {{ form.username }}
+                                <div class="invalid-feedback">Please enter your username.</div>
+                            </div>
+                            {{ form.password.label_tag }}
+                            <div class="form-floating mb-3">
+                                {{ form.password }}
+                                <div class="invalid-feedback">Please enter your password.</div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="rememberPasswordCheck">
+                                <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                <a class="small text-decoration-none" href="{% url 'password_reset' %}">Forgot Password?</a>
+                                <button class="btn btn-primary px-4" type="submit">Login</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-block" style="background-color: #50a2ff; color: white;">Login</button>
+                    <div class="card-footer text-center py-3"
+                         style="background-color: #f8f9fa">
+                        <div class="small">
+                            <a href="{% url 'signup' %}" class="text-decoration-none">Need an account? Sign up!</a>
+                        </div>
                     </div>
-                </form>
-            </div>
-            <div class="card-footer text-center" style="background-color: #029ea3; border-top: none;">
-                <small>&copy; {{ current_year }} Clinic Management System</small>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">&copy; {{ current_year }} Clinic Management System. All rights reserved.</small>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- <div class="text-center">
+    <!-- <div class="text-center">
     <h2>Log In</h2>
     <form method="post">
         {% csrf_token %}
@@ -40,3 +75,22 @@
     </form>
 </div> -->
 {% endblock content %}
+{% block scripts %}
+    <script>
+    // Example of custom validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+    </script>
+{% endblock scripts %}
