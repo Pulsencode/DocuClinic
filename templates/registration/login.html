@@ -5,7 +5,7 @@
 {% block content %}
     <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
         <div class="row w-100 justify-content-center">
-            <div class="col-md-8 col-lg-5">
+            <div class="col-md-5 col-lg-4">
                 <div class="card shadow-lg border-0 rounded-lg">
                     <div class="card-header bg-gradient text-white text-center"
                          style="background-color: #1a73e8">
@@ -31,7 +31,7 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        <form method="POST" class="needs-validation" novalidate>
+                        <form method="POST" class="needs-validation ms-5" novalidate>
                             {% csrf_token %}
                             {{ form.username.label_tag }}
                             <div class="form-floating mb-3">

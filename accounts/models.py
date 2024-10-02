@@ -44,3 +44,20 @@ class Admin(User):
     class Meta:
         verbose_name = "Admin"
         verbose_name_plural = "Admins"
+
+class PatientDetails(User):
+    condition = models.TextField(max_length=100)
+    reg_id = models.CharField(max_length=10, unique=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.reg_id:
+            last_patient = PatientDetails.objects.all().order_by('id').last()
+            if last_patient:
+                last_reg_id = int(last_patient.reg_id.split('REG')[1])
+                self.reg_id = f'REG{last_reg_id + 1:04d}'
+            else:
+                self.reg_id = 'REG0001'
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.patient.username} - {self.reg_id}'
