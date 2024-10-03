@@ -48,6 +48,7 @@ class Admin(User):
 class PatientDetails(User):
     condition = models.TextField(max_length=100)
     reg_id = models.CharField(max_length=10, unique=True, editable=False)
+    
 
     def save(self, *args, **kwargs):
         if not self.reg_id:
@@ -59,5 +60,4 @@ class PatientDetails(User):
                 self.reg_id = 'REG0001'
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f'{self.patient.username} - {self.reg_id}'
+    

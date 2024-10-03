@@ -14,6 +14,7 @@
               rel="stylesheet"
               integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
               crossorigin="anonymous">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
         <!-- Bootstrap Icons -->
         <link rel="stylesheet"
               href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -29,16 +30,52 @@
     <body>
         {% block content %}
         {% endblock content %}
-        <div class="spinner-wrapper">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
+        {% comment %} <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            {% if messages %}
+                {% for message in messages %}
+                    <div id="liveToast{{ forloop.counter }}"
+                         class="toast align-items-center bg-{{ message.tags }} border-0"
+                         role="alert"
+                         aria-live="assertive"
+                         aria-atomic="true"
+                         data-bs-delay="10000">
+                        <div class="toast-header">
+                            <img src=""
+                                 class="rounded me-2"
+                                 alt="Pulseflow"
+                                 width="15px"
+                                 height="15px">
+                            <strong class="me-auto">Notification</strong>
+                            <small class="text-muted">Just now</small>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div> {% endcomment %}
+        <!-- Display error messages -->
+        {% if messages %}
+    <div class="alert alert-dismissible fade show" role="alert">
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      </div>
+{% endif %}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                 crossorigin="anonymous"></script>
     </body>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
     <!-- Custom js -->
     <script src="{% static 'js/main.js' %}"></script>
 </html>
