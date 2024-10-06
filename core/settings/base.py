@@ -28,7 +28,8 @@ INSTALLED_APPS = [
 # Add External Apps Here
 EXTERNAL_APPS = [
     "accounts.apps.AccountsConfig",
-    "inventory.apps.InventoryConfig"
+    "inventory.apps.InventoryConfig",
+    "patients.apps.PatientsConfig",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

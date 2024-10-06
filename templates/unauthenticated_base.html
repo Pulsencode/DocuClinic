@@ -31,6 +31,17 @@
     <body>
         {% block content %}
         {% endblock content %}
+        {% if messages %}
+                  <div class="alert alert-dismissible fade show" role="alert">
+                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                              {% for message in messages %}<div>{{ message }}</div>{% endfor %}
+                              <button type="button"
+                                      class="btn-close"
+                                      data-bs-dismiss="alert"
+                                      aria-label="Close"></button>
+                        </div>
+                  </div>
+      {% endif %}
         {% comment %} <div class="spinner-wrapper">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>

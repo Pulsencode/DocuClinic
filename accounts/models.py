@@ -45,19 +45,46 @@ class Admin(User):
         verbose_name = "Admin"
         verbose_name_plural = "Admins"
 
-class PatientDetails(User):
-    condition = models.TextField(max_length=100)
-    reg_id = models.CharField(max_length=10, unique=True, editable=False)
-    
+
+class Patient(User):
+    GENDER_CHOICES = [
+        ("M", "Male"),
+        ("F", "Female"),
+        ("O", "Other"),
+    ]
+
+    BLOOD_TYPE_CHOICES = [
+        ("A+", "A+"),
+        ("A-", "A-"),
+        ("B+", "B+"),
+        ("B-", "B-"),
+        ("O+", "O+"),
+        ("O-", "O-"),
+        ("AB+", "AB+"),
+        ("AB-", "AB-"),
+    ]
+    condition = models.TextField(max_length=100, null=True)
+    registration_id = models.CharField(max_length=10, unique=True, editable=False)
+    age = models.PositiveIntegerField(null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
+    blood_type = models.CharField(max_length=3, choices=BLOOD_TYPE_CHOICES, null=True)
+    allergies = models.TextField(max_length=255, blank=True, null=True)
+    emergency_contact_name = models.CharField(max_length=100, null=True)
+    emergency_contact_number = models.CharField(max_length=15, null=True)
 
     def save(self, *args, **kwargs):
-        if not self.reg_id:
-            last_patient = PatientDetails.objects.all().order_by('id').last()
+        if not self.registration_id:
+            last_patient = Patient.objects.all().order_by("id").last()
             if last_patient:
-                last_reg_id = int(last_patient.reg_id.split('REG')[1])
-                self.reg_id = f'REG{last_reg_id + 1:04d}'
+                last_registration_id = int(last_patient.registration_id.split("REG")[1])
+                self.registration_id = f"REG{last_registration_id + 1:04d}"
             else:
-                self.reg_id = 'REG0001'
+                self.registration_id = "REG0001"
         super().save(*args, **kwargs)
 
-    
+    class Meta:
+        verbose_name = "Patient"
+        verbose_name_plural = "Patients"
+
+    def __str__(self):
+        return self.registration_id
