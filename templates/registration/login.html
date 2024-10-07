@@ -13,10 +13,6 @@
                     </div>
                     <div class="card-body p-5">
                         <div class="text-center mb-4">
-                            <img src=""
-                                 alt="Clinic Logo"
-                                 class="img-fluid mb-3"
-                                 style="max-width: 150px">
                             <h4 class="text-muted">Welcome back!</h4>
                         </div>
                         {% if messages %}
@@ -31,7 +27,7 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        <form method="POST" class="needs-validation ms-5" novalidate>
+                        <form method="post" class="needs-validation ms-5" novalidate>
                             {% csrf_token %}
                             {{ form.username.label_tag }}
                             <div class="form-floating mb-3">
@@ -43,41 +39,27 @@
                                 {{ form.password }}
                                 <div class="invalid-feedback">Please enter your password.</div>
                             </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="rememberPasswordCheck">
-                                <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
-                            </div>
                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                 <a class="small text-decoration-none" href="{% url 'password_reset' %}">Forgot Password?</a>
                                 <button class="btn btn-primary px-4" type="submit">Login</button>
                             </div>
                         </form>
                     </div>
-                    <div class="card-footer text-center py-3"
-                         style="background-color: #f8f9fa">
+                    <div class="card-footer text-center py-3">
                         <div class="small">
                             <a href="{% url 'signup' %}" class="text-decoration-none">Need an account? Sign up!</a>
                         </div>
                     </div>
                 </div>
                 <div class="text-center mt-3">
-                    <small class="text-muted">&copy; {{ current_year }} Clinic Management System. All rights reserved.</small>
+                    <small class="text-muted">Clinic Management System. All rights reserved.</small>
                 </div>
             </div>
         </div>
     </div>
-    <!-- <div class="text-center">
-    <h2>Log In</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Log In</button>
-    </form>
-</div> -->
 {% endblock content %}
 {% block scripts %}
     <script>
-    // Example of custom validation
     (function () {
         'use strict'
         var forms = document.querySelectorAll('.needs-validation')

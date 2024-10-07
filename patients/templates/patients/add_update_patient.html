@@ -1,0 +1,77 @@
+{% extends "authenticated_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-1">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                {% if form.instance.pk %}
+                    {{ form.instance.username }} - {{ form.instance.reg_id }}
+                {% else %}
+                    New Patient
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body">
+            <form id="patientForm" method="post" action="{% if form.instance.pk %}{% url 'patient_update' form.instance.pk %}{% else %}{% url 'patient_create' %}{% endif %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <h6>Name:</h6>
+                        {{ form.username }}
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Email:</h6>
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Contact Number:</h6>
+                        <div class="input-group">
+                            {{ form.phone_number_country_code }}
+                            {{ form.phone_number }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Address:</h6>
+                        {{ form.address }}
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="submit" id="saveButton" class="btn btn-success">
+                        {% if form.instance.pk %}
+                            Update Patient
+                        {% else %}
+                            Create Patient
+                        {% endif %}
+                    </button>
+                    {% if form.instance.pk %}
+                        <a href="{% url 'patient_detail' form.instance.pk %}" class="btn btn-secondary">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+            <div id="responseMessage">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#patientForm').on('submit', function(event) {
+        // You can add client-side validation here if needed
+    });
+});
+</script>
+{% endblock %}

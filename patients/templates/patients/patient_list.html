@@ -30,7 +30,7 @@
 
                     <td>{{ patient.phone_number }}</td>
                     <td>
-                        <a href="{% url 'patient_detail' patient.pk %}">View</a>
+                        <a href="{% url 'patient_detail' patient.pk %}"><i class="bi bi-eye"></i></a>
                     </td>
                 </tr>
             {% endfor %}
