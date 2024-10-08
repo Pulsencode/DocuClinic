@@ -26,8 +26,11 @@ class PatientForm(forms.ModelForm):
                     "placeholder": "Enter your phone number",
                 }
             ),
-            "address": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
         }
+
+    address = forms.CharField(
+        required=True, widget=forms.Textarea(attrs={"class": "form-control", "rows": 2})
+    )
 
     phone_number_country_code = forms.CharField(
         required=False,

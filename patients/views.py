@@ -38,10 +38,10 @@ class PatientCreateView(CreateView):
         patient = form.save()  # Save the patient instance
         messages.success(
             self.request, "Patient created successfully!"
-        )  # Show success message
+        )
         return redirect(
             "patient_detail", pk=patient.pk
-        )  # Redirect to the detail view of the newly created patient
+        )
 
     def form_invalid(self, form):
         error_details = form.errors.as_text()
@@ -96,5 +96,5 @@ class PatientUpdateView(UpdateView):
 # Delete a patient (DeleteView)
 class PatientDeleteView(DeleteView):
     model = Patient
-    template_name = "patient_confirm_delete.html"
+    template_name = "patient_detail.html"
     success_url = reverse_lazy("patient_list")
