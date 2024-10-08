@@ -6,16 +6,14 @@
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">
                     {% if form.instance.pk %}
-                        {{ form.instance.username }} - {{ form.instance.reg_id }}
+                        {{ form.instance.username }} - {{ form.instance.registration_id }}
                     {% else %}
                         New Patient
                     {% endif %}
                 </h4>
             </div>
             <div class="card-body">
-                <form id="patientForm"
-                      method="post"
-                      action="{% if form.instance.pk %}{% url 'patient_update' form.instance.pk %}{% else %}{% url 'patient_create' %}{% endif %}">
+                <form id="patientForm" method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="row mb-3">
@@ -48,13 +46,7 @@
                         {% else %}
                             <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
                         {% endif %}
-                        <button type="submit" id="saveButton" class="btn btn-success">
-                            {% if form.instance.pk %}
-                                Update Patient
-                            {% else %}
-                                Create Patient
-                            {% endif %}
-                        </button>
+                        <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
                     </div>
                 </form>
                 <div id="responseMessage">
@@ -67,11 +59,11 @@
     </div>
 {% endblock content %}
 {% block scripts %}
-<script>
+    <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("clearButton").addEventListener("click", function() {
             document.getElementById("patientForm").reset();  // Reset the form
         });
     });
-</script>
+    </script>
 {% endblock scripts %}

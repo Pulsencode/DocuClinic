@@ -88,10 +88,10 @@
         <!-- Display error messages -->
         {% if messages %}
             <div class="alert alert-dismissible fade show" role="alert">
-                <div class="toast-container position-fixed bottom-0 end-0 me-3">
+                <div class="toast-container position-fixed bottom-0 end-0">
                     {% for message in messages %}<div>{{ message }}</div>{% endfor %}
                     <button type="button"
-                            class="btn-close"
+                            class="btn-close position-fixed bottom-0 end-0"
                             data-bs-dismiss="alert"
                             aria-label="Close"></button>
                 </div>
