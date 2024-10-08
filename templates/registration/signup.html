@@ -4,31 +4,35 @@
 {% endblock title %}
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center ">
         <div class="col-md-6 col-lg-5">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center py-3">
                     <h4 class="mb-0">Sign Up</h4>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-3">
                     <!-- Use Django's form -->
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            {{ form.username }}
+                        <div class="form-floating mb-3">
+                            <input type="text" name="username" class="form-control" id="floatingUsername" placeholder="Enter your username">
+                            <label for="floatingUsername">Enter your username</label>
                         </div>
-                        <div class="mb-3">
-                            {{ form.email }}
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" class="form-control" id="floatingEmail" placeholder="Enter your email">
+                            <label for="floatingEmail">Enter your email</label>
                         </div>
-                        <div class="mb-3">
-                            {{ form.phone_number }}
+                        <div class="form-floating mb-3">
+                            <input type="text" name="phone_number" class="form-control" id="floatingPhone" placeholder="Enter your phone number">
+                            <label for="floatingPhone">Enter your phone number</label>
                         </div>
-                        <div class="mb-3">
-                            {{ form.password1.placeholder }}
-                            {{ form.password1 }}
+                        <div class="form-floating mb-3">
+                            <input type="password" name="password1" class="form-control" id="floatingPassword1" placeholder="Enter your password">
+                            <label for="floatingPassword1">Enter your password</label>
                         </div>
-                        <div class="mb-3">
-                            {{ form.password2 }}
+                        <div class="form-floating mb-3">
+                            <input type="password" name="password2" class="form-control" id="floatingPassword2" placeholder="Confirm your password">
+                            <label for="floatingPassword2">Confirm your password</label>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">CREATE ACCOUNT</button>
@@ -39,17 +43,10 @@
                     <a href="{% url 'login' %}" class="text-decoration-none">Have an account? Go to login</a>
                 </div>
             </div>
-            <div class="text-center mt-3">
+            <div class="text-center">
                 <small class="text-muted">Clinic Management System. All rights reserved.</small>
             </div>
         </div>
     </div>
 </div>
-
-    {% comment %} <h2>Signup</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Sign Up</button>
-    </form> {% endcomment %}
 {% endblock content %}
