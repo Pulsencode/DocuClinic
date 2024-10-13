@@ -2,7 +2,7 @@ from django import forms
 
 from accounts.models import Patient
 
-from .models import PatientDetails
+from .models import PatientDetail
 
 
 class PatientForm(forms.ModelForm):
@@ -50,7 +50,7 @@ class PatientForm(forms.ModelForm):
 
 class PatientDetailsForm(forms.ModelForm):
     class Meta:
-        model = PatientDetails
+        model = PatientDetail
         fields = [
             # "condition",
             "age",
@@ -65,10 +65,10 @@ class PatientDetailsForm(forms.ModelForm):
             # "condition": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
             "allergies": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
             "gender": forms.Select(
-                choices=PatientDetails.GENDER_CHOICES, attrs={"class": "form-select"}
+                choices=PatientDetail.GENDER_CHOICES, attrs={"class": "form-select"}
             ),
             "blood_type": forms.Select(
-                choices=PatientDetails.BLOOD_TYPE_CHOICES,
+                choices=PatientDetail.BLOOD_TYPE_CHOICES,
                 attrs={"class": "form-select"},
             ),
             "emergency_contact_name": forms.TextInput(attrs={"class": "form-control"}),

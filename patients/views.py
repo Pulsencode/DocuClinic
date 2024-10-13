@@ -13,7 +13,7 @@ from django.views.generic import (
 from accounts.models import Patient
 
 from .forms import PatientDetailsForm, PatientForm
-from .models import PatientDetails
+from .models import PatientDetail
 
 
 class PatientListView(ListView):
@@ -90,7 +90,7 @@ class PatientDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["patient"] = self.object
         context["page_title"] = "Patient Details"
-        context["details"] = PatientDetails.objects.get_or_create(patient=self.object)[
+        context["details"] = PatientDetail.objects.get_or_create(patient=self.object)[
             0
         ]
         return context
