@@ -19,6 +19,12 @@ class PatientDetails(models.Model):
         ("AB+", "AB+"),
         ("AB-", "AB-"),
     ]
+    patient = models.OneToOneField(
+        "accounts.Patient",
+        related_name="patient_details",
+        null=True,
+        on_delete=models.CASCADE,
+    )
     condition = models.TextField(max_length=100, null=True)
     age = models.PositiveIntegerField(null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)

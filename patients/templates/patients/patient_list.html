@@ -15,6 +15,7 @@
                 <th scope="col">Reg ID</th>
                 <th scope="col">Name</th>
                 <th scope="col">Address</th>
+                <th scope="col">Age</th>
                 <th scope="col">Contact</th>
                 <th scope="col">View</th>
             </tr>
@@ -24,10 +25,10 @@
                 <tr>
                     <td class="col-1" >{{ patient.registration_id }}</td>
                     <td>{{ patient.username }}</td>
-                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ">
+                    <td style="max-width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ">
                         {{ patient.address }}
                     </td>
-
+                    <td>{{ patient.patient_details.age }}</td>
                     <td>{{ patient.phone_number }}</td>
                     <td>
                         <a href="{% url 'patient_detail' patient.pk %}"><i class="bi bi-eye"></i></a>

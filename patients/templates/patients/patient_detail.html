@@ -24,10 +24,36 @@
                     <p>{{ patient.phone_number_country_code }} {{ patient.phone_number }}</p>
                 </div>
             </div>
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <h6>Age:</h6>
+                    {{ patient.patient_details.age }}
+                </div>
+                <div class="col-md-2">
+                    <h6>Gender:</h6>
+                    {{ patient.patient_details.gender }}
+                </div>
+                <div class="col-md-2">
+                    <h6>Blood Type:</h6>
+                    {{ patient.patient_details.blood_type }}
+                </div>
+                <div class="col-md-3">
+                    <h6>Emergency Contact Name:</h6>
+                    {{ patient.patient_details.emergency_contact_name }}
+                </div>
+                <div class="col-md-3">
+                    <h6>Emergency Contact Number:</h6>
+                    {{ patient.patient_details.emergency_contact_number }}
+                </div>
+            </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <h6>Address:</h6>
                     <p>{{ patient.address }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Allergies:</h6>
+                    <p>{{ patient.patient_details.allergies }}</p>
                 </div>
             </div>
             <div class="text-end">

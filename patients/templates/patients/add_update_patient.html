@@ -16,6 +16,7 @@
                 <form id="patientForm" method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
+                    {{ details_form.non_field_errors }}
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <h6>Name:</h6>
@@ -34,9 +35,35 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-2">
+                            <h6>Age:</h6>
+                            {{ details_form.age }}
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Gender:</h6>
+                            {{ details_form.gender }}
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Blood Type:</h6>
+                            {{ details_form.blood_type }}
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Emergency Contact Name:</h6>
+                            {{ details_form.emergency_contact_name }}
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Emergency Contact Number:</h6>
+                            {{ details_form.emergency_contact_number }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <h6>Address:</h6>
                             {{ form.address }}
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Allergies:</h6>
+                            {{ details_form.allergies }}
                         </div>
                     </div>
                     <div class="text-end">
@@ -60,10 +87,10 @@
 {% endblock content %}
 {% block scripts %}
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("clearButton").addEventListener("click", function() {
-            document.getElementById("patientForm").reset();  // Reset the form
-        });
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("clearButton").addEventListener("click", function() {
+        document.getElementById("patientForm").reset(); // Reset the form
     });
+});
     </script>
 {% endblock scripts %}
