@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
-from django.views.generic.base import TemplateView
+# from django.views.generic.base import TemplateView
 from django.views.static import serve
+from django.contrib.auth import views
+
 
 urlpatterns = [
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
@@ -10,7 +12,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path("", views.LoginView.as_view(), name="login"),
     path("inventory/", include("inventory.urls")),
     path("patients/", include("patients.urls")),
 ]
