@@ -1,16 +1,9 @@
-{% extends "unauthenticated_base.html" %}
+{% extends "authenticated_base.html" %}
 {% block title %}
-    Home
+    Clinic Management Home
 {% endblock title %}
 {% block content %}
-    {% if user.is_authenticated %}
-        Hi {{ user.username }}!
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Log Out</button>
-        </form>
-    {% else %}
-        <p>You are not logged in</p>
-        <a href="{% url 'login' %}">Log In</a>
-    {% endif %}
+<h1>Welcome to the Clinic Management System</h1>
+<h2>Hi {{ user.username }}!</h2>
+<p>Here you can manage patient records, appointments, and inventory.</p>
 {% endblock content %}

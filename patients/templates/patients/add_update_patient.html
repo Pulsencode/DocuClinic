@@ -1,0 +1,96 @@
+{% extends "authenticated_base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container mt-1">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    {% if form.instance.pk %}
+                        {{ form.instance.username }} - {{ form.instance.registration_id }}
+                    {% else %}
+                        New Patient
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="patientForm" method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {{ details_form.non_field_errors }}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h6>Name:</h6>
+                            {{ form.username }}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Email:</h6>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Contact Number:</h6>
+                            <div class="input-group">
+                                {{ form.phone_number_country_code }}
+                                {{ form.phone_number }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <h6>Age:</h6>
+                            {{ details_form.age }}
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Gender:</h6>
+                            {{ details_form.gender }}
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Blood Type:</h6>
+                            {{ details_form.blood_type }}
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Emergency Contact Name:</h6>
+                            {{ details_form.emergency_contact_name }}
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Emergency Contact Number:</h6>
+                            {{ details_form.emergency_contact_number }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Address:</h6>
+                            {{ form.address }}
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Allergies:</h6>
+                            {{ details_form.allergies }}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        {% if form.instance.pk %}
+                            <a href="{% url 'patient_detail' form.instance.pk %}"
+                               class="btn btn-secondary">Cancel</a>
+                        {% else %}
+                            <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
+                        {% endif %}
+                        <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+                <div id="responseMessage">
+                    {% if messages %}
+                        {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("clearButton").addEventListener("click", function() {
+        document.getElementById("patientForm").reset(); // Reset the form
+    });
+});
+    </script>
+{% endblock scripts %}

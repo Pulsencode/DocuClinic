@@ -28,15 +28,16 @@ INSTALLED_APPS = [
 # Add External Apps Here
 EXTERNAL_APPS = [
     "accounts.apps.AccountsConfig",
-    "inventory.apps.InventoryConfig"
+    "inventory.apps.InventoryConfig",
+    "patients.apps.PatientsConfig",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
 
 INSTALLED_APPS += EXTERNAL_APPS
 
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "dashboard"
+LOGOUT_REDIRECT_URL = "login"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

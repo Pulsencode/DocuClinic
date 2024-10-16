@@ -3,10 +3,53 @@
     Login
 {% endblock title %}
 {% block content %}
-    <h2>Log In</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Log In</button>
-    </form>
+    <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div class="row w-100 justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-header bg-gradient text-white text-center"
+                         style="background-color: #1a73e8">
+                        <h3 class="font-weight-light my-2">Clinic Management System</h3>
+                    </div>
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h4 class="text-muted">Welcome back!</h4>
+                        </div>
+                        {% if form.errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+                        <form method="post" class="me-3 ms-3" novalidate>
+                            {% csrf_token %}
+                            <div class="form-floating mb-3">
+                                <input type="text"
+                                       class="form-control"
+                                       id="floatingUsername"
+                                       name="username"
+                                       placeholder="Username">
+                                <label for="floatingUsername">Username</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="password"
+                                       class="form-control"
+                                       id="floatingPassword"
+                                       name="password"
+                                       placeholder="Password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                <!-- <a class="small text-decoration-none" href="{% url 'password_reset' %}">Forgot Password?</a> -->
+                                <button class="btn btn-primary px-4" type="submit">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center py-3">
+                        <div class="small">
+                            <a href="{% url 'signup' %}" class="text-decoration-none">Need an account? Sign up!</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Clinic Management System. All rights reserved.</small>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

@@ -1,0 +1,35 @@
+/* Optional custom styles to improve the look of the sidebar */
+#sidebar {
+    height: 100vh;
+    /* Full height */
+    position: fixed;
+    /* Fixed position */
+    z-index: 100;
+    /* Ensure it is on top */
+    padding-top: 1rem;
+    /* Top padding for better appearance */
+}
+
+.nav-link {
+    color: #0237aa;
+    /* White text color for links */
+}
+
+.nav-link.active {
+    font-weight: bold;
+    /* Make the active link bold */
+    background-color: #007bff;
+    /* Bootstrap primary color for active link */
+}
+
+.nav-link:hover {
+    background-color: #0056b3;
+    /* Darker background on hover */
+}
+
+.sidebar-title {
+    padding: 1rem;
+    /* Add some padding */
+    font-size: 1.25rem;
+    /* Increase font size */
+}
