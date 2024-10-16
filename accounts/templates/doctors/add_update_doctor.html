@@ -1,0 +1,97 @@
+{% extends "authenticated_base.html" %}
+{% block content %}
+    <div class="container mt-1">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    {% if form.instance.pk %}
+                        {{ form.instance.username }} - {{ form.instance.license_number }}
+                    {% else %}
+                        New Doctor
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="doctorForm" method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h6>Username:</h6>
+                            {{ form.username }}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Email:</h6>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Phone Number:</h6>
+                            {{ form.phone_number }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>First Name:</h6>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Last Name:</h6>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Address:</h6>
+                            {{ form.address }}
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Specialization:</h6>
+                            {{ form.specialization }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>License Number:</h6>
+                            {{ form.license_number }}
+                        </div>
+                        {% if not form.instance.pk %}
+                            <div class="col-3">
+                                <h6>Password:</h6>
+                                {{ form.password1 }}
+                                {{ form.password1.errors }}
+                            </div>
+                            <div class="col-3">
+                                <h6>Confirm Password:</h6>
+                                {{ form.password2 }}
+                                {{ form.password2.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="text-end">
+                        {% if form.instance.pk %}
+                            <a href="{% url 'doctor_detail' form.instance.pk %}"
+                               class="btn btn-secondary">Cancel</a>
+                        {% else %}
+                            <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
+                        {% endif %}
+                        <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+                <div id="responseMessage">
+                    {% if messages %}
+                        {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("clearButton").addEventListener("click", function() {
+            document.getElementById("doctorForm").reset(); // Reset the form
+        });
+    });
+    </script>
+{% endblock %}
