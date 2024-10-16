@@ -1,5 +1,6 @@
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import TemplateView
 from accounts.forms import CustomUserCreationForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,8 +11,9 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .models import Doctor
-from .forms import DoctorForm
+from .models import Doctor, Appointment, Patient
+from .forms import DoctorForm, AppointmentForm
+from django.utils import timezone
 
 
 class SignUpView(CreateView):
@@ -112,4 +114,54 @@ class DoctorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Doctor successfully deleted.")
+        return super().delete(request, *args, **kwargs)
+
+
+class AppointmentCreateView(CreateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "patients/patient_list.html"
+
+    def form_valid(self, form):
+        form.instance.patient = Patient.objects.get(pk=self.request.POST["patient"])  # Get patient from form
+        self.object = form.save()
+        messages.success(self.request, "Appointment created successfully!")  # Add a success message
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("patient_list")
+
+
+# Doctor's Appointment List View
+class DoctorDashboardView(ListView):
+    model = Appointment
+    template_name = "doctors/doctor_dashboard.html"  # Doctor dashboard template
+    context_object_name = "appointments"
+
+    def get_queryset(self):
+        # Show only appointments related to the logged-in doctor
+        return Appointment.objects.filter(doctor=self.request.user).order_by(
+            "appointment_datetime"
+        )
+
+
+# Update Appointment Status View
+class AppointmentUpdateView(UpdateView):
+    model = Appointment
+    fields = ["status"]  # Only the status field should be editable
+    template_name = "doctors/appointment_update_form.html"
+    success_url = reverse_lazy("dashboard")
+
+    def get_queryset(self):
+        # Limit to appointments belonging to the logged-in doctor
+        return Appointment.objects.filter(doctor=self.request.user)
+
+
+class AppointmentDeleteView(DeleteView):
+    model = Appointment
+    template_name = "patients/appointment_confirm_delete.html"  # Optional: You can create a confirmation template
+    success_url = reverse_lazy('dashboard')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Appointment removed successfully!")
         return super().delete(request, *args, **kwargs)

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Doctor
+from .models import Appointment, Patient, User, Doctor
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -87,18 +87,22 @@ class DoctorForm(UserCreationForm):
 
     password1 = forms.CharField(
         label="Password",
-        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter password"}),
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Enter password"}
+        ),
     )
     password2 = forms.CharField(
         label="Confirm Password",
-        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Confirm password"}),
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Confirm password"}
+        ),
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            self.fields['password1'].required = False
-            self.fields['password2'].required = False
+            self.fields["password1"].required = False
+            self.fields["password2"].required = False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -118,3 +122,24 @@ class DoctorForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class AppointmentForm(forms.ModelForm):
+    doctor = forms.ModelChoiceField(
+        queryset=Doctor.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    patient = forms.ModelChoiceField(
+        queryset=Patient.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
+    appointment_datetime = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            attrs={"type": "datetime-local", "class": "form-control"}
+        ),
+    )
+
+    class Meta:
+        model = Appointment
+        fields = ["patient", "doctor", "appointment_datetime"]

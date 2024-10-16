@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Patient
+from accounts.models import Doctor, Patient
 
 from .forms import PatientDetailsForm, PatientForm
 from .models import PatientDetail
@@ -25,6 +25,7 @@ class PatientListView(ListView):
         context = super().get_context_data(**kwargs)
         context["form"] = PatientForm()
         context["page_title"] = "Patient List"
+        context['doctors'] = Doctor.objects.all()
         return context
 
 
