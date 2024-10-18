@@ -30,13 +30,15 @@ EXTERNAL_APPS = [
     "accounts.apps.AccountsConfig",
     "inventory.apps.InventoryConfig",
     "patients.apps.PatientsConfig",
+    "doctors.apps.DoctorsConfig",
+    "operators.apps.OperatorsConfig",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
 
 INSTALLED_APPS += EXTERNAL_APPS
 
-LOGIN_REDIRECT_URL = "/login-redirect/"
+LOGIN_REDIRECT_URL = "user_redirect"
 LOGOUT_REDIRECT_URL = "login"
 
 MIDDLEWARE = [

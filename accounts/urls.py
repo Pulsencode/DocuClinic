@@ -5,23 +5,7 @@ from . import views
 
 urlpatterns = [
     path("signup/", views.SignUpView.as_view(), name="signup"),
-    path('login-redirect/', views.login_redirect_view, name='login_redirect'),
-
-    # DOCTORS
-    path("doctors/", views.DoctorListView.as_view(), name="doctor_list"),
-    path("doctors/<int:pk>/", views.DoctorDetailView.as_view(), name="doctor_detail"),
-    path("doctors/create/", views.DoctorCreateView.as_view(), name="doctor_create"),
-    path(
-        "doctors/<int:pk>/update/",
-        views.DoctorUpdateView.as_view(),
-        name="doctor_update",
-    ),
-    path(
-        "doctors/<int:pk>/delete/",
-        views.DoctorDeleteView.as_view(),
-        name="doctor_delete",
-    ),
-    path("doctor/dashboard/", views.DoctorDashboardView.as_view(), name="doctor_dashboard"),
+    path("redirect/", views.user_redirect, name="user_redirect"),
     # APPOINMENTS
     path(
         "appointment/create/",
@@ -38,25 +22,4 @@ urlpatterns = [
         views.AppointmentDeleteView.as_view(),
         name="appointment_delete",
     ),
-    path("operators/", views.OperatorListView.as_view(), name="operator_list"),
-    # OPERATORS
-    path(
-        "operators/<int:pk>/",
-        views.OperatorDetailView.as_view(),
-        name="operator_detail",
-    ),
-    path(
-        "operators/create/", views.OperatorCreateView.as_view(), name="operator_create"
-    ),
-    path(
-        "operators/update/<int:pk>/",
-        views.OperatorUpdateView.as_view(),
-        name="operator_update",
-    ),
-    path(
-        "operators/delete/<int:pk>/",
-        views.OperatorDeleteView.as_view(),
-        name="operator_delete",
-    ),
-    path("operator/dashboard/", views.OperatorDashboardView.as_view(), name="operator_dashboard"),
 ]
