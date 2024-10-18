@@ -30,10 +30,7 @@
                         <tr>
                             <td class="col-1">{{ patient.registration_id }}</td>
                             <td>{{ patient.username }}</td>
-                            <td style="max-width: 50px;
-                                       overflow: hidden;
-                                       text-overflow: ellipsis;
-                                       white-space: nowrap">{{ patient.address }}</td>
+                            <td class="text-truncate" style="max-width: 50px;">{{ patient.address }}</td>
                             <td>{{ patient.patient_details.age }}</td>
                             <td>{{ patient.phone_number }}</td>
                             <td>
