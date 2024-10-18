@@ -114,5 +114,5 @@ class DoctorDashboardView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Dashboard"  # Set the page title
+        context["page_title"] = "Doctors Dashboard"  # Set the page title
         return context

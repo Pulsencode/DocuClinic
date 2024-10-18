@@ -5,18 +5,18 @@ from . import views
 
 urlpatterns = [
     path(
-        "appointment/create/",
+        "create/appointment",
         views.AppointmentCreateView.as_view(),
-        name="appointment_create",
+        name="create_appointment",
     ),
     path(
-        "appointment/update/<int:pk>/",
+        "update/appointment/<int:pk>/",
         views.AppointmentUpdateView.as_view(),
-        name="appointment_update",
+        name="update_appointment",
     ),
     path(
-        "appointment/delete/<int:pk>/",
+        "delete/appointment/<int:pk>/",
         views.AppointmentDeleteView.as_view(),
-        name="appointment_delete",
+        name="delete_appointment",
     ),
 ]
