@@ -8,8 +8,9 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from accounts.models import Doctor, Appointment
+from accounts.models import Doctor
 from .forms import DoctorForm
+from medicalrecords.models import Appointment
 
 
 # Create your views here.

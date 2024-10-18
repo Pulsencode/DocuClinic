@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Appointment, Patient, User, Doctor
+from .models import User
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -32,24 +32,3 @@ class CustomUserCreationForm(UserCreationForm):
                 }
             ),
         }
-
-
-class AppointmentForm(forms.ModelForm):
-    doctor = forms.ModelChoiceField(
-        queryset=Doctor.objects.all(),
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
-    patient = forms.ModelChoiceField(
-        queryset=Patient.objects.all(),
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
-
-    appointment_datetime = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-local", "class": "form-control"}
-        ),
-    )
-
-    class Meta:
-        model = Appointment
-        fields = ["patient", "doctor", "appointment_datetime"]

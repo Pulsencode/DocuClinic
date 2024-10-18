@@ -8,10 +8,11 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from accounts.models import Doctor, Appointment, Operator
+from accounts.models import Doctor, Operator
 from .forms import OperatorForm
 from django.utils import timezone
 from datetime import datetime
+from medicalrecords.models import Appointment
 
 
 class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
