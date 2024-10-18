@@ -20,7 +20,7 @@ urlpatterns = [
         views.DoctorDeleteView.as_view(),
         name="doctor_delete",
     ),
-    path("doctor/dashboard/", views.DoctorDashboardView.as_view(), name="dashboard"),
+    path("doctor/dashboard/", views.DoctorDashboardView.as_view(), name="doctor_dashboard"),
     # APPOINMENTS
     path(
         "appointment/create/",
@@ -57,4 +57,5 @@ urlpatterns = [
         views.OperatorDeleteView.as_view(),
         name="operator_delete",
     ),
+    path("operator/dashboard/", views.OperatorDashboardView.as_view(), name="operator_dashboard"),
 ]

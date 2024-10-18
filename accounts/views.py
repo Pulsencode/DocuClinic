@@ -12,6 +12,8 @@ from django.views.generic import (
 )
 from .models import Doctor, Appointment, Patient, Operator
 from .forms import DoctorForm, AppointmentForm, OperatorForm
+from django.utils import timezone
+from datetime import datetime
 
 
 class SignUpView(CreateView):
@@ -115,7 +117,7 @@ class DoctorDashboardView(ListView):
     def get_queryset(self):
         # Show only appointments related to the logged-in doctor
         return Appointment.objects.filter(doctor=self.request.user).order_by(
-            "appointment_datetime"
+            "-appointment_datetime"
         )
 
     def get_context_data(self, **kwargs):
@@ -148,21 +150,41 @@ class AppointmentUpdateView(UpdateView):
     model = Appointment
     fields = ["status"]  # Only the status field should be editable
     template_name = "doctors/appointment_update_form.html"
-    success_url = reverse_lazy("dashboard")
 
     def get_queryset(self):
-        # Limit to appointments belonging to the logged-in doctor
-        return Appointment.objects.filter(doctor=self.request.user)
+        user = self.request.user
+        # Check if the user is a doctor or an operator
+        if hasattr(user, 'operator'):
+            return Appointment.objects.all()  # Operators can update any appointment
+        elif hasattr(user, 'doctor'):
+            return Appointment.objects.filter(doctor=user)  # Doctors can only update their own appointments
+        else:
+            return Appointment.objects.none()
+
+    def get_success_url(self):
+        user = self.request.user
+        # Redirect to the appropriate dashboard based on the user's role
+        if hasattr(user, 'operator'):
+            return reverse_lazy('operator_dashboard')  # Redirect to operator dashboard
+        else:
+            return reverse_lazy("doctor_dashboard")  # Redirect to doctor/dashboard
 
 
 class AppointmentDeleteView(DeleteView):
     model = Appointment
     template_name = "patients/appointment_confirm_delete.html"  # Optional: You can create a confirmation template
-    success_url = reverse_lazy("dashboard")
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Appointment removed successfully!")
         return super().delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        user = self.request.user
+        # Redirect to the appropriate dashboard based on the user's role
+        if hasattr(user, 'operator'):
+            return reverse_lazy('operator_dashboard')  # Redirect to operator dashboard
+        else:
+            return reverse_lazy("doctor_dashboard")
 
 
 class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -263,3 +285,72 @@ class OperatorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Operator successfully deleted.")
         return super().delete(request, *args, **kwargs)
+
+
+class OperatorDashboardView(ListView):
+    model = Appointment
+    template_name = "operators/operator_dashboard.html"
+    context_object_name = "appointments"
+    paginate_by = 10  # Pagination for better performance
+
+    def get_queryset(self):
+        queryset = (
+            Appointment.objects.all()
+            .select_related("doctor", "patient")
+            .order_by("-appointment_datetime")
+        )
+
+        # Get filter parameters from GET request
+        doctor_id = self.request.GET.get("doctor")
+        status = self.request.GET.get("status")
+        date_from = self.request.GET.get("date_from")
+        date_to = self.request.GET.get("date_to")
+
+        # Apply filters
+        # if 'clear_filters' in self.request.GET:
+        #     return queryset.order_by('appointment_datetime')
+        if doctor_id:
+            queryset = queryset.filter(doctor_id=doctor_id)
+        if status:
+            queryset = queryset.filter(status=status)
+        if date_from:
+            try:
+                date_from = datetime.strptime(date_from, "%Y-%m-%d")
+                queryset = queryset.filter(appointment_datetime__date__gte=date_from)
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                date_to = datetime.strptime(date_to, "%Y-%m-%d")
+                queryset = queryset.filter(appointment_datetime__date__lte=date_to)
+            except ValueError:
+                pass
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Operator Dashboard"
+
+        # Add filter options to context
+        context["doctors"] = Doctor.objects.all().order_by("username")
+        context["status_choices"] = Appointment.STATUS_CHOICES
+
+        # Preserve filter values in context
+        context["selected_doctor"] = self.request.GET.get("doctor", "")
+        context["selected_status"] = self.request.GET.get("status", "")
+        context["selected_date_from"] = self.request.GET.get("date_from", "")
+        context["selected_date_to"] = self.request.GET.get("date_to", "")
+
+        # Add summary statistics
+        context["total_appointments"] = self.get_queryset().count()
+        context["pending_appointments"] = (
+            self.get_queryset().filter(status="Pending").count()
+        )
+        context["today_appointments"] = (
+            self.get_queryset()
+            .filter(appointment_datetime__date=timezone.now().date())
+            .count()
+        )
+
+        return context

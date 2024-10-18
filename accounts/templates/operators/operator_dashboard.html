@@ -1,0 +1,206 @@
+{% extends "authenticated_base.html" %}
+{% block title %}
+    Operator Dashboard - Appointments
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-2">
+    <h2 class="mb-2">All Appointments</h2>
+    
+    <!-- Filters Row -->
+       <!-- Filters Row -->
+       <div class="row mb-4">
+        <div class="col-md-3">
+            <select name="doctor" class="form-select" id="doctorFilter">
+                <option value="">All Doctors</option>
+                {% for doctor in doctors %}
+                <option value="{{ doctor.id }}" {% if selected_doctor == doctor.id|stringformat:"s" %}selected{% endif %}>
+                    {{ doctor.username }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select" id="statusFilter">
+                <option value="">All Status</option>
+                {% for status_value, status_label in status_choices %}
+                <option value="{{ status_value }}" {% if selected_status == status_value %}selected{% endif %}>
+                    {{ status_label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="date_from" value="{{ selected_date_from }}" class="form-control" id="dateFrom">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="date_to" value="{{ selected_date_to }}" class="form-control" id="dateTo">
+        </div>
+        <div class="col-md-2">
+            <div class="d-flex gap-2">
+                <button onclick="applyFilters()" class="btn btn-primary btn-sm">Apply</button>
+                <button onclick="clearFilters()" class="btn btn-secondary btn-sm">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Appointments</h5>
+                    <p class="card-text h3">{{ total_appointments }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Appointments</h5>
+                    <p class="card-text h3">{{ pending_appointments }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Appointments</h5>
+                    <p class="card-text h3">{{ today_appointments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not appointments %}
+        <div class="alert alert-info text-center" role="alert">No Appointments Found!</div>
+    {% else %}
+        <!-- Appointments Table -->
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Patient Name</th>
+                    <th scope="col">Doctor Name</th>
+                    <th scope="col">Scheduled Date & Time</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.patient.username }}</td>
+                        <td>{{ appointment.doctor.username }}</td>
+                        <td>{{ appointment.appointment_datetime|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <span class="badge {% if appointment.status == 'Scheduled' %} bg-info {% elif appointment.status == 'Pending' %} bg-warning {% elif appointment.status == 'Completed' %} bg-success {% elif appointment.status == 'Cancelled' %} bg-danger {% endif %}">
+                                {{ appointment.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal{{ appointment.pk }}">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ appointment.pk }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            <!-- Update Modal -->
+                            <div class="modal fade" id="updateModal{{ appointment.pk }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Update Appointment Status</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" action="{% url 'appointment_update' appointment.pk %}">
+                                                {% csrf_token %}
+                                                <div class="form-group mb-3">
+                                                    <label for="status{{ appointment.pk }}" class="form-label">Select New Status</label>
+                                                    <select id="status{{ appointment.pk }}" name="status" class="form-select">
+                                                        {% for status_value, status_label in status_choices %}
+                                                        <option value="{{ status_value }}" {% if appointment.status == status_value %}selected{% endif %}>
+                                                            {{ status_label }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <button type="submit" class="btn btn-success">Save Changes</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="deleteModal{{ appointment.pk }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to remove this appointment?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" action="{% url 'appointment_delete' appointment.pk %}">
+                                                {% csrf_token %}
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Remove</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<!-- JavaScript for handling filters -->
+<script>
+    <!-- Updated JavaScript for handling filters -->
+    // Function to clear all filters and reload page
+    function clearFilters() {
+        // Clear all form fields
+        document.getElementById('doctorFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        
+        // Redirect to base URL without parameters
+        window.location.href = window.location.pathname;
+    }
+    
+    function applyFilters() {
+        const doctor = document.getElementById('doctorFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const dateFrom = document.getElementById('dateFrom').value;
+        const dateTo = document.getElementById('dateTo').value;
+        
+        // Only add parameters if they have values
+        const params = new URLSearchParams();
+        if (doctor) params.append('doctor', doctor);
+        if (status) params.append('status', status);
+        if (dateFrom) params.append('date_from', dateFrom);
+        if (dateTo) params.append('date_to', dateTo);
+        
+        // Redirect with parameters only if there are any
+        const queryString = params.toString();
+        window.location.href = window.location.pathname + (queryString ? `?${queryString}` : '');
+    }
+    
+    // Clear filters on page reload if "clear_filters" parameter is present
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.href.includes('?clear_filters')) {
+            window.location.href = window.location.pathname;
+        }
+    });
+    
+</script>
+{% endblock content %}
