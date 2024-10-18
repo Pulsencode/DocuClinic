@@ -1,6 +1,5 @@
 # from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
 from accounts.forms import CustomUserCreationForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -13,7 +12,6 @@ from django.views.generic import (
 )
 from .models import Doctor, Appointment, Patient, Operator
 from .forms import DoctorForm, AppointmentForm, OperatorForm
-from django.db.models import Q
 
 
 class SignUpView(CreateView):
@@ -108,25 +106,6 @@ class DoctorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class AppointmentCreateView(CreateView):
-    model = Appointment
-    form_class = AppointmentForm
-    template_name = "patients/patient_list.html"
-
-    def form_valid(self, form):
-        form.instance.patient = Patient.objects.get(
-            pk=self.request.POST["patient"]
-        )  # Get patient from form
-        self.object = form.save()
-        messages.success(
-            self.request, "Appointment created successfully!"
-        )  # Add a success message
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy("patient_list")
-
-    
 # Doctor's Appointment List View
 class DoctorDashboardView(ListView):
     model = Appointment
@@ -184,7 +163,6 @@ class AppointmentDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Appointment removed successfully!")
         return super().delete(request, *args, **kwargs)
-
 
 
 class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -285,4 +263,3 @@ class OperatorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Operator successfully deleted.")
         return super().delete(request, *args, **kwargs)
-
