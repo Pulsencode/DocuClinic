@@ -22,15 +22,6 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-class Dashboard(TemplateView):
-    template_name = "home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = "Dashboard"  # Set the page title
-        return context
-
-
 class DoctorListView(LoginRequiredMixin, ListView):
     model = Doctor
     template_name = "doctors/doctor_list.html"
@@ -135,7 +126,7 @@ class AppointmentCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy("patient_list")
 
-
+    
 # Doctor's Appointment List View
 class DoctorDashboardView(ListView):
     model = Appointment
@@ -147,6 +138,30 @@ class DoctorDashboardView(ListView):
         return Appointment.objects.filter(doctor=self.request.user).order_by(
             "appointment_datetime"
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Dashboard"  # Set the page title
+        return context
+
+
+class AppointmentCreateView(CreateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "patients/patient_list.html"
+
+    def form_valid(self, form):
+        form.instance.patient = Patient.objects.get(
+            pk=self.request.POST["patient"]
+        )  # Get patient from form
+        self.object = form.save()
+        messages.success(
+            self.request, "Appointment created successfully!"
+        )  # Add a success message
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("patient_list")
 
 
 # Update Appointment Status View
@@ -169,6 +184,7 @@ class AppointmentDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Appointment removed successfully!")
         return super().delete(request, *args, **kwargs)
+
 
 
 class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -269,3 +285,4 @@ class OperatorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Operator successfully deleted.")
         return super().delete(request, *args, **kwargs)
+
