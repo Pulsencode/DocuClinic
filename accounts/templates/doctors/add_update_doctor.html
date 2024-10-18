@@ -77,15 +77,10 @@
                         <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
                     </div>
                 </form>
-                <div id="responseMessage">
-                    {% if messages %}
-                        {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
 {% block scripts %}
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -94,4 +89,4 @@
         });
     });
     </script>
-{% endblock %}
+{% endblock scripts %}

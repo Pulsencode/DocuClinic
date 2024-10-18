@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from accounts.forms import CustomUserCreationForm
@@ -11,9 +11,9 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .models import Doctor, Appointment, Patient
-from .forms import DoctorForm, AppointmentForm
-from django.utils import timezone
+from .models import Doctor, Appointment, Patient, Operator
+from .forms import DoctorForm, AppointmentForm, OperatorForm
+from django.db.models import Q
 
 
 class SignUpView(CreateView):
@@ -108,6 +108,25 @@ class DoctorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+class AppointmentCreateView(CreateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "patients/patient_list.html"
+
+    def form_valid(self, form):
+        form.instance.patient = Patient.objects.get(
+            pk=self.request.POST["patient"]
+        )  # Get patient from form
+        self.object = form.save()
+        messages.success(
+            self.request, "Appointment created successfully!"
+        )  # Add a success message
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("patient_list")
+
+    
 # Doctor's Appointment List View
 class DoctorDashboardView(ListView):
     model = Appointment
@@ -165,3 +184,105 @@ class AppointmentDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Appointment removed successfully!")
         return super().delete(request, *args, **kwargs)
+
+
+
+class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Operator
+    template_name = "operators/operator_list.html"
+    context_object_name = "operators"
+    paginate_by = 10
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Operator list"
+        return context
+
+
+class OperatorDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = Operator
+    template_name = "operators/operator_detail.html"
+    context_object_name = "operator"
+
+    def test_func(self):
+        return (
+            self.request.user.is_staff or self.request.user.pk == self.get_object().pk
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Operator Detail"
+        return context
+
+
+class OperatorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Operator
+    form_class = OperatorForm
+    template_name = "operators/add_update_operator.html"
+    success_url = reverse_lazy("operator_list")
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Operator successfully created.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request, "Failed to create operator. Please check the form for errors."
+        )
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Add Operator"
+        return context
+
+
+class OperatorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Operator
+    form_class = OperatorForm
+    template_name = "operators/add_update_operator.html"
+
+    def test_func(self):
+        return (
+            self.request.user.is_staff or self.request.user.pk == self.get_object().pk
+        )
+
+    def get_success_url(self):
+        return reverse_lazy("operator_detail", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Operator successfully updated.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request, "Failed to update operator. Please check the form for errors."
+        )
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Operator"
+        return context
+
+
+class OperatorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Operator
+    template_name = "operators/operator_confirm_delete.html"
+    success_url = reverse_lazy("operator_list")
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Operator successfully deleted.")
+        return super().delete(request, *args, **kwargs)
+
