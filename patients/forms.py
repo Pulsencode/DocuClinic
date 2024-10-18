@@ -11,7 +11,6 @@ class PatientForm(forms.ModelForm):
         fields = [
             "username",
             "email",
-            "phone_number_country_code",
             "phone_number",
             "address",
         ]
@@ -33,18 +32,6 @@ class PatientForm(forms.ModelForm):
 
     address = forms.CharField(
         required=True, widget=forms.Textarea(attrs={"class": "form-control", "rows": 2})
-    )
-
-    phone_number_country_code = forms.CharField(
-        required=False,
-        max_length=3,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "style": "max-width: 65px;",
-                "placeholder": "Country code",
-            }
-        ),
     )
 
 

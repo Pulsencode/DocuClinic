@@ -28,10 +28,7 @@
                         </div>
                         <div class="col-md-4">
                             <h6>Contact Number:</h6>
-                            <div class="input-group">
-                                {{ form.phone_number_country_code }}
-                                {{ form.phone_number }}
-                            </div>
+                            <div class="input-group">{{ form.phone_number }}</div>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -76,11 +73,6 @@
                         <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
                     </div>
                 </form>
-                <div id="responseMessage">
-                    {% if messages %}
-                        {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>
