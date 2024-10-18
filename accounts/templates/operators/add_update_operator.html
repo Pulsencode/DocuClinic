@@ -5,7 +5,7 @@
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">
                     {% if form.instance.pk %}
-                        Update Operator - {{ form.instance.username }}
+                        Update Operator - {{ form.instance.get_full_name }}
                     {% else %}
                         New Operator
                     {% endif %}
@@ -72,19 +72,10 @@
                             <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
                         {% endif %}
                         <button type="submit" id="saveButton" class="btn btn-success">
-                            {% if form.instance.pk %}Update{% else %}Create{% endif %}
+                            Submit
                         </button>
                     </div>
                 </form>
-                <div id="responseMessage">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} mt-3">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>

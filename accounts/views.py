@@ -180,17 +180,10 @@ class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def test_func(self):
         return self.request.user.is_staff
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        search_query = self.request.GET.get("search")
-        if search_query:
-            queryset = queryset.filter(
-                Q(username__icontains=search_query)
-                | Q(email__icontains=search_query)
-                | Q(first_name__icontains=search_query)
-                | Q(last_name__icontains=search_query)
-            )
-        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Operator list"
+        return context
 
 
 class OperatorDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -202,6 +195,11 @@ class OperatorDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return (
             self.request.user.is_staff or self.request.user.pk == self.get_object().pk
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Operator Detail"
+        return context
 
 
 class OperatorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -223,6 +221,11 @@ class OperatorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             self.request, "Failed to create operator. Please check the form for errors."
         )
         return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Add Operator"
+        return context
 
 
 class OperatorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -248,6 +251,11 @@ class OperatorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             self.request, "Failed to update operator. Please check the form for errors."
         )
         return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Operator"
+        return context
 
 
 class OperatorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
