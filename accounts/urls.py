@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path("signup/", views.SignUpView.as_view(), name="signup"),
+    path('login-redirect/', views.login_redirect_view, name='login_redirect'),
 
     # DOCTORS
     path("doctors/", views.DoctorListView.as_view(), name="doctor_list"),

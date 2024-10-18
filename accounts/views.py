@@ -1,4 +1,4 @@
-# from django.shortcuts import redirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from accounts.forms import CustomUserCreationForm
 from django.contrib import messages
@@ -14,6 +14,22 @@ from .models import Doctor, Appointment, Patient, Operator
 from .forms import DoctorForm, AppointmentForm, OperatorForm
 from django.utils import timezone
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def login_redirect_view(request):
+    try:
+        Doctor.objects.get(id=request.user.id)
+        return redirect("doctor_dashboard")  # your existing doctor dashboard URL
+    except Doctor.DoesNotExist:
+        try:
+            Operator.objects.get(id=request.user.id)
+            return redirect(
+                "operator_dashboard"
+            )  # your existing operator dashboard URL
+        except Operator.DoesNotExist:
+            return redirect("home")  # or wherever you want unknown users to go
 
 
 class SignUpView(CreateView):
@@ -154,18 +170,20 @@ class AppointmentUpdateView(UpdateView):
     def get_queryset(self):
         user = self.request.user
         # Check if the user is a doctor or an operator
-        if hasattr(user, 'operator'):
+        if hasattr(user, "operator"):
             return Appointment.objects.all()  # Operators can update any appointment
-        elif hasattr(user, 'doctor'):
-            return Appointment.objects.filter(doctor=user)  # Doctors can only update their own appointments
+        elif hasattr(user, "doctor"):
+            return Appointment.objects.filter(
+                doctor=user
+            )  # Doctors can only update their own appointments
         else:
             return Appointment.objects.none()
 
     def get_success_url(self):
         user = self.request.user
         # Redirect to the appropriate dashboard based on the user's role
-        if hasattr(user, 'operator'):
-            return reverse_lazy('operator_dashboard')  # Redirect to operator dashboard
+        if hasattr(user, "operator"):
+            return reverse_lazy("operator_dashboard")  # Redirect to operator dashboard
         else:
             return reverse_lazy("doctor_dashboard")  # Redirect to doctor/dashboard
 
@@ -181,8 +199,8 @@ class AppointmentDeleteView(DeleteView):
     def get_success_url(self):
         user = self.request.user
         # Redirect to the appropriate dashboard based on the user's role
-        if hasattr(user, 'operator'):
-            return reverse_lazy('operator_dashboard')  # Redirect to operator dashboard
+        if hasattr(user, "operator"):
+            return reverse_lazy("operator_dashboard")  # Redirect to operator dashboard
         else:
             return reverse_lazy("doctor_dashboard")
 

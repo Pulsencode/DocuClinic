@@ -36,7 +36,7 @@ AUTH_USER_MODEL = "accounts.User"
 
 INSTALLED_APPS += EXTERNAL_APPS
 
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_REDIRECT_URL = "/login-redirect/"
 LOGOUT_REDIRECT_URL = "login"
 
 MIDDLEWARE = [
