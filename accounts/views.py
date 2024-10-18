@@ -1,6 +1,5 @@
 # from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
 from accounts.forms import CustomUserCreationForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -13,22 +12,12 @@ from django.views.generic import (
 )
 from .models import Doctor, Appointment, Patient, Operator
 from .forms import DoctorForm, AppointmentForm, OperatorForm
-from django.db.models import Q
 
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
-
-
-class Dashboard(TemplateView):
-    template_name = "home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = "Dashboard"  # Set the page title
-        return context
 
 
 class DoctorListView(LoginRequiredMixin, ListView):
@@ -117,6 +106,24 @@ class DoctorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+# Doctor's Appointment List View
+class DoctorDashboardView(ListView):
+    model = Appointment
+    template_name = "doctors/doctor_dashboard.html"  # Doctor dashboard template
+    context_object_name = "appointments"
+
+    def get_queryset(self):
+        # Show only appointments related to the logged-in doctor
+        return Appointment.objects.filter(doctor=self.request.user).order_by(
+            "appointment_datetime"
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Dashboard"  # Set the page title
+        return context
+
+
 class AppointmentCreateView(CreateView):
     model = Appointment
     form_class = AppointmentForm
@@ -134,19 +141,6 @@ class AppointmentCreateView(CreateView):
 
     def get_success_url(self):
         return reverse_lazy("patient_list")
-
-
-# Doctor's Appointment List View
-class DoctorDashboardView(ListView):
-    model = Appointment
-    template_name = "doctors/doctor_dashboard.html"  # Doctor dashboard template
-    context_object_name = "appointments"
-
-    def get_queryset(self):
-        # Show only appointments related to the logged-in doctor
-        return Appointment.objects.filter(doctor=self.request.user).order_by(
-            "appointment_datetime"
-        )
 
 
 # Update Appointment Status View
