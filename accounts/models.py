@@ -4,7 +4,6 @@ from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-# from django.urls import reverse
 
 
 class User(AbstractUser):
@@ -88,24 +87,3 @@ class Patient(User):
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
-
-
-class Appointment(models.Model):
-    STATUS_CHOICES = [
-        ('Scheduled', 'Scheduled'),
-        ('Pending', 'Pending'),
-        ('Completed', 'Completed'),
-        ('Cancelled', 'Cancelled'),
-    ]
-
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    appointment_datetime = models.DateTimeField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['appointment_datetime']
-
-    def __str__(self):
-        return f"{self.patient.username} with {self.doctor.username} on {self.appointment_datetime}"

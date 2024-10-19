@@ -30,7 +30,7 @@
                         <tr>
                             <td class="col-1">{{ patient.registration_id }}</td>
                             <td>{{ patient.username }}</td>
-                            <td class="text-truncate" style="max-width: 50px;">{{ patient.address }}</td>
+                            <td class="text-truncate">{{ patient.address }}</td>
                             <td>{{ patient.patient_details.age }}</td>
                             <td>{{ patient.phone_number }}</td>
                             <td>
@@ -57,7 +57,7 @@
                                 aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" action="{% url 'appointment_create' %}">
+                        <form method="post" action="{% url 'create_appointment' %}">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="patient" class="form-label">Select Patient</label>
