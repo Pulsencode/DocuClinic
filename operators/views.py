@@ -15,14 +15,17 @@ from datetime import datetime
 from medicalrecords.models import Appointment
 
 
-class OperatorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class OperatorListView(LoginRequiredMixin, ListView):
     model = Operator
     template_name = "operators/operator_list.html"
     context_object_name = "operators"
-    paginate_by = 10
 
-    def test_func(self):
-        return self.request.user.is_staff
+    def dispatch(self, request, *args, **kwargs):
+        if not hasattr(request.user, "operator") and not hasattr(
+            request.user, "doctor"
+        ):
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
