@@ -57,7 +57,7 @@
                                                         aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form method="post" action="{% url 'appointment_update' appointment.pk %}">
+                                                <form method="post" action="{% url 'update_appointment' appointment.pk %}">
                                                     {% csrf_token %}
                                                     <!-- Status Update Dropdown -->
                                                     <div class="form-group mb-3">
@@ -104,7 +104,7 @@
                                             </div>
                                             <div class="modal-body">Are you sure you want to remove this appointment?</div>
                                             <div class="modal-footer">
-                                                <form method="post" action="{% url 'appointment_delete' appointment.pk %}">
+                                                <form method="post" action="{% url 'delete_appointment' appointment.pk %}">
                                                     {% csrf_token %}
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                     <button type="submit" class="btn btn-danger">Remove</button>
