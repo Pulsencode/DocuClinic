@@ -20,6 +20,8 @@ def user_redirect(request):
         return redirect("operator_dashboard")
     elif hasattr(request.user, "patient"):
         return redirect("patient_dashboard")
+    elif hasattr(request.user, "admin"):
+        return redirect("admin_dashboard")
     else:
         raise Http404("You are not registered with the system")
 
