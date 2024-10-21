@@ -13,7 +13,6 @@ from .forms import DoctorForm
 from medicalrecords.models import Appointment
 
 
-# Create your views here.
 class DoctorListView(LoginRequiredMixin, ListView):
     model = Doctor
     template_name = "doctors/doctor_list.html"
@@ -21,7 +20,7 @@ class DoctorListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Doctor List"  # Set the page title
+        context["page_title"] = "Doctor List"
         return context
 
 
