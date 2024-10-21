@@ -37,7 +37,7 @@ class DoctorDetailView(LoginRequiredMixin, DetailView):
 class DoctorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Doctor
     form_class = DoctorForm
-    template_name = "doctors/add_update_doctor.html"
+    template_name = "doctors/create_update_doctor.html"
     success_url = reverse_lazy("doctor_list")
 
     def test_func(self):
@@ -55,7 +55,7 @@ class DoctorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Add Doctor"  # Set the page title
+        context["page_title"] = "Add Doctor"
         return context
 
 
