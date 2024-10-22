@@ -88,19 +88,20 @@ class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class DoctorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Doctor
-    template_name = "doctor_confirm_delete.html"
     success_url = reverse_lazy("doctor_list")
 
     def test_func(self):
         return self.request.user.is_staff
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Doctor successfully deleted.")
         return super().delete(request, *args, **kwargs)
 
 
-# Doctor's Appointment List View
-class DoctorDashboardView(ListView):
+class DoctorDashboardView(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = "doctors/doctor_dashboard.html"  # Doctor dashboard template
     context_object_name = "appointments"

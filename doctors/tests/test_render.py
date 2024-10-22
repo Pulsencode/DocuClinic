@@ -136,3 +136,33 @@ class DoctorUpdatePageRenderTestCase(TestCase):
         self.assertRedirects(
             response, f"/accounts/login/?next=/doctors/doctors/{self.doctor.id}/update/"
         )
+
+
+class DoctorDashboardPageRenderTestCase(TestCase):
+    def setUp(self):
+        self.user_is_staff = Operator.objects.create_user(
+            username="testuser",
+            password="testpassword",
+            is_staff=True,  # The user is set as is_staff because it needs to pass the UserPassesTestMixin
+        )
+        self.client.login(username="testuser", password="testpassword")
+        self.response = self.client.get(reverse("doctor_dashboard"))
+
+    def test_create_page_renders(self):
+        self.assertEqual(self.response.status_code, 200)
+
+    def test_page_template(self):
+        self.assertTemplateUsed(self.response, "doctors/doctor_dashboard.html")
+        self.assertTemplateUsed(self.response, "authenticated_base.html")
+        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+
+    def test_page_title_in_context(self):
+        self.assertIn("page_title", self.response.context)
+        self.assertEqual(self.response.context["page_title"], "Doctors Dashboard")
+
+    def test_unauthenticated_page_render(self):
+        self.client.logout()
+        response = self.client.get(reverse("doctor_dashboard"))
+        self.assertRedirects(
+            response, "/accounts/login/?next=/doctors/doctor/dashboard/"
+        )
