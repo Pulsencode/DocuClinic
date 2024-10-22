@@ -62,7 +62,7 @@ class DoctorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Doctor
     form_class = DoctorForm
-    template_name = "doctors/add_update_doctor.html"
+    template_name = "doctors/create_update_doctor.html"
 
     def get_success_url(self):
         return reverse_lazy("doctor_detail", kwargs={"pk": self.object.pk})
