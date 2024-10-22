@@ -11,6 +11,7 @@ class ListDoctorPageRenderTestCase(TestCase):
         )
         self.client.login(username="testuser", password="testpassword")
         self.response = self.client.get(reverse("doctor_list"))
+        self.all_doctors = Doctor.objects.all()
 
     def test_list_page_renders(self):
         self.assertEqual(self.response.status_code, 200)
@@ -29,6 +30,14 @@ class ListDoctorPageRenderTestCase(TestCase):
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
         self.assertEqual(self.response.context["page_title"], "Doctor List")
+
+        # Converting the querysets to lists with list() ensures that you are comparing the actual objects.
+        expected_doctors = list(self.all_doctors)
+        # assertQuerysetEqual is designed to compare querysets or lists of model instances.
+        context_doctors = list(self.response.context["doctors"])
+        self.assertQuerySetEqual(
+            context_doctors, expected_doctors, transform=lambda x: x
+        )
 
 
 class DoctorDetailPageRenderTestCase(TestCase):
@@ -158,6 +167,7 @@ class DoctorDashboardPageRenderTestCase(TestCase):
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
+        self.assertIn("appointments", self.response.context)
         self.assertEqual(self.response.context["page_title"], "Doctors Dashboard")
 
     def test_unauthenticated_page_render(self):
