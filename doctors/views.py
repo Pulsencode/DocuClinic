@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     ListView,
     DetailView,
@@ -34,14 +34,11 @@ class DoctorDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class DoctorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class DoctorCreateView(LoginRequiredMixin, CreateView):
     model = Doctor
     form_class = DoctorForm
     template_name = "doctors/create_update_doctor.html"
     success_url = reverse_lazy("doctor_list")
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def form_valid(self, form):
         messages.success(self.request, "Doctor successfully created.")
@@ -59,16 +56,13 @@ class DoctorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return context
 
 
-class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class DoctorUpdateView(LoginRequiredMixin, UpdateView):
     model = Doctor
     form_class = DoctorForm
     template_name = "doctors/create_update_doctor.html"
 
     def get_success_url(self):
         return reverse_lazy("doctor_detail", kwargs={"pk": self.object.pk})
-
-    def test_func(self):
-        return self.request.user.is_staff or self.request.user == self.get_object()
 
     def form_valid(self, form):
         messages.success(self.request, "Doctor successfully updated.")
@@ -86,12 +80,9 @@ class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
 
 
-class DoctorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class DoctorDeleteView(LoginRequiredMixin, DeleteView):
     model = Doctor
     success_url = reverse_lazy("doctor_list")
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
