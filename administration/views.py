@@ -14,6 +14,11 @@ from django.contrib import messages
 class AdminDashboard(TemplateView):
     template_name = "administration/admin_dashboard.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Admin Dashboard"
+        return context
+
 
 class GroupListView(ListView):
     model = Group

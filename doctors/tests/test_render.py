@@ -18,8 +18,6 @@ class ListDoctorPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/doctor_list.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
 
     def test_unauthenticated_page_render(self):
         self.client.logout()
@@ -61,8 +59,7 @@ class DoctorDetailPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/doctor_detail.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_unauthenticated_page_render(self):
         self.client.logout()
@@ -94,8 +91,7 @@ class DoctorCreatePageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/create_update_doctor.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
@@ -130,8 +126,7 @@ class DoctorUpdatePageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/create_update_doctor.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
@@ -162,8 +157,7 @@ class DoctorDashboardPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/doctor_dashboard.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)

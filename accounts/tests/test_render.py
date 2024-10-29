@@ -18,4 +18,4 @@ class SignUpPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "registration/signup.html")
-        self.assertTemplateUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
