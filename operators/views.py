@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     ListView,
     DetailView,
@@ -33,15 +33,10 @@ class OperatorListView(LoginRequiredMixin, ListView):
         return context
 
 
-class OperatorDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+class OperatorDetailView(LoginRequiredMixin, DetailView):
     model = Operator
     template_name = "operators/operator_detail.html"
     context_object_name = "operator"
-
-    def test_func(self):
-        return (
-            self.request.user.is_staff or self.request.user.pk == self.get_object().pk
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -49,14 +44,11 @@ class OperatorDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return context
 
 
-class OperatorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class OperatorCreateView(LoginRequiredMixin, CreateView):
     model = Operator
     form_class = OperatorForm
     template_name = "operators/add_update_operator.html"
     success_url = reverse_lazy("operator_list")
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -75,15 +67,10 @@ class OperatorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return context
 
 
-class OperatorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class OperatorUpdateView(LoginRequiredMixin, UpdateView):
     model = Operator
     form_class = OperatorForm
     template_name = "operators/add_update_operator.html"
-
-    def test_func(self):
-        return (
-            self.request.user.is_staff or self.request.user.pk == self.get_object().pk
-        )
 
     def get_success_url(self):
         return reverse_lazy("operator_detail", kwargs={"pk": self.object.pk})
@@ -105,13 +92,10 @@ class OperatorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
 
 
-class OperatorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class OperatorDeleteView(LoginRequiredMixin, DeleteView):
     model = Operator
     template_name = "operators/operator_confirm_delete.html"
     success_url = reverse_lazy("operator_list")
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Operator successfully deleted.")
