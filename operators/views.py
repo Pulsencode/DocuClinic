@@ -20,13 +20,6 @@ class OperatorListView(LoginRequiredMixin, ListView):
     template_name = "operators/operator_list.html"
     context_object_name = "operators"
 
-    def dispatch(self, request, *args, **kwargs):
-        if not hasattr(request.user, "operator") and not hasattr(
-            request.user, "doctor"
-        ):
-            return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Operator list"
