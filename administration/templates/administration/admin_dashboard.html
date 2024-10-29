@@ -1,137 +1,150 @@
 {% extends "general_base.html" %}
 {% block content %}
     <div class="container-fluid py-4">
-        <!-- Page Header -->
-        <div class="row mb-2">
-            <div class="col">
-                <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-            </div>
-        </div>
         <!-- Stats Cards -->
         <div class="row g-3 mb-4">
-            <div class="col-xl-3 col-md-6">
+            <!-- Total Doctors Card -->
+            <div class="col-xl-4 col-md-6">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Users</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_users|default:"0" }}</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Doctors</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_doctors|default:"0" }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-people fs-2 text-gray-300"></i>
+                                <i class="bi bi-clipboard2-pulse fs-2 text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+
+            <!-- Total Operators Card -->
+            <div class="col-xl-4 col-md-6">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Active Groups</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_groups|default:"0" }}</div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Operators</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_operators|default:"0" }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-diagram-3 fs-2 text-gray-300"></i>
+                                <i class="bi bi-person-workspace fs-2 text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+
+            <!-- Today's Appointments Card -->
+            <div class="col-xl-4 col-md-6">
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Active Sessions</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_sessions|default:"0" }}</div>
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today's Appointments</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ todays_appointment|default:"0" }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-clock-history fs-2 text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">System Load</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ system_load|default:"0" }}%</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-cpu fs-2 text-gray-300"></i>
+                                <i class="bi bi-calendar2-check fs-2 text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Content Row -->
+
+        <!-- Chart Row -->
         <div class="row">
-            <!-- Recent Activities -->
-            <div class="col-lg-6 mb-4">
+            <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">Recent Activities</h6>
-                        <a href="#" class="btn btn-sm btn-primary">View All</a>
+                        <h6 class="m-0 font-weight-bold text-primary">Appointment Analytics</h6>
                     </div>
                     <div class="card-body">
-                        {% if recent_activities %}
-                            <div class="list-group list-group-flush">
-                                {% for activity in recent_activities %}
-                                    <div class="list-group-item">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">{{ activity.title }}</h6>
-                                            <small>{{ activity.timestamp }}</small>
-                                        </div>
-                                        <p class="mb-1">{{ activity.description }}</p>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="text-center text-muted my-3">No recent activities</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <!-- System Status -->
-            <div class="col-lg-6 mb-4">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">System Status</h6>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="small font-weight-bold">
-                            CPU Usage <span class="float-end">{{ cpu_usage|default:"0" }}%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar"
-                                 role="progressbar"
-                                 style="width: {{ cpu_usage|default:'0' }}%"></div>
-                        </div>
-                        <h4 class="small font-weight-bold">
-                            Memory Usage <span class="float-end">{{ memory_usage|default:"0" }}%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-info"
-                                 role="progressbar"
-                                 style="width: {{ memory_usage|default:'0' }}%"></div>
-                        </div>
-                        <h4 class="small font-weight-bold">
-                            Disk Space <span class="float-end">{{ disk_usage|default:"0" }}%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-success"
-                                 role="progressbar"
-                                 style="width: {{ disk_usage|default:'0' }}%"></div>
-                        </div>
+                        <div id="appointments_chart" style="height: 300px;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock content %}
+{% block scripts %}
+    <!-- Load Google Charts -->
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Date', 'Appointments'],
+                {% for date, count in appointment_data %}
+                    ['{{ date|date:"M d" }}', {{ count }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+                title: 'Appointment Trends - Last 7 Days',
+                titleTextStyle: {
+                    color: '#4e73df',
+                    fontSize: 16,
+                    bold: true
+                },
+                curveType: 'function',
+                legend: { 
+                    position: 'bottom',
+                    textStyle: {
+                        color: '#5a5c69'
+                    }
+                },
+                colors: ['#4e73df'],
+                backgroundColor: 'transparent',
+                chartArea: {
+                    width: '85%',
+                    height: '75%'
+                },
+                vAxis: {
+                    minValue: 0,
+                    format: '0',
+                    gridlines: {
+                        color: '#f8f9fc',
+                        count: 5
+                    },
+                    textStyle: {
+                        color: '#5a5c69'
+                    }
+                },
+                hAxis: {
+                    gridlines: {
+                        color: '#f8f9fc'
+                    },
+                    textStyle: {
+                        color: '#5a5c69'
+                    }
+                },
+                lineWidth: 3,
+                pointSize: 6,
+                animation: {
+                    startup: true,
+                    duration: 1000,
+                    easing: 'out'
+                },
+                tooltip: {
+                    textStyle: {
+                        color: '#5a5c69',
+                        fontSize: 14
+                    }
+                }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('appointments_chart'));
+            chart.draw(data, options);
+        }
+
+        // Redraw chart on window resize
+        window.addEventListener('resize', function() {
+            drawChart();
+        });
+    </script>
+{% endblock scripts %}
