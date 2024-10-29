@@ -12,7 +12,7 @@ from accounts.models import Doctor, Operator
 from .forms import OperatorForm
 from django.utils import timezone
 from datetime import datetime
-from medicalrecords.models import Appointment
+from operators.models import Appointment
 
 
 class OperatorListView(LoginRequiredMixin, ListView):

@@ -5,27 +5,27 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .models import Appointment, Patient
-from .forms import AppointmentForm
+from operators.models import Appointment
+from accounts.models import Patient
 
 
-class AppointmentCreateView(CreateView):
-    model = Appointment
-    form_class = AppointmentForm
-    template_name = "patients/patient_list.html"
+# class AppointmentCreateView(CreateView):
+#     model = Appointment
+#     form_class = AppointmentForm
+#     template_name = "patients/patient_list.html"
 
-    def form_valid(self, form):
-        form.instance.patient = Patient.objects.get(
-            pk=self.request.POST["patient"]
-        )  # Get patient from form
-        self.object = form.save()
-        messages.success(
-            self.request, "Appointment created successfully!"
-        )  # Add a success message
-        return super().form_valid(form)
+#     def form_valid(self, form):
+#         form.instance.patient = Patient.objects.get(
+#             pk=self.request.POST["patient"]
+#         )  # Get patient from form
+#         self.object = form.save()
+#         messages.success(
+#             self.request, "Appointment created successfully!"
+#         )  # Add a success message
+#         return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse_lazy("patient_list")
+#     def get_success_url(self):
+#         return reverse_lazy("patient_list")
 
 
 # Update Appointment Status View

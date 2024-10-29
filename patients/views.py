@@ -25,7 +25,7 @@ class PatientListView(ListView):
         context = super().get_context_data(**kwargs)
         context["form"] = PatientForm()
         context["page_title"] = "Patient List"
-        context['doctors'] = Doctor.objects.all()
+        context["doctors"] = Doctor.objects.all()
         return context
 
 
@@ -42,7 +42,6 @@ class PatientCreateUpdateMixin:
         return context
 
     def form_valid(self, form):
-        # context = self.get_context_data()
         details_form = PatientDetailsForm(
             self.request.POST, instance=getattr(self.object, "patient_details", None)
         )
@@ -91,16 +90,16 @@ class PatientDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["patient"] = self.object
         context["page_title"] = "Patient Details"
-        context["details"] = PatientDetail.objects.get_or_create(patient=self.object)[
-            0
-        ]
+        context["details"] = PatientDetail.objects.get_or_create(patient=self.object)[0]
         return context
 
 
 class PatientDeleteView(DeleteView):
     model = Patient
-    template_name = "patients/patient_confirm_delete.html"
     success_url = reverse_lazy("patient_list")
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         patient = self.get_object()

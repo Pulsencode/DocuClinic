@@ -10,7 +10,7 @@ from django.views.generic import (
 )
 from accounts.models import Doctor
 from .forms import DoctorForm
-from medicalrecords.models import Appointment
+from operators.models import Appointment
 
 
 class DoctorListView(LoginRequiredMixin, ListView):

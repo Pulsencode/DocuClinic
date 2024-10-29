@@ -10,7 +10,7 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.contrib import messages
 from accounts.models import Doctor, Operator
-from medicalrecords.models import Appointment
+from operators.models import Appointment
 from datetime import datetime, timedelta
 from django.db.models import Count
 
