@@ -5,10 +5,14 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
-    TemplateView
+    TemplateView,
 )
 from django.urls import reverse_lazy
 from django.contrib import messages
+from accounts.models import Doctor, Operator
+from medicalrecords.models import Appointment
+from datetime import datetime, timedelta
+from django.db.models import Count
 
 
 class AdminDashboard(TemplateView):
@@ -16,7 +20,43 @@ class AdminDashboard(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Admin Dashboard"
+        today = datetime.now().date()
+
+        end_date = today
+        start_date = end_date - timedelta(days=6)
+
+        appointment_data = (
+            Appointment.objects.filter(
+                appointment_datetime__date__range=[start_date, end_date]
+            )
+            .values("appointment_datetime__date")
+            .annotate(count=Count("id"))
+            .order_by("appointment_datetime__date")
+        )
+        appointment_data_list = [
+            (entry["appointment_datetime__date"], entry["count"])
+            for entry in appointment_data
+        ]
+
+        date_counts = dict(appointment_data_list)
+        all_dates = []
+        for i in range(7):
+            date = start_date + timedelta(days=i)
+            count = date_counts.get(date, 0)
+            all_dates.append((date, count))
+
+        context.update(
+            {
+                "page_title": "Admin Dashboard",
+                "todays_appointment": Appointment.objects.filter(
+                    appointment_datetime__date=today
+                ).count(),
+                "total_doctors": Doctor.objects.all().count(),
+                "total_operators": Operator.objects.all().count(),
+                "appointment_data": all_dates,
+            }
+        )
+
         return context
 
 
