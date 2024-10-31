@@ -27,13 +27,8 @@
                                 </span>
                             </td>
                             <td>
-                                <!-- Button to trigger the update modal for changing status -->
-                                <button type="button"
-                                        class="btn btn-sm btn-primary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#updateModal{{ appointment.pk }}">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </button>
+                                <a href="{% url "update_appointment" appointment.pk %}"
+                                   class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
                                 <!-- Button to trigger the delete confirmation modal -->
                                 <button type="button"
                                         class="btn btn-sm btn-danger"
@@ -41,52 +36,6 @@
                                         data-bs-target="#deleteModal{{ appointment.pk }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                                <!-- Modal for Updating Status -->
-                                <div class="modal fade"
-                                     id="updateModal{{ appointment.pk }}"
-                                     tabindex="-1"
-                                     aria-labelledby="updateModalLabel{{ appointment.pk }}"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="updateModalLabel{{ appointment.pk }}">Update Appointment Status</h5>
-                                                <button type="button"
-                                                        class="btn-close"
-                                                        data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form method="post" action="{% url 'update_appointment' appointment.pk %}">
-                                                    {% csrf_token %}
-                                                    <!-- Status Update Dropdown -->
-                                                    <div class="form-group mb-3">
-                                                        <label for="status{{ appointment.pk }}" class="form-label">Select New Status</label>
-                                                        <select id="status{{ appointment.pk }}" name="status" class="form-control">
-                                                            <option value="Scheduled"
-                                                                    {% if appointment.status == "Scheduled" %}selected{% endif %}>
-                                                                Scheduled
-                                                            </option>
-                                                            <option value="Pending"
-                                                                    {% if appointment.status == "Pending" %}selected{% endif %}>
-                                                                Pending
-                                                            </option>
-                                                            <option value="Completed"
-                                                                    {% if appointment.status == "Completed" %}selected{% endif %}>
-                                                                Completed
-                                                            </option>
-                                                            <option value="Cancelled"
-                                                                    {% if appointment.status == "Cancelled" %}selected{% endif %}>
-                                                                Cancelled
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-success">Save Changes</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <!-- Modal for Deleting Appointment -->
                                 <div class="modal fade"
                                      id="deleteModal{{ appointment.pk }}"

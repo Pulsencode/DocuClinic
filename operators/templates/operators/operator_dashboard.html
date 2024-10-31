@@ -114,48 +114,14 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <button type="button"
-                                            class="btn btn-sm btn-primary"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#updateModal{{ appointment.pk }}">
-                                        <i class="bi bi-arrow-clockwise"></i>
-                                    </button>
+                                    <a href="{% url "update_appointment" appointment.pk %}"
+                                    class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
                                     <button type="button"
                                             class="btn btn-sm btn-danger"
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteModal{{ appointment.pk }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
-                                    <!-- Update Modal -->
-                                    <div class="modal fade" id="updateModal{{ appointment.pk }}" tabindex="-1">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Update Appointment Status</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form method="post" action="{% url 'update_appointment' appointment.pk %}">
-                                                        {% csrf_token %}
-                                                        <div class="form-group mb-3">
-                                                            <label for="status{{ appointment.pk }}" class="form-label">Select New Status</label>
-                                                            <select id="status{{ appointment.pk }}"
-                                                                    name="status"
-                                                                    class="form-select form-select-sm">
-                                                                {% for status_value, status_label in status_choices %}
-                                                                    <option value="{{ status_value }}"
-                                                                            {% if appointment.status == status_value %}selected{% endif %}>
-                                                                        {{ status_label }}
-                                                                    </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-success">Save Changes</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <!-- Delete Modal -->
                                     <div class="modal fade" id="deleteModal{{ appointment.pk }}" tabindex="-1">
                                         <div class="modal-dialog">
