@@ -13,6 +13,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    class Meta:
+        verbose_name = "Super Admin"
+        verbose_name_plural = "Super Admins"
 
     def save(self, *args, **kwargs):
         if self.password and not self.password.startswith(

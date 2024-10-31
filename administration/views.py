@@ -1,18 +1,20 @@
-from django.contrib.auth.models import Group, Permission
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import (
-    ListView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    TemplateView,
-)
-from django.urls import reverse_lazy
-from django.contrib import messages
-from accounts.models import Doctor, Operator
-from operators.models import Appointment
 from datetime import datetime, timedelta
+
+from django.contrib import messages
+from django.contrib.auth.models import Group, Permission
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
+
+from accounts.models import Doctor, Operator
+from medicalrecords.models import Appointment
 
 
 class AdminDashboard(TemplateView):

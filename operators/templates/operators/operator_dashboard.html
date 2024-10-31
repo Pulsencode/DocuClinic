@@ -55,7 +55,7 @@
                                 <p class="card-text h3">{{ total_appointments }}</p>
                             </div>
                             <div class="col text-end">
-                                <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">Add Appoinment</i></a>
+                                <a href="{% url 'list_appointments' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Appoinment</i></a>
                             </div>
                         </div>
                     </div>
@@ -73,8 +73,17 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Today's Appointments</h5>
-                        <p class="card-text h3">{{ today_appointments }}</p>
+                        <div class="row">
+                            <div class="col">
+                                <p class="card-text h3">{{ today_appointments }}</p>
+                            </div>
+                            <div class="col text-end">
+                                <a href="{% url 'create_appointment' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">Add Appoinment</i></a>
+                            </div>
+                        </div>
+                        
                     </div>
+                    
                 </div>
             </div>
         </div>
