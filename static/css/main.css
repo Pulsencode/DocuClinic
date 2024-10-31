@@ -33,3 +33,23 @@
     font-size: 1.25rem;
     /* Increase font size */
 }
+
+.chart-height { /* Admin Dashboard Appointment chart */
+    height: 300px;
+}
+
+/* Group List */
+.permissions-container {
+    /* Firefox */
+    scrollbar-width: thin;
+    
+    /* Chrome/Safari/Edge */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+  }

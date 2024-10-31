@@ -1,33 +1,5 @@
-{% extends "authenticated_base.html" %}
+{% extends "general_base.html" %}
 {% block content %}
-    <style>
-    .permissions-container {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-    }
-    
-    .permissions-container::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .permissions-container::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    
-    .permissions-container::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 3px;
-    }
-    
-    .hover-bg-light:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-    
-    .permission-item .form-check-label {
-        cursor: pointer;
-        user-select: none;
-    }
-    </style>
     <div class="container-fluid py-4">
         <div class="row mb-4">
             <div class="col">
@@ -65,19 +37,16 @@
                         <div class="col-md-6">
                             <select id="categoryFilter" class="form-select">
                                 <option value="">All Categories</option>
-                                <!-- Add your categories dynamically -->
                             </select>
                         </div>
                     </div>
                     <!-- Permissions List -->
-                    <div class="permissions-container border rounded p-3 mb-4"
-                         style="max-height: 400px;
-                                overflow-y: auto">
+                    <div class="permissions-container border rounded p-3 mb-4 overflow-auto">
                         <div class="row" id="permissionsList">
                             {% for permission in permissions %}
-                                <div class="col-lg-6 permission-item mb-2"
+                                <div class="col-lg-6 mb-2 permission-item"
                                      data-category="{{ permission.content_type.app_label }}">
-                                    <div class="d-flex align-items-center p-2 hover-bg-light rounded">
+                                    <div class="d-flex align-items-center p-2 rounded transition bg-hover-light">
                                         <div class="form-check flex-grow-1">
                                             <input class="form-check-input permission-checkbox"
                                                    type="checkbox"
@@ -86,7 +55,7 @@
                                                    value="{{ permission.id }}"
                                                    {% if permission.id in assigned_permissions %}checked{% endif %}
                                                    aria-label="{{ permission.name }}">
-                                            <label class="form-check-label ms-2"
+                                            <label class="form-check-label ms-2 cursor-pointer user-select-none"
                                                    for="permission{{ permission.id }}"
                                                    data-bs-toggle="tooltip"
                                                    title="{{ permission.content_type.app_label }} - {{ permission.codename }}">

@@ -4,21 +4,21 @@ from . import views
 
 
 urlpatterns = [
-    path("doctors/", views.DoctorListView.as_view(), name="doctor_list"),
-    path("doctors/<int:pk>/", views.DoctorDetailView.as_view(), name="doctor_detail"),
-    path("doctors/create/", views.DoctorCreateView.as_view(), name="doctor_create"),
+    path("list/", views.DoctorListView.as_view(), name="doctor_list"),
+    path("<int:pk>/", views.DoctorDetailView.as_view(), name="doctor_detail"),
+    path("create/", views.DoctorCreateView.as_view(), name="doctor_create"),
     path(
-        "doctors/<int:pk>/update/",
+        "update/<int:pk>/",
         views.DoctorUpdateView.as_view(),
         name="doctor_update",
     ),
     path(
-        "doctors/<int:pk>/delete/",
+        "delete/<int:pk>/",
         views.DoctorDeleteView.as_view(),
         name="doctor_delete",
     ),
     path(
-        "doctor/dashboard/",
+        "dashboard/",
         views.DoctorDashboardView.as_view(),
         name="doctor_dashboard",
     ),

@@ -10,20 +10,17 @@
               href="{% static 'favicon.ico' %}"
               type="image/x-icon">
         <!--Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-              crossorigin="anonymous">
-        <link rel="stylesheet"
-              href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         <!-- Bootstrap Icons -->
         <link rel="stylesheet"
               href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <!-- Custom Css -->
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
         <!-- Meta Description -->
+        {% comment %} TODO Need to pass in the desctipton here {% endcomment %}
         <meta name="description" content="your project description here">
         <!-- Meta Keywords -->
+        {% comment %} TODO Need to pass in the keywords here {% endcomment %}
         <meta name="keywords" content="keywords">
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
     </head>
@@ -34,13 +31,13 @@
                 <nav id="sidebar"
                      class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar">
                     <div class="position-sticky">
-                        <h4 class="sidebar-title text-light">Menu</h4>
+                        <h4 class="sidebar-title text-light">Docu Clinic</h4>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link active text-info" href="{% url 'user_redirect' %}">Dashboard</a>
+                                <a class="nav-link text-light" href="{% url 'user_redirect' %}">Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link  text-light" href="{% url 'doctor_list' %}">Doctors</a>
+                                <a class="nav-link text-light" href="{% url 'doctor_list' %}">Doctors</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-light" href="{% url 'patient_list' %}">Patients</a>
@@ -48,7 +45,6 @@
                             <li class="nav-item">
                                 <a class="nav-link text-light" href="{% url 'operator_list' %}">Operators</a>
                             </li>
-                            <!-- Add more links here as needed -->
                         </ul>
                     </div>
                 </nav>
@@ -56,7 +52,7 @@
                 <div class="col-md-9 ms-sm-auto col-lg-10 px-0">
                     <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
                         <div class="container-fluid">
-                            <h3> {{ page_title }} </h3>
+                            <h5>{{ page_title }}</h5>
                             <button class="navbar-toggler"
                                     type="button"
                                     data-bs-toggle="collapse"
@@ -68,9 +64,6 @@
                             </button>
                             <div class="collapse navbar-collapse" id="navbarNav">
                                 <ul class="navbar-nav ms-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Profile</a>
-                                    </li>
                                     <li class="nav-item">
                                         <form action="{% url 'logout' %}" method="post" class="d-inline">
                                             {% csrf_token %}
@@ -111,7 +104,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
     <!-- Custom js -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     {% block scripts %}
     {% endblock scripts %}
     <script src="{% static 'js/main.js' %}"></script>
-</html> 
+</html>

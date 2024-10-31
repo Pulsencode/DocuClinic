@@ -5,6 +5,11 @@ from . import views
 
 urlpatterns = [
     path(
+        "list/appointment",
+        views.AppointmentListView.as_view(),
+        name="list_appointments",
+    ),
+    path(
         "create/appointment",
         views.AppointmentCreateView.as_view(),
         name="create_appointment",

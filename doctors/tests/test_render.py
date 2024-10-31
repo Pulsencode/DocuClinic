@@ -18,14 +18,12 @@ class ListDoctorPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/doctor_list.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
 
     def test_unauthenticated_page_render(self):
         self.client.logout()
         response = self.client.get(reverse("doctor_list"))
         self.assertNotEqual(response.status_code, 200)
-        self.assertRedirects(response, "/accounts/login/?next=/doctors/doctors/")
+        self.assertRedirects(response, "/accounts/login/?next=/doctors/list/")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
@@ -61,8 +59,7 @@ class DoctorDetailPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/doctor_detail.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_unauthenticated_page_render(self):
         self.client.logout()
@@ -71,7 +68,7 @@ class DoctorDetailPageRenderTestCase(TestCase):
         )
         self.assertNotEqual(response.status_code, 200)
         self.assertRedirects(
-            response, f"/accounts/login/?next=/doctors/doctors/{self.doctor.id}/"
+            response, f"/accounts/login/?next=/doctors/{self.doctor.id}/"
         )
 
     def test_page_title_in_context(self):
@@ -94,8 +91,7 @@ class DoctorCreatePageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/create_update_doctor.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
@@ -130,8 +126,7 @@ class DoctorUpdatePageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/create_update_doctor.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
@@ -143,7 +138,7 @@ class DoctorUpdatePageRenderTestCase(TestCase):
             reverse("doctor_update", kwargs={"pk": self.doctor.id})
         )
         self.assertRedirects(
-            response, f"/accounts/login/?next=/doctors/doctors/{self.doctor.id}/update/"
+            response, f"/accounts/login/?next=/doctors/update/{self.doctor.id}/"
         )
 
 
@@ -162,8 +157,7 @@ class DoctorDashboardPageRenderTestCase(TestCase):
 
     def test_page_template(self):
         self.assertTemplateUsed(self.response, "doctors/doctor_dashboard.html")
-        self.assertTemplateUsed(self.response, "authenticated_base.html")
-        self.assertTemplateNotUsed(self.response, "unauthenticated_base.html")
+        self.assertTemplateUsed(self.response, "general_base.html")
 
     def test_page_title_in_context(self):
         self.assertIn("page_title", self.response.context)
@@ -174,5 +168,5 @@ class DoctorDashboardPageRenderTestCase(TestCase):
         self.client.logout()
         response = self.client.get(reverse("doctor_dashboard"))
         self.assertRedirects(
-            response, "/accounts/login/?next=/doctors/doctor/dashboard/"
+            response, "/accounts/login/?next=/doctors/dashboard/"
         )

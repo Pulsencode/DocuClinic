@@ -1,12 +1,20 @@
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import (
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
-from .models import Appointment, Patient
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView
+from medicalrecords.models import Appointment
+from accounts.models import Patient
 from .forms import AppointmentForm
+
+
+class AppointmentListView(ListView):
+    model = Appointment
+    template_name = "medicalrecords/list_appointments.html"
+    context_object_name = "all_appointments"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Appointment List"
+        return context
 
 
 class AppointmentCreateView(CreateView):

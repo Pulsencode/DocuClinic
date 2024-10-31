@@ -8,11 +8,15 @@ from django.db import models
 
 class User(AbstractUser):
     registration_id = models.CharField(max_length=10, unique=True, editable=False)
-    phone_number = models.PositiveBigIntegerField(null=True)
+    phone_number = models.PositiveBigIntegerField(null=True, blank=True)
     address = models.TextField(blank=True)
 
     def __str__(self):
         return self.username
+    
+    class Meta:
+        verbose_name = "Super Admin"
+        verbose_name_plural = "Super Admins"
 
     def save(self, *args, **kwargs):
         if self.password and not self.password.startswith(
