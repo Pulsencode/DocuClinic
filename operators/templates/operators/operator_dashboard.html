@@ -1,49 +1,6 @@
 {% extends "general_base.html" %}
 {% block content %}
     <div class="container mt-2">
-        <!-- Filters Row -->
-        <div class="row mb-4 border rounded-4 p-3">
-            <div class="col-md-3">
-                <select name="doctor" class="form-select form-select-sm" id="doctorFilter">
-                    <option value="">All Doctors</option>
-                    {% for doctor in doctors %}
-                        <option value="{{ doctor.id }}"
-                                {% if selected_doctor == doctor.id|stringformat:"s" %}selected{% endif %}>
-                            {{ doctor.username }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select form-select-sm" id="statusFilter">
-                    <option value="">All Status</option>
-                    {% for status_value, status_label in status_choices %}
-                        <option value="{{ status_value }}"
-                                {% if selected_status == status_value %}selected{% endif %}>{{ status_label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <input type="date"
-                       name="date_from"
-                       value="{{ selected_date_from }}"
-                       class="form-control form-control-sm"
-                       id="dateFrom">
-            </div>
-            <div class="col-md-2">
-                <input type="date"
-                       name="date_to"
-                       value="{{ selected_date_to }}"
-                       class="form-control form-control-sm"
-                       id="dateTo">
-            </div>
-            <div class="col-md-2">
-                <div class="d-flex gap-2">
-                    <button onclick="clearFilters()" class="btn btn-danger btn-sm">Clear</button>
-                    <button onclick="applyFilters()" class="btn btn-primary btn-sm w-75">Apply</button>
-                </div>
-            </div>
-        </div>
         <!-- Stats Cards Row -->
         <div class="row mb-4">
             <div class="col-md-4">
@@ -81,9 +38,7 @@
                                 <a href="{% url 'create_appointment' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">Add Appoinment</i></a>
                             </div>
                         </div>
-                        
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -115,7 +70,7 @@
                                 </td>
                                 <td>
                                     <a href="{% url "update_appointment" appointment.pk %}"
-                                    class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
+                                       class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
                                     <button type="button"
                                             class="btn btn-sm btn-danger"
                                             data-bs-toggle="modal"
@@ -149,45 +104,4 @@
             </div>
         {% endif %}
     </div>
-    <!-- JavaScript for handling filters -->
-    <script>
-    <!-- Updated JavaScript for handling filters -->
-    // Function to clear all filters and reload page
-    function clearFilters() {
-        // Clear all form fields
-        document.getElementById('doctorFilter').value = '';
-        document.getElementById('statusFilter').value = '';
-        document.getElementById('dateFrom').value = '';
-        document.getElementById('dateTo').value = '';
-        
-        // Redirect to base URL without parameters
-        window.location.href = window.location.pathname;
-    }
-    
-    function applyFilters() {
-        const doctor = document.getElementById('doctorFilter').value;
-        const status = document.getElementById('statusFilter').value;
-        const dateFrom = document.getElementById('dateFrom').value;
-        const dateTo = document.getElementById('dateTo').value;
-        
-        // Only add parameters if they have values
-        const params = new URLSearchParams();
-        if (doctor) params.append('doctor', doctor);
-        if (status) params.append('status', status);
-        if (dateFrom) params.append('date_from', dateFrom);
-        if (dateTo) params.append('date_to', dateTo);
-        
-        // Redirect with parameters only if there are any
-        const queryString = params.toString();
-        window.location.href = window.location.pathname + (queryString ? `?${queryString}` : '');
-    }
-    
-    // Clear filters on page reload if "clear_filters" parameter is present
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.location.href.includes('?clear_filters')) {
-            window.location.href = window.location.pathname;
-        }
-    });
-    
-    </script>
 {% endblock content %}
