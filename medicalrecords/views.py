@@ -20,61 +20,43 @@ class AppointmentListView(ListView):
 class AppointmentCreateView(CreateView):
     model = Appointment
     form_class = AppointmentForm
-    template_name = "patients/patient_list.html"
+    template_name = "medicalrecords/create_update_appointments.html"
 
     def form_valid(self, form):
-        form.instance.patient = Patient.objects.get(
-            pk=self.request.POST["patient"]
-        )  # Get patient from form
+        form.instance.patient = Patient.objects.get(pk=self.request.POST["patient"])
         self.object = form.save()
-        messages.success(
-            self.request, "Appointment created successfully!"
-        )  # Add a success message
+        messages.success(self.request, "Appointment created successfully!")
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("patient_list")
+        return reverse_lazy("user_redirect")
 
 
 # Update Appointment Status View
 class AppointmentUpdateView(UpdateView):
     model = Appointment
-    fields = ["status"]  # Only the status field should be editable
-    template_name = "doctors/appointment_update_form.html"
+    form_class = AppointmentForm
+    template_name = "medicalrecords/create_update_appointments.html"
 
     def get_queryset(self):
         user = self.request.user
-        # Check if the user is a doctor or an operator
         if hasattr(user, "operator"):
-            return Appointment.objects.all()  # Operators can update any appointment
+            return Appointment.objects.all()
         elif hasattr(user, "doctor"):
-            return Appointment.objects.filter(
-                doctor=user
-            )  # Doctors can only update their own appointments
+            return Appointment.objects.filter(doctor=user)
         else:
             return Appointment.objects.none()
 
     def get_success_url(self):
-        user = self.request.user
-        # Redirect to the appropriate dashboard based on the user's role
-        if hasattr(user, "operator"):
-            return reverse_lazy("operator_dashboard")  # Redirect to operator dashboard
-        else:
-            return reverse_lazy("doctor_dashboard")  # Redirect to doctor/dashboard
+        return reverse_lazy("user_redirect")
 
 
 class AppointmentDeleteView(DeleteView):
     model = Appointment
-    template_name = "patients/appointment_confirm_delete.html"  # Optional: You can create a confirmation template
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Appointment removed successfully!")
         return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        user = self.request.user
-        # Redirect to the appropriate dashboard based on the user's role
-        if hasattr(user, "operator"):
-            return reverse_lazy("operator_dashboard")  # Redirect to operator dashboard
-        else:
-            return reverse_lazy("doctor_dashboard")
+        return reverse_lazy("user_redirect")
