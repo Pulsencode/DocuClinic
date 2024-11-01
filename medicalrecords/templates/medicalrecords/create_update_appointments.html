@@ -6,16 +6,16 @@
     <div class="container mt-2">
         <div class="container col-8 border rounded-4">
             <div class="text-center py-2">
-                <h4>Add {{ item_name }}</h4>
+                <h4>{{ action }} {{ model }}</h4>
             </div>
-            <form method="post" id="add_form">
+            <form method="post" id="form">
                 {% csrf_token %}
                 <div class="mb-3">
                     {{ form.as_p }}
                     <div class="d-grid gap-2 d-md-block text-end">
                         <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
                         <button type="submit" class="btn btn-danger" id="clearButton">Clear</button>
-                        <button type="submit" class="btn btn-primary w-25">Add {{ item_name }}</button>
+                        <button type="submit" class="btn btn-primary w-25">Add {{ model }}</button>
                     </div>
                 </div>
             </form>

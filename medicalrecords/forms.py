@@ -6,6 +6,10 @@ from .models import Appointment
 
 
 class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ["patient", "doctor", "appointment_datetime", "status"]
+
     doctor = forms.ModelChoiceField(
         queryset=Doctor.objects.all(),
         widget=forms.Select(attrs={"class": "form-control"}),
@@ -21,6 +25,13 @@ class AppointmentForm(forms.ModelForm):
         ),
     )
 
-    class Meta:
-        model = Appointment
-        fields = ["patient", "doctor", "appointment_datetime"]
+    status = forms.ChoiceField(
+        choices=Appointment.STATUS_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select"}),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not(self.instance and self.instance.pk):
+            self.fields.pop("status")
