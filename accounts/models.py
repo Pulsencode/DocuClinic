@@ -15,8 +15,8 @@ class User(AbstractUser):
         return self.username
     
     class Meta:
-        verbose_name = "Super Admin"
-        verbose_name_plural = "Super Admins"
+        verbose_name = "User"
+        verbose_name_plural = "All users"
 
     def save(self, *args, **kwargs):
         if self.password and not self.password.startswith(
