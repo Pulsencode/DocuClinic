@@ -8,98 +8,98 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from accounts.models import Doctor
-from ..physicians.forms import DoctorForm
+from accounts.models import Physician
+from .forms import PhysicianForm
 from medicalrecords.models import Appointment
 
 
-class DoctorListView(LoginRequiredMixin, ListView):
-    model = Doctor
-    template_name = "doctors/doctor_list.html"
-    context_object_name = "doctors"
+class PhysicianListView(LoginRequiredMixin, ListView):
+    model = Physician
+    template_name = "physicians/physicians_list.html"
+    context_object_name = "physicians"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Doctor List"
+        context["page_title"] = "Physician List"
         return context
 
 
-class DoctorDetailView(LoginRequiredMixin, DetailView):
-    model = Doctor
-    template_name = "doctors/doctor_detail.html"
+class PhysicianDetailView(LoginRequiredMixin, DetailView):
+    model = Physician
+    template_name = "physicians/physician_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Doctor Details"
+        context["page_title"] = "Physician Details"
         return context
 
 
-class DoctorCreateView(LoginRequiredMixin, CreateView):
-    model = Doctor
-    form_class = DoctorForm
-    template_name = "doctors/create_update_doctor.html"
+class PhysicianCreateView(LoginRequiredMixin, CreateView):
+    model = Physician
+    form_class = PhysicianForm
+    template_name = "physicians/create_update_physician.html"
     success_url = reverse_lazy("doctor_list")
 
     def form_valid(self, form):
-        messages.success(self.request, "Doctor successfully created.")
+        messages.success(self.request, "Physician successfully created.")
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
-            self.request, "Failed to create doctor. Please check the form for errors."
+            self.request, "Failed to create Physician. Please check the form for errors."
         )
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Add Doctor"
+        context["page_title"] = "Add Physician"
         return context
 
 
-class DoctorUpdateView(LoginRequiredMixin, UpdateView):
-    model = Doctor
-    form_class = DoctorForm
-    template_name = "doctors/create_update_doctor.html"
+class PhysicianUpdateView(LoginRequiredMixin, UpdateView):
+    model = Physician
+    form_class = PhysicianForm
+    template_name = "physicians/create_update_physician.html"
 
     def get_success_url(self):
         return reverse_lazy("doctor_detail", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
-        messages.success(self.request, "Doctor successfully updated.")
+        messages.success(self.request, "Physician successfully updated.")
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
-            self.request, "Failed to update doctor. Please check the form for errors."
+            self.request, "Failed to update Physician. Please check the form for errors."
         )
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Update Doctor"
+        context["page_title"] = "Update Physician"
         return context
 
 
-class DoctorDeleteView(LoginRequiredMixin, DeleteView):
-    model = Doctor
+class PhysicianDeleteView(LoginRequiredMixin, DeleteView):
+    model = Physician
     success_url = reverse_lazy("doctor_list")
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Doctor successfully deleted.")
+        messages.success(self.request, "Physician successfully deleted.")
         return super().delete(request, *args, **kwargs)
 
 
-class DoctorDashboardView(LoginRequiredMixin, ListView):
+class PhysicianDashboardView(LoginRequiredMixin, ListView):
     model = Appointment
-    template_name = "doctors/doctor_dashboard.html"  # Doctor dashboard template
+    template_name = "physicians/physician_dashboard.html"  # Physician dashboard template
     context_object_name = "appointments"
 
     def get_queryset(self):
-        # Show only appointments related to the logged-in doctor
-        return Appointment.objects.filter(doctor=self.request.user).order_by(
+        # Show only appointments related to the logged-in Physician
+        return Appointment.objects.filter(physician=self.request.user).order_by(
             "-appointment_datetime"
         )
 

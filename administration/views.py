@@ -13,7 +13,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Doctor, Operator
+from accounts.models import Physician
 from medicalrecords.models import Appointment
 
 
@@ -53,8 +53,8 @@ class AdminDashboard(TemplateView):
                 "todays_appointment": Appointment.objects.filter(
                     appointment_datetime__date=today
                 ).count(),
-                "total_doctors": Doctor.objects.all().count(),
-                "total_operators": Operator.objects.all().count(),
+                "total_doctors": Physician.objects.all().count(),
+                # "total_operators": Operator.objects.all().count(),
                 "appointment_data": all_dates,
             }
         )

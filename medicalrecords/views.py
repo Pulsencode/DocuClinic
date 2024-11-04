@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 from medicalrecords.models import Appointment
-from accounts.models import Doctor, Patient
+from accounts.models import Physician, Patient
 from .forms import AppointmentForm
 from datetime import datetime
 from django.utils import timezone
@@ -52,7 +52,7 @@ class AppointmentListView(ListView):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Appointment List"
         # Add filter options to context
-        context["doctors"] = Doctor.objects.all().order_by("username")
+        context["physician"] = Physician.objects.all().order_by("username")
         context["status_choices"] = Appointment.STATUS_CHOICES
 
         # Preserve filter values in context

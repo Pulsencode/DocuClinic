@@ -1,6 +1,6 @@
 from django.db import models
 
-from accounts.models import Patient, Doctor
+from accounts.models import Patient, Physician
 
 from django.utils import timezone
 from inventory.models import Medicine
@@ -15,7 +15,7 @@ class Appointment(models.Model):
     ]
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
     appointment_datetime = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,7 +33,7 @@ class Prescription(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, related_name="prescriptions"
     )
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
     date_prescribed = models.DateTimeField(default=timezone.now)
     notes = models.TextField(blank=True, null=True)
     diagnosis = models.TextField()

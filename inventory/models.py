@@ -16,7 +16,6 @@ class RouteOfAdministration(models.Model):
     """This model determines the way the medicine is taken. example oral, injection etc.."""
 
     name = models.CharField(max_length=255)
-    route_of_administration = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.name} - {self.route_of_administration}"

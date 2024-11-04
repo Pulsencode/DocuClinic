@@ -1,6 +1,6 @@
 from django import forms
 
-from accounts.models import Doctor, Patient
+from accounts.models import Physician, Patient
 
 from .models import Appointment
 
@@ -11,7 +11,7 @@ class AppointmentForm(forms.ModelForm):
         fields = ["patient", "doctor", "appointment_datetime", "status"]
 
     doctor = forms.ModelChoiceField(
-        queryset=Doctor.objects.all(),
+        queryset=Physician.objects.all(),
         widget=forms.Select(attrs={"class": "form-control"}),
     )
     patient = forms.ModelChoiceField(

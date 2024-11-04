@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from accounts.models import Doctor
+from accounts.models import Physician
 
 
-class DoctorForm(UserCreationForm):
+class PhysicianForm(UserCreationForm):
     class Meta:
-        model = Doctor
+        model = Physician
         fields = [
             "username",
             "email",
@@ -88,7 +88,7 @@ class DoctorForm(UserCreationForm):
         username = self.cleaned_data.get("username")
         # Allow current user to retain their username without validation error
         if self.instance and self.instance.pk:
-            existing_user = Doctor.objects.filter(username=username).exclude(
+            existing_user = Physician.objects.filter(username=username).exclude(
                 pk=self.instance.pk
             )
             if existing_user.exists():

@@ -13,7 +13,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-    
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "All users"
@@ -38,7 +38,20 @@ class User(AbstractUser):
                 return registration_id
 
 
-class Doctor(User):
+class Administrator(User):
+    class Meta:
+        verbose_name = "Administrator"
+        verbose_name_plural = "Administrators"
+
+    def __str__(self):
+        return f"{self.username} - {self.registration_id}"
+
+    def save(self, *args, **kwargs):
+        self.registration_id = self.generate_registration_id(prefix="ADM")
+        super().save(*args, **kwargs)
+
+
+class Physician(User):
     specialization = models.CharField(max_length=100)
     license_number = models.CharField(max_length=50, unique=True)
 
@@ -50,33 +63,46 @@ class Doctor(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="DOC")
+        self.registration_id = self.generate_registration_id(prefix="PHY")
         super().save(*args, **kwargs)
 
 
-class Operator(User):
+class Nurse(User):
     class Meta:
-        verbose_name = "Operator"
-        verbose_name_plural = "Operators"
+        verbose_name = "Nurse"
+        verbose_name_plural = "Nurses"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="OPE")
+        self.registration_id = self.generate_registration_id(prefix="NUR")
         super().save(*args, **kwargs)
 
 
-class Admin(User):
+class Accountant(User):
     class Meta:
-        verbose_name = "Admin"
-        verbose_name_plural = "Admins"
+        verbose_name = "Accountant"
+        verbose_name_plural = "Accountants"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="ADM")
+        self.registration_id = self.generate_registration_id(prefix="ACC")
+        super().save(*args, **kwargs)
+
+
+class Receptionist(User):
+    class Meta:
+        verbose_name = "Receptionist"
+        verbose_name_plural = "Receptionists"
+
+    def __str__(self):
+        return f"{self.username} - {self.registration_id}"
+
+    def save(self, *args, **kwargs):
+        self.registration_id = self.generate_registration_id(prefix="RES")
         super().save(*args, **kwargs)
 
 
