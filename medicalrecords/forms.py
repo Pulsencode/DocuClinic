@@ -33,5 +33,5 @@ class AppointmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not(self.instance and self.instance.pk):
+        if not (self.instance and self.instance.pk):
             self.fields.pop("status")

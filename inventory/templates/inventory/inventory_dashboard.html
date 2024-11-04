@@ -1,0 +1,50 @@
+{% extends "general_base.html" %}
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Medicine</h5>
+                    <div class="row">
+                        <div class="col">
+                            <p class="card-text h3">{{ total_medicine }}</p>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{% url "list_medicine" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Medicine</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Appointments</h5>
+                    <div class="row">
+                        <div class="col">
+                            <p class="card-text h3">{{ total_appointments }}</p>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{% url "list_appointments" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Appoinment</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Supplier</h5>
+                    <div class="row">
+                        <div class="col">
+                            <p class="card-text h3">{{ total_appointments }}</p>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{% url "list_supplier" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Supplier</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
