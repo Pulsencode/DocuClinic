@@ -1,56 +1,41 @@
 {% extends "general_base.html" %}
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between">
-        <h2>Prescriptions</h2>
-        <a href="{% url 'create_prescription' %}" class="btn btn-primary">Create Prescription</a>
+    <div class="container mx-auto p-4">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Prescriptions</h1>
+            <a href="{% url 'create_prescription' %}" class="btn btn-primary btn-sm">Create New Prescription</a>
+        </div>
+        {% if prescriptions %}
+            <table class="min-w-full bg-white shadow-md rounded mb-6">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="py-3 px-4 text-left">Date</th>
+                        <th class="py-3 px-4 text-left">Patient</th>
+                        <th class="py-3 px-4 text-left">Doctor</th>
+                        <th class="py-3 px-4 text-left">Diagnosis</th>
+                        <th class="py-3 px-4 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">{{ prescription.prescription_date|date:"d/m/Y" }}</td>
+                            <td class="py-3 px-4">{{ prescription.patient.get_full_name }}</td>
+                            <td class="py-3 px-4">Dr. {{ prescription.physician.get_full_name }}</td>
+                            <td class="py-3 px-4">{{ prescription.diagnosis|truncatechars:50 }}</td>
+                            <td class="py-3 px-4">
+                                <!-- Redirect to the prescription detail page -->
+                                <a href="{% url 'prescription_detail' prescription.pk %}"
+                                   class="bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded">Print</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No prescriptions found.</p>
+            </div>
+        {% endif %}
     </div>
-
-    <table class="table table-bordered mt-4">
-        <thead>
-            <tr>
-                <th>Patient Name</th>
-                <th>Date Prescribed</th>
-                <th>Diagnosis</th>
-                <th>Follow-up Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for prescription in prescriptions %}
-            <tr>
-                <td>{{ prescription.patient.get_full_name }}</td>
-                <td>{{ prescription.date_prescribed }}</td>
-                <td>{{ prescription.diagnosis }}</td>
-                <td>{{ prescription.follow_up_date }}</td>
-                <td>
-                    <a href="" class="btn btn-info btn-sm" target="_blank">Print</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="text-center">No prescriptions found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    {% if prescriptions.has_other_pages %}
-    <div class="pagination">
-        <span class="step-links">
-            {% if prescriptions.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ prescriptions.previous_page_number }}">previous</a>
-            {% endif %}
-            <span class="current">
-                Page {{ prescriptions.number }} of {{ prescriptions.paginator.num_pages }}.
-            </span>
-            {% if prescriptions.has_next %}
-                <a href="?page={{ prescriptions.next_page_number }}">next</a>
-                <a href="?page={{ prescriptions.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-    {% endif %}
-</div>
 {% endblock content %}

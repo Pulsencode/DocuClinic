@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 
@@ -32,9 +31,9 @@ urlpatterns = [
         views.PrescriptionCreateView.as_view(),
         name="create_prescription",
     ),
-    # path(
-    #     "prescription/<int:pk>/print/",
-    #     views.PrescriptionPrintView.as_view(),
-    #     name="print_prescription",
-    # ),
+    path(
+        "prescription/<int:pk>/",
+        views.PrescriptionDetailView.as_view(),
+        name="prescription_detail",
+    ),
 ]

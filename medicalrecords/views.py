@@ -8,6 +8,7 @@ from django.views.generic import (
     DeleteView,
     ListView,
     FormView,
+    DetailView,
 )
 
 from inventory.models import Medicine
@@ -158,12 +159,10 @@ class PrescriptionListView(ListView):
 class PrescriptionCreateView(FormView):
     template_name = "medicalrecords/create_prescription.html"
     form_class = PrescriptionForm
-    success_url = "prescription_list"  # Redirect after successful save
+    success_url = "prescription_list"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Set up the formset for PrescriptionMedicine with 'fields' specified
         MedicineFormSet = modelformset_factory(
             PrescriptionMedicine,
             form=PrescriptionMedicineForm,
@@ -177,61 +176,39 @@ class PrescriptionCreateView(FormView):
                 "additional_instructions",
             ),
         )
-
         context["medicine_formset"] = MedicineFormSet(
             queryset=PrescriptionMedicine.objects.none()
         )
-
-        # Auto-fill the physician details (from logged-in user)
         context["physician"] = self.request.user.physician
-
-        # Auto-fill the date prescribed (current date)
         context["current_date"] = date.today()
         context["medicines"] = Medicine.objects.all()
-
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
+        medicine_formset = context["medicine_formset"](self.request.POST)
 
-        # Bind the formset with the POST data
-        medicine_formset = context["medicine_formset"]
-        medicine_formset = medicine_formset.__class__(
-            self.request.POST, queryset=medicine_formset.queryset
-        )
-
-        if form.is_valid():
-            print("Main form is valid")  # Debugging
-
-            # Save the main prescription form
+        if form.is_valid() and medicine_formset.is_valid():
             prescription = form.save(commit=False)
-            prescription.physician = self.request.user.physician
+            prescription.physician = context["physician"]
             prescription.date_prescribed = context["current_date"]
             prescription.save()
 
-            # Validate and save the medicine formset
-            if medicine_formset.is_valid():
-                print("Medicine formset is valid")  # Debugging
-                for medicine_form in medicine_formset:
-                    if medicine_form.cleaned_data:
-                        medicine = medicine_form.save(commit=False)
-                        medicine.prescription = prescription
-                        medicine.save()
+            for medicine_form in medicine_formset:
+                if medicine_form.cleaned_data:
+                    medicine = medicine_form.save(commit=False)
+                    medicine.prescription = prescription
+                    medicine.save()
 
-                return super().form_valid(form)
-            else:
-                print("Medicine formset is invalid")  # Debugging
-                print(
-                    medicine_formset.errors
-                )  # Show any errors related to the medicine formset
-
+            return super().form_valid(form)
         else:
-            print("Main form is invalid")  # Debugging
-            print(form.errors)  # Show any errors related to the main form
-
-        return self.form_invalid(form)
+            return self.form_invalid(form)
 
     def form_invalid(self, form):
-        # Debugging form invalid case
-        print("Form is invalid!")
         return redirect("prescription_list")
+
+
+class PrescriptionDetailView(DetailView):
+    model = Prescription
+    template_name = "medicalrecords/prescription_detail.html"
+    context_object_name = "prescription"
