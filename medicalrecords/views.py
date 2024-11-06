@@ -1,10 +1,20 @@
+from django.forms import modelformset_factory
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView
-from medicalrecords.models import Appointment
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DeleteView,
+    ListView,
+    FormView,
+)
+
+from inventory.models import Medicine
+from .models import Appointment, Prescription, PrescriptionMedicine
 from accounts.models import Physician, Patient
-from .forms import AppointmentForm
-from datetime import datetime
+from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
+from datetime import date, datetime
 from django.utils import timezone
 
 
@@ -128,3 +138,100 @@ class AppointmentDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy("user_redirect")
+
+
+class PrescriptionListView(ListView):
+    model = Prescription
+    template_name = "medicalrecords/list_prescription.html"
+    context_object_name = "prescriptions"
+    ordering = ["-prescription_date"]
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            if hasattr(self.request.user, "physician"):
+                queryset = queryset.filter(physician=self.request.user.physician)
+        return queryset
+
+
+class PrescriptionCreateView(FormView):
+    template_name = "medicalrecords/create_prescription.html"
+    form_class = PrescriptionForm
+    success_url = "prescription_list"  # Redirect after successful save
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Set up the formset for PrescriptionMedicine with 'fields' specified
+        MedicineFormSet = modelformset_factory(
+            PrescriptionMedicine,
+            form=PrescriptionMedicineForm,
+            extra=1,
+            fields=(
+                "medicine",
+                "dose",
+                "frequency",
+                "timing",
+                "amount",
+                "additional_instructions",
+            ),
+        )
+
+        context["medicine_formset"] = MedicineFormSet(
+            queryset=PrescriptionMedicine.objects.none()
+        )
+
+        # Auto-fill the physician details (from logged-in user)
+        context["physician"] = self.request.user.physician
+
+        # Auto-fill the date prescribed (current date)
+        context["current_date"] = date.today()
+        context["medicines"] = Medicine.objects.all()
+
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+
+        # Bind the formset with the POST data
+        medicine_formset = context["medicine_formset"]
+        medicine_formset = medicine_formset.__class__(
+            self.request.POST, queryset=medicine_formset.queryset
+        )
+
+        if form.is_valid():
+            print("Main form is valid")  # Debugging
+
+            # Save the main prescription form
+            prescription = form.save(commit=False)
+            prescription.physician = self.request.user.physician
+            prescription.date_prescribed = context["current_date"]
+            prescription.save()
+
+            # Validate and save the medicine formset
+            if medicine_formset.is_valid():
+                print("Medicine formset is valid")  # Debugging
+                for medicine_form in medicine_formset:
+                    if medicine_form.cleaned_data:
+                        medicine = medicine_form.save(commit=False)
+                        medicine.prescription = prescription
+                        medicine.save()
+
+                return super().form_valid(form)
+            else:
+                print("Medicine formset is invalid")  # Debugging
+                print(
+                    medicine_formset.errors
+                )  # Show any errors related to the medicine formset
+
+        else:
+            print("Main form is invalid")  # Debugging
+            print(form.errors)  # Show any errors related to the main form
+
+        return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        # Debugging form invalid case
+        print("Form is invalid!")
+        return redirect("prescription_list")

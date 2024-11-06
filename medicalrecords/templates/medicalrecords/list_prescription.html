@@ -1,0 +1,56 @@
+{% extends "general_base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between">
+        <h2>Prescriptions</h2>
+        <a href="{% url 'create_prescription' %}" class="btn btn-primary">Create Prescription</a>
+    </div>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Date Prescribed</th>
+                <th>Diagnosis</th>
+                <th>Follow-up Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in prescriptions %}
+            <tr>
+                <td>{{ prescription.patient.get_full_name }}</td>
+                <td>{{ prescription.date_prescribed }}</td>
+                <td>{{ prescription.diagnosis }}</td>
+                <td>{{ prescription.follow_up_date }}</td>
+                <td>
+                    <a href="" class="btn btn-info btn-sm" target="_blank">Print</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No prescriptions found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if prescriptions.has_other_pages %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if prescriptions.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ prescriptions.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ prescriptions.number }} of {{ prescriptions.paginator.num_pages }}.
+            </span>
+            {% if prescriptions.has_next %}
+                <a href="?page={{ prescriptions.next_page_number }}">next</a>
+                <a href="?page={{ prescriptions.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

@@ -24,4 +24,17 @@ urlpatterns = [
         views.AppointmentDeleteView.as_view(),
         name="delete_appointment",
     ),
+    path(
+        "prescriptions/", views.PrescriptionListView.as_view(), name="prescription_list"
+    ),
+    path(
+        "prescription/create/",
+        views.PrescriptionCreateView.as_view(),
+        name="create_prescription",
+    ),
+    # path(
+    #     "prescription/<int:pk>/print/",
+    #     views.PrescriptionPrintView.as_view(),
+    #     name="print_prescription",
+    # ),
 ]
