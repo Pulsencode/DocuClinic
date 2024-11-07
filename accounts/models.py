@@ -57,8 +57,8 @@ class Physician(User):
     license_number = models.CharField(max_length=50, unique=True)
 
     class Meta:
-        verbose_name = "Doctor"
-        verbose_name_plural = "Doctors"
+        verbose_name = "Physician"
+        verbose_name_plural = "Physicians"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
