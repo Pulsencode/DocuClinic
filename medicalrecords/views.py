@@ -1,9 +1,19 @@
-from django.urls import reverse_lazy
+from django.forms import modelformset_factory
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView
-from medicalrecords.models import Appointment
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DeleteView,
+    ListView,
+    FormView,
+    DetailView,
+)
+
+from inventory.models import Medicine
+from .models import Appointment, Prescription, PrescriptionMedicine
 from accounts.models import Physician, Patient
-from .forms import AppointmentForm
+from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
 from datetime import datetime
 from django.utils import timezone
 
@@ -128,3 +138,106 @@ class AppointmentDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy("user_redirect")
+
+
+class PrescriptionListView(ListView):
+    model = Prescription
+    template_name = "medicalrecords/list_prescription.html"
+    context_object_name = "prescriptions"
+    ordering = ["-prescription_date"]
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Prescription List"
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            if hasattr(self.request.user, "physician"):
+                queryset = queryset.filter(physician=self.request.user.physician)
+        return queryset
+
+
+class PrescriptionCreateView(FormView):
+    template_name = "medicalrecords/create_prescription.html"
+    form_class = PrescriptionForm
+
+    def get_success_url(self):
+        return reverse("prescription_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Initialize the PrescriptionMedicine formset
+        PrescriptionMedicineFormSet = modelformset_factory(
+            PrescriptionMedicine,
+            form=PrescriptionMedicineForm,
+            extra=1,
+            fields=(
+                "medicine",
+                "dose",
+                "frequency",
+                "timing",
+                "amount",
+                "additional_instructions",
+            ),
+        )
+        context["medicine_formset"] = PrescriptionMedicineFormSet(
+            queryset=PrescriptionMedicine.objects.none()
+        )
+
+        context["page_title"] = "Create Prescription"
+        context["physician"] = self.request.user.physician
+        context["medicines"] = Medicine.objects.all()
+
+        return context
+
+    def form_valid(self, form):
+        # Get medicine formset from POST data
+        medicine_formset = self.get_context_data()["medicine_formset"]
+        medicine_formset = medicine_formset.__class__(self.request.POST)
+
+        if form.is_valid() and medicine_formset.is_valid():
+            # Save the prescription instance
+            prescription = form.save(commit=False)
+            prescription.physician = self.request.user.physician
+            prescription.date_prescribed = (
+                self.request.POST.get("date_prescribed") or timezone.now().date()
+            )
+            prescription.save()
+
+            # Save each valid medicine form linked to the prescription
+            for medicine_form in medicine_formset:
+                if medicine_form.cleaned_data:
+                    medicine = medicine_form.save(commit=False)
+                    medicine.prescription = prescription
+                    medicine.save()
+
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form, medicine_formset)
+
+    def form_invalid(self, form, medicine_formset=None):
+        if not medicine_formset:
+            medicine_formset = self.get_context_data()["medicine_formset"](
+                self.request.POST
+            )
+        # Render invalid form and formset with errors
+        return self.render_to_response(
+            self.get_context_data(form=form, medicine_formset=medicine_formset)
+        )
+
+
+class PrescriptionDetailView(DetailView):
+    model = Prescription
+    template_name = "medicalrecords/prescription_detail.html"
+    context_object_name = "prescription"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Print Prescription"
+        context["clinic_name"] = "Yama Puri"
+        context["clinic_address"] = "Yama Puri, Near evdielum"
+        return context

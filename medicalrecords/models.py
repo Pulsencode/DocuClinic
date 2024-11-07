@@ -41,7 +41,7 @@ class Prescription(models.Model):
     follow_up_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"Prescription for {self.patient.get_full_name()} by Dr. {self.doctor_name} on {self.date_prescribed}"
+        return f"Prescription for {self.patient.get_full_name()} by Dr. {self.physician.get_full_name} on {self.date_prescribed}"
 
 
 class PrescriptionMedicine(models.Model):

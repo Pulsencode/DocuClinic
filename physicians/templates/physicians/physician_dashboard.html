@@ -1,7 +1,14 @@
 {% extends "general_base.html" %}
 {% block content %}
     <div class="container mt-4">
-        <h2 class="mb-4">Scheduled Appointments</h2>
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 class="mb-4">Scheduled Appointments</h3>
+            </div>
+            <div class="col-sm-6 text-end">
+                <a href="{% url "prescription_list" %}" class="btn btn-primary btn-sm">Prescription</a>
+            </div>
+        </div>
         {% if not appointments %}
             <div class="alert alert-info text-center ms-3 me-3" role="alert">No Appointments Scheduled!</div>
         {% else %}
