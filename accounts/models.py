@@ -47,7 +47,8 @@ class Administrator(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="ADM")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="ADM")
         super().save(*args, **kwargs)
 
 
@@ -63,7 +64,8 @@ class Physician(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="PHY")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="PHY")
         super().save(*args, **kwargs)
 
 
@@ -76,7 +78,8 @@ class Nurse(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="NUR")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="NUR")
         super().save(*args, **kwargs)
 
 
@@ -89,7 +92,8 @@ class Accountant(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="ACC")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="ACC")
         super().save(*args, **kwargs)
 
 
@@ -102,18 +106,20 @@ class Receptionist(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="RES")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="RES")
         super().save(*args, **kwargs)
 
 
 class Patient(User):
-    def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="PAT")
-        super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
+
+    def save(self, *args, **kwargs):
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="PAT")
+        super().save(*args, **kwargs)
