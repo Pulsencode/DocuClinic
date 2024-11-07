@@ -34,22 +34,27 @@ def user_redirect(request):
 
 class NurseListView(LoginRequiredMixin, ListView):
     model = Nurse
-    template_name = "accounts/nurses_list.html"
-    context_object_name = "nurses"
+    template_name = "accounts/list_view.html"
+    context_object_name = "users"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Nurse List"
+        context["user_create"] = "nurse_create"
+        context["user_detail"] = "nurse_detail"
         return context
 
 
 class NurseDetailView(LoginRequiredMixin, DetailView):
     model = Nurse
-    template_name = "accounts/nurse_detail.html"
+    template_name = "accounts/detail_view.html"
+    context_object_name = "user"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Nurse Details"
+        context["user_update"] = "nurse_update"
+        context["user_delete"] = "nurse_delete"
         return context
 
 
@@ -113,22 +118,27 @@ class NurseDeleteView(LoginRequiredMixin, DeleteView):
 
 class ReceptionistListView(LoginRequiredMixin, ListView):
     model = Receptionist
-    template_name = "accounts/receptionists_list.html"
-    context_object_name = "receptionists"
+    template_name = "accounts/list_view.html"
+    context_object_name = "users"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Receptionist List"
+        context["user_create"] = "receptionist_create"
+        context["user_detail"] = "receptionist_detail"
         return context
 
 
 class ReceptionistDetailView(LoginRequiredMixin, DetailView):
     model = Receptionist
-    template_name = "accounts/receptionist_detail.html"
+    template_name = "accounts/detail_view.html"
+    context_object_name = "user"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Receptionist Details"
+        context["user_update"] = "receptionist_update"
+        context["user_delete"] = "receptionist_delete"
         return context
 
 
@@ -188,22 +198,27 @@ class ReceptionistDeleteView(LoginRequiredMixin, DeleteView):
 
 class AccountantListView(LoginRequiredMixin, ListView):
     model = Accountant
-    template_name = "accounts/accountants_list.html"
-    context_object_name = "accountants"
+    template_name = "accounts/list_view.html"
+    context_object_name = "users"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Accountant List"
+        context["user_create"] = "accountant_create"
+        context["user_detail"] = "accountant_detail"
         return context
 
 
 class AccountantDetailView(LoginRequiredMixin, DetailView):
     model = Accountant
-    template_name = "accounts/accountant_detail.html"
+    template_name = "accounts/detail_view.html"
+    context_object_name = "user"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Accountant Details"
+        context["user_update"] = "accountant_update"
+        context["user_delete"] = "accountant_delete"
         return context
 
 

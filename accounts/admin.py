@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Accountant, Administrator, Patient, Physician
+from .models import Accountant, Administrator, Patient, Physician, Nurse
 
 # from .models import User
 
@@ -9,3 +9,4 @@ admin.site.register(Administrator)
 admin.site.register(Physician)
 admin.site.register(Accountant)
 admin.site.register(Patient)
+admin.site.register(Nurse)
