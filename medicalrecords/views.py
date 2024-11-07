@@ -1,5 +1,4 @@
 from django.forms import modelformset_factory
-from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.views.generic import (
@@ -148,6 +147,11 @@ class PrescriptionListView(ListView):
     ordering = ["-prescription_date"]
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Prescription List"
+        return context
+
     def get_queryset(self):
         queryset = super().get_queryset()
         if not self.request.user.is_superuser:
@@ -184,7 +188,7 @@ class PrescriptionCreateView(FormView):
             queryset=PrescriptionMedicine.objects.none()
         )
 
-        # Add other context variables
+        context["page_title"] = "Create Prescription"
         context["physician"] = self.request.user.physician
         context["medicines"] = Medicine.objects.all()
 
@@ -230,3 +234,10 @@ class PrescriptionDetailView(DetailView):
     model = Prescription
     template_name = "medicalrecords/prescription_detail.html"
     context_object_name = "prescription"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Print Prescription"
+        context["clinic_name"] = "Yama Puri"
+        context["clinic_address"] = "Yama Puri, Near evdielum"
+        return context

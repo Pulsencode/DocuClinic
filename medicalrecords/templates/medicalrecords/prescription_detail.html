@@ -1,112 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load static %}
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Prescription Details</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-ka6hbqDGBObznFhEvfbd8oCXhbVzo6q8ybZfhLuG+mL9XyopWfbD3rtyqL3OsPQy"
-              crossorigin="anonymous">
+        <meta name="description" content="your project description here">
+        <meta name="keywords" content="keywords">
+        <title>{{ page_title }}</title>
+        <!-- Favicon -->
+        <link rel="shortcut icon"
+              href="{% static 'favicon.ico' %}"
+              type="image/x-icon">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .prescription-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .prescription-header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-
-        .prescription-header .clinic-name {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .patient-info, .doctor-info {
-            margin-bottom: 15px;
-        }
-
-        .doctor-info {
-            text-align: right;
-        }
-
-        .patient-info div, .doctor-info div {
-            margin: 5px 0;
-        }
-
-        .table th, .table td {
-            text-align: left;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-
-        .table {
-            width: 100%;
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
-
-        .signature {
-            margin-top: 50px;
-            text-align: right;
-        }
-
-        .signature p {
-            font-style: italic;
-        }
-
-        /* Hide print button in print view */
-        @media print {
-            .print-button {
-                display: none;
+            /* General Styles */
+            body {
+                font-family: Arial, sans-serif;
+                color: #333;
+                background-color: #f9f9f9;
             }
-        }
+            .container {
+                max-width: 700px;
+                margin: 0 auto;
+                padding: 20px;
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+            .text-primary {
+                color: #007bff !important;
+            }
+            h1, h2, h3, p {
+                margin: 0;
+            }
+
+            /* Header Styles */
+            .prescription-header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .prescription-header h1 {
+                font-size: 24px;
+                font-weight: bold;
+            }
+            .clinic-address {
+                font-size: 14px;
+                color: #555;
+            }
+
+            /* Information Sections */
+            .info-section {
+                margin-bottom: 20px;
+            }
+            .info-section p {
+                margin-bottom: 5px;
+                font-size: 14px;
+            }
+            .info-section strong {
+                font-size: 14px;
+            }
+
+            /* Table Styles */
+            .table thead th {
+                background-color: #007bff;
+                color: white;
+            }
+            .table td, .table th {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            /* Signature */
+            .signature {
+                text-align: right;
+                margin-top: 40px;
+                font-size: 14px;
+                font-style: italic;
+            }
+
+            /* Print button */
+            .print-button {
+                margin-top: 20px;
+            }
+
+            /* Print-specific styles */
+            @media print {
+                .print-button {
+                    display: none;
+                }
+                body {
+                    background-color: white;
+                }
+                .container {
+                    border: none;
+                }
+            }
         </style>
     </head>
     <body>
         <div class="container">
+            <!-- Clinic Header -->
             <div class="prescription-header">
-                <h1 class="clinic-name">CLINIC NAME</h1>
-                <p class="clinic-address">1234 Clinic St, City, Country</p>
+                <h1>{{ clinic_name }}</h1>
+                <p class="clinic-address">{{ clinic_address }}</p>
             </div>
-            <!-- Prescription Details -->
-            <div class="row">
-                <!-- Patient Info (Left side) -->
-                <div class="col-6 patient-info">
-                    <div>
+            <!-- Patient and Doctor Information -->
+            <div class="row info-section">
+                <!-- Patient Info -->
+                <div class="col-6">
+                    <p>
                         <strong>Patient Name:</strong> {{ prescription.patient.get_full_name }}
-                    </div>
-                    <div>
+                    </p>
+                    <p>
                         <strong>Age:</strong> {{ prescription.patient.patient_details.age }}
-                    </div>
-                    <div>
+                    </p>
+                    <p>
                         <strong>Gender:</strong> {{ prescription.patient.patient_details.gender }}
-                    </div>
+                    </p>
                 </div>
-                <!-- Doctor & Date Info (Right side) -->
-                <div class="col-6 doctor-info">
-                    <div>
+                <!-- Doctor Info -->
+                <div class="col-6 text-end">
+                    <p>
                         <strong>Doctor:</strong> Dr. {{ prescription.physician.get_full_name }}
-                    </div>
-                    <div>
+                    </p>
+                    <p>
                         <strong>Date:</strong> {{ prescription.prescription_date|date:"d/m/Y" }}
-                    </div>
+                    </p>
                 </div>
             </div>
             <!-- Diagnosis Information -->
-            <div class="mb-4">
+            <div class="info-section">
                 <p>
                     <strong>Diagnosis:</strong>
                 </p>
@@ -137,16 +164,29 @@
                             <td colspan="5" class="text-center">No medications listed.</td>
                         </tr>
                     {% endfor %}
+                    {% for i in "10000" %}
+                        <tr>
+                            <td>hello</td>
+                            <td>hello</td>
+                            <td>hello</td>
+                            <td>hello</td>
+                            <td>hello</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <!-- Doctor's Signature -->
             <div class="signature">
                 <p>Doctor's Signature</p>
             </div>
-            <!-- Print Button (Visible only on screen, not during print) -->
+            <!-- Print Button -->
             <div class="text-center print-button">
                 <button onclick="window.print()" class="btn btn-primary">Print Prescription</button>
+                <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
             </div>
         </div>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
+    <script src="{% static 'js/main.js' %}"></script>
 </html>
