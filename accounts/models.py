@@ -8,11 +8,15 @@ from django.db import models
 
 class User(AbstractUser):
     registration_id = models.CharField(max_length=10, unique=True, editable=False)
-    phone_number = models.PositiveBigIntegerField(null=True)
+    phone_number = models.PositiveBigIntegerField(null=True, blank=True)
     address = models.TextField(blank=True)
 
     def __str__(self):
         return self.username
+
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "All users"
 
     def save(self, *args, **kwargs):
         if self.password and not self.password.startswith(
@@ -34,7 +38,21 @@ class User(AbstractUser):
                 return registration_id
 
 
-class Doctor(User):
+class Administrator(User):
+    class Meta:
+        verbose_name = "Administrator"
+        verbose_name_plural = "Administrators"
+
+    def __str__(self):
+        return f"{self.username} - {self.registration_id}"
+
+    def save(self, *args, **kwargs):
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="ADM")
+        super().save(*args, **kwargs)
+
+
+class Physician(User):
     specialization = models.CharField(max_length=100)
     license_number = models.CharField(max_length=50, unique=True)
 
@@ -46,44 +64,62 @@ class Doctor(User):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="DOC")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="PHY")
         super().save(*args, **kwargs)
 
 
-class Operator(User):
+class Nurse(User):
     class Meta:
-        verbose_name = "Operator"
-        verbose_name_plural = "Operators"
+        verbose_name = "Nurse"
+        verbose_name_plural = "Nurses"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="OPE")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="NUR")
         super().save(*args, **kwargs)
 
 
-class Admin(User):
+class Accountant(User):
     class Meta:
-        verbose_name = "Admin"
-        verbose_name_plural = "Admins"
+        verbose_name = "Accountant"
+        verbose_name_plural = "Accountants"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="ADM")
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="ACC")
+        super().save(*args, **kwargs)
+
+
+class Receptionist(User):
+    class Meta:
+        verbose_name = "Receptionist"
+        verbose_name_plural = "Receptionists"
+
+    def __str__(self):
+        return f"{self.username} - {self.registration_id}"
+
+    def save(self, *args, **kwargs):
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="RES")
         super().save(*args, **kwargs)
 
 
 class Patient(User):
-    def save(self, *args, **kwargs):
-        self.registration_id = self.generate_registration_id(prefix="PAT")
-        super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
 
     def __str__(self):
         return f"{self.username} - {self.registration_id}"
+
+    def save(self, *args, **kwargs):
+        if not self.registration_id:
+            self.registration_id = self.generate_registration_id(prefix="PAT")
+        super().save(*args, **kwargs)

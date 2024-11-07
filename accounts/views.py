@@ -14,12 +14,12 @@ def user_redirect(request):
     if request.user.is_superuser:
         return redirect("admin:index")
 
-    if hasattr(request.user, "doctor"):
-        return redirect("doctor_dashboard")
-    elif hasattr(request.user, "operator"):
+    if hasattr(request.user, "physician"):
+        return redirect("physician_dashboard")
+    elif hasattr(request.user, "accountant"):
         return redirect("operator_dashboard")
-    elif hasattr(request.user, "patient"):
-        return redirect("patient_dashboard")
+    elif hasattr(request.user, "administrator"):
+        return redirect("admin_dashboard")
     else:
         raise Http404("You are not registered with the system")
 

@@ -1,0 +1,31 @@
+{% extends "general_base.html" %}
+{% block page_specific_links %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% endblock page_specific_links %}
+{% block content %}
+    <div class="container mt-2">
+        <div class="container col-8 border rounded-4">
+            <div class="text-center py-2">
+                <h4>{{ action }} {{ model }}</h4>
+            </div>
+            <form method="post" id="form">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 d-md-block text-end">
+                        <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
+                        <button type="submit" class="btn btn-primary w-25">Add {{ model }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+    document.getElementById('clearButton').addEventListener('click', function() {
+        document.getElementById('form').reset();
+    });
+    </script>
+{% endblock scripts %}

@@ -1,4 +1,4 @@
-{% extends "authenticated_base.html" %}
+{% extends "general_base.html" %}
 {% load static %}
 {% block title %}Patient Details: {{ patient.username }}{% endblock title %}
 {% block content %}
@@ -83,11 +83,8 @@
                     <p>Are you sure you want to delete this patient? This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
-                    <form method="post" action="{% url 'patient_delete' patient.pk %}">
-                        {% csrf_token %}
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger" href="{% url 'patient_delete' patient.pk %}">Delete</a>
                 </div>
             </div>
         </div>

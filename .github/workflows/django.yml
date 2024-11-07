@@ -21,10 +21,16 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Installing MysqlClient
+      run: |
+        sudo apt-get install python3-dev default-libmysqlclient-dev build-essential pkg-config
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Copy .env files
+      run: |
+        cp .env.example .env
     - name: Run Tests
       run: |
         python manage.py test

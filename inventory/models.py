@@ -12,22 +12,25 @@ class Supplier(models.Model):
         return self.name
 
 
-class DosageForm(models.Model):
+class RouteOfAdministration(models.Model):
+    """This model determines the way the medicine is taken. example oral, injection etc.."""
+
     name = models.CharField(max_length=255)
-    route_of_administration = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.name} - {self.route_of_administration}"
+        return f"{self.name}"
 
 
 class Medicine(models.Model):
     name = models.CharField(max_length=255)
     generic_name = models.CharField(max_length=255)
     brand_name = models.CharField(max_length=255)
-    dosage_form = models.ForeignKey(
-        DosageForm, on_delete=models.SET_NULL, null=True, related_name="dosageForm"
+    route_of_administration = models.ForeignKey(
+        RouteOfAdministration,
+        on_delete=models.SET_NULL,
+        null=True,
     )
-    dosage_strength = models.CharField(max_length=255)
+    # dosage_strength = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     quantity = models.PositiveIntegerField()
     expiration_date = models.DateField()
