@@ -37,13 +37,19 @@
                                 <a class="nav-link text-light" href="{% url 'user_redirect' %}">Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="#">Doctors</a>
+                                <a class="nav-link text-light" href="{% url 'physician_list' %}">Physician's</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'patient_list' %}">Patients</a>
+                                <a class="nav-link text-light" href="{% url 'accountant_list' %}">Accountant's</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="#">Operators</a>
+                                <a class="nav-link text-light" href="{% url 'nurse_list' %}">Nurse's</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" href="{% url 'receptionist_list' %}">Receptionist's</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" href="{% url 'patient_list' %}">Patient's</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-light" href="{% url 'inventory_dashboard' %}">Inventory</a>
