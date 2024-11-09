@@ -16,15 +16,16 @@ class Appointment(models.Model):
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
-    appointment_datetime = models.DateTimeField()
+    date = models.DateField(null=True)
+    time = models.TimeField(null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["appointment_datetime"]
+        ordering = ["date", "time"]
 
     def __str__(self):
-        return f"{self.patient.username} with {self.doctor.username} on {self.appointment_datetime}"
+        return f"{self.patient.username} with {self.physician.username} on {self.date} {self.time}"
 
 
 class Prescription(models.Model):
