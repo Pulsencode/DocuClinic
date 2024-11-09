@@ -1,9 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from accounts.models import Nurse, Receptionist, Accountant
 
 
-class BaseUserForm(UserCreationForm):
+class BaseUserForm(forms.ModelForm):
     # Common fields for all user types
     address = forms.CharField(
         required=True,
@@ -38,15 +37,14 @@ class BaseUserForm(UserCreationForm):
             self.fields["password2"].widget = forms.HiddenInput()
 
     def clean(self):
-        if not self.instance and not self.instance.pk:
-            cleaned_data = super().clean()
-            password1 = cleaned_data.get("password1")
-            password2 = cleaned_data.get("password2")
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
 
-            if password1 != password2:
-                raise forms.ValidationError("Passwords do not match")
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
 
-            return cleaned_data
+        return cleaned_data
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
