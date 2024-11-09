@@ -18,11 +18,19 @@
                     {{ form.non_field_errors }}
                     {{ details_form.non_field_errors }}
                     <div class="row mb-3">
-                        <div class="col-md-4">
-                            <h6>Name:</h6>
+                        <div class="col-md-2">
+                            <h6>Username:</h6>
                             {{ form.username }}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
+                            <h6>First Name:</h6>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-2">
+                            <h6>Last Name:</h6>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="col-md-2">
                             <h6>Email:</h6>
                             {{ form.email }}
                         </div>
