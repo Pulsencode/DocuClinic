@@ -29,14 +29,14 @@ class AdminDashboard(TemplateView):
 
         appointment_data = (
             Appointment.objects.filter(
-                appointment_datetime__date__range=[start_date, end_date]
+                date__range=[start_date, end_date]
             )
-            .values("appointment_datetime__date")
+            .values("date")
             .annotate(count=Count("id"))
-            .order_by("appointment_datetime__date")
+            .order_by("date", "time")
         )
         appointment_data_list = [
-            (entry["appointment_datetime__date"], entry["count"])
+            (entry["date"], entry["count"])
             for entry in appointment_data
         ]
 
@@ -51,7 +51,7 @@ class AdminDashboard(TemplateView):
             {
                 "page_title": "Admin Dashboard",
                 "todays_appointment": Appointment.objects.filter(
-                    appointment_datetime__date=today
+                    date=today
                 ).count(),
                 "total_doctors": Physician.objects.all().count(),
                 # "total_operators": Operator.objects.all().count(),
