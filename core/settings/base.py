@@ -32,6 +32,7 @@ EXTERNAL_APPS = [
     "medicalrecords.apps.MedicalrecordsConfig",
     "administration.apps.AdministrationConfig",
     "physicians.apps.PhysiciansConfig",
+    "accounting.apps.AccountingConfig",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
