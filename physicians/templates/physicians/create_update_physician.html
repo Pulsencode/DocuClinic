@@ -7,12 +7,12 @@
                     {% if form.instance.pk %}
                         {{ form.instance.username }} - {{ form.instance.license_number }}
                     {% else %}
-                        New Doctor
+                        New Physician
                     {% endif %}
                 </h4>
             </div>
             <div class="card-body">
-                <form id="doctorForm" method="post">
+                <form id="physicianForm" method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="row mb-3">
@@ -69,7 +69,7 @@
                     </div>
                     <div class="text-end">
                         {% if form.instance.pk %}
-                            <a href="{% url 'doctor_detail' form.instance.pk %}"
+                            <a href="{% url 'physician_detail' form.instance.pk %}"
                                class="btn btn-secondary">Cancel</a>
                         {% else %}
                             <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
@@ -85,7 +85,7 @@
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("clearButton").addEventListener("click", function() {
-            document.getElementById("doctorForm").reset(); // Reset the form
+            document.getElementById("physicianForm").reset(); // Reset the form
         });
     });
     </script>

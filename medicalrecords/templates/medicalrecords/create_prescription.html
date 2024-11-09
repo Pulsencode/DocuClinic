@@ -36,6 +36,7 @@
             </div>
             <div class="mt-4">
                 <h4>Prescribed Medicines</h4>
+                <!-- Formset Management Forms -->
                 {{ medicine_formset.management_form }}
                 <table class="table table-bordered">
                     <thead>
@@ -46,6 +47,7 @@
                             <th>Timing</th>
                             <th>Amount</th>
                             <th>Additional Instructions</th>
+                            <th>Remove</th>
                         </tr>
                     </thead>
                     <tbody id="medicine-table-body">
@@ -57,6 +59,7 @@
                                 <td>{{ form.timing }}</td>
                                 <td>{{ form.amount }}</td>
                                 <td>{{ form.additional_instructions }}</td>
+                                <td>{{ form.DELETE }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -76,26 +79,38 @@
     $(document).ready(function() {
         // Track the number of forms
         var formIndex = {{ medicine_formset.total_form_count }};
+        var totalFormsInput = $('#id_form-TOTAL_FORMS');
+
+        // Update TOTAL_FORMS value when a new row is added
+        function updateTotalForms() {
+            totalFormsInput.val(formIndex);
+        }
 
         // Add new medicine row
         $('#add-medicine').on('click', function() {
-            var newRow = `<tr class="medicine-row">
-                <td><select name="form-${formIndex}-medicine" class="form-select">
-                    {% for medicine in medicines %}<option value="{{ medicine.id }}">{{ medicine.name }}</option>{% endfor %}
-                </select></td>
-                <td><input type="text" name="form-${formIndex}-dose" class="form-control" /></td>
-                <td><input type="text" name="form-${formIndex}-frequency" class="form-control" /></td>
-                <td><input type="text" name="form-${formIndex}-timing" class="form-control" /></td>
-                <td><input type="number" name="form-${formIndex}-amount" class="form-control" /></td>
-                <td><input type="text" name="form-${formIndex}-additional_instructions" class="form-control" /></td>
-            </tr>`;
+            var newRow = `
+                <tr class="medicine-row">
+                    <td><select name="form-${formIndex}-medicine" class="form-select">
+                        {% for medicine in medicines %}
+                            <option value="{{ medicine.id }}">{{ medicine.name }}</option>
+                        {% endfor %}
+                    </select></td>
+                    <td><input type="text" name="form-${formIndex}-dose" class="form-control" /></td>
+                    <td><input type="text" name="form-${formIndex}-frequency" class="form-control" /></td>
+                    <td><input type="text" name="form-${formIndex}-timing" class="form-control" /></td>
+                    <td><input type="number" name="form-${formIndex}-amount" class="form-control" /></td>
+                    <td><input type="text" name="form-${formIndex}-additional_instructions" class="form-control" /></td>
+                    <td><input type="checkbox" name="form-${formIndex}-DELETE" class="form-check-input" /></td>
+                </tr>`;
 
             // Append the new row to the table
             $('#medicine-table-body').append(newRow);
 
-            // Increment the form index
+            // Increment the form index and update TOTAL_FORMS
             formIndex++;
+            updateTotalForms();
         });
     });
     </script>
 {% endblock scripts %}
+

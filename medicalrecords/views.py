@@ -170,7 +170,7 @@ class PrescriptionCreateView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Initialize the PrescriptionMedicine formset
+        # Initialize the PrescriptionMedicine formset with delete option enabled
         PrescriptionMedicineFormSet = modelformset_factory(
             PrescriptionMedicine,
             form=PrescriptionMedicineForm,
@@ -183,10 +183,16 @@ class PrescriptionCreateView(FormView):
                 "amount",
                 "additional_instructions",
             ),
+            can_delete=True,  # Allows the user to delete rows in the formset
         )
-        context["medicine_formset"] = PrescriptionMedicineFormSet(
-            queryset=PrescriptionMedicine.objects.none()
-        )
+
+        # Handle GET and POST requests differently
+        if self.request.POST:
+            context["medicine_formset"] = PrescriptionMedicineFormSet(self.request.POST)
+        else:
+            context["medicine_formset"] = PrescriptionMedicineFormSet(
+                queryset=PrescriptionMedicine.objects.none()
+            )
 
         context["page_title"] = "Create Prescription"
         context["physician"] = self.request.user.physician
@@ -195,9 +201,9 @@ class PrescriptionCreateView(FormView):
         return context
 
     def form_valid(self, form):
-        # Get medicine formset from POST data
-        medicine_formset = self.get_context_data()["medicine_formset"]
-        medicine_formset = medicine_formset.__class__(self.request.POST)
+        # Get the medicine formset from the context
+        context = self.get_context_data()
+        medicine_formset = context["medicine_formset"]
 
         if form.is_valid() and medicine_formset.is_valid():
             # Save the prescription instance
@@ -208,23 +214,27 @@ class PrescriptionCreateView(FormView):
             )
             prescription.save()
 
-            # Save each valid medicine form linked to the prescription
+            # Save each valid medicine form linked to the prescription, handle deletions
             for medicine_form in medicine_formset:
                 if medicine_form.cleaned_data:
-                    medicine = medicine_form.save(commit=False)
-                    medicine.prescription = prescription
-                    medicine.save()
+                    if medicine_form.cleaned_data.get("DELETE", False):
+                        if medicine_form.instance.pk:
+                            # Delete the instance if it already exists in the database
+                            medicine_form.instance.delete()
+                    else:
+                        # Assign prescription and save if not marked for deletion
+                        medicine = medicine_form.save(commit=False)
+                        medicine.prescription = prescription
+                        medicine.save()
 
             return super().form_valid(form)
         else:
             return self.form_invalid(form, medicine_formset)
 
     def form_invalid(self, form, medicine_formset=None):
-        if not medicine_formset:
-            medicine_formset = self.get_context_data()["medicine_formset"](
-                self.request.POST
-            )
-        # Render invalid form and formset with errors
+        # Ensure medicine_formset is initialized if not provided
+        if medicine_formset is None:
+            medicine_formset = self.get_context_data()["medicine_formset"]
         return self.render_to_response(
             self.get_context_data(form=form, medicine_formset=medicine_formset)
         )
@@ -238,6 +248,17 @@ class PrescriptionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Print Prescription"
-        context["clinic_name"] = "Yama Puri"
-        context["clinic_address"] = "Yama Puri, Near evdielum"
+        context["clinic_name"] = "Hospital Name"
+        context["clinic_address"] = "Address or description"
         return context
+
+
+class PrescriptionDeleteView(DeleteView):
+    model = Prescription
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Prescription removed successfully!")
+        return super().delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy("prescription_list")

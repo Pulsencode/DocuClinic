@@ -1,8 +1,12 @@
 from django.contrib import admin
-from .models import Administrator, Physician, Accountant, Patient, User
 
-admin.site.register(User)
+from .models import Accountant, Administrator, Patient, Physician, Nurse
+
+# from .models import User
+
+# admin.site.register(User) # Do not create users with this model
 admin.site.register(Administrator)
 admin.site.register(Physician)
 admin.site.register(Accountant)
 admin.site.register(Patient)
+admin.site.register(Nurse)

@@ -3,54 +3,54 @@
 <div class="container card mt-4 shadow">
     <div class="row card-body">
         <div class="col-md-12">
-            <h3>Doctor {{ doctor.first_name }}'s Details</h3>
+            <h3>Physician {{ physician.first_name }}'s Details</h3>
             <hr>
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <strong>Name:</strong> {{ doctor.first_name }} {{ doctor.last_name }}
+                    <strong>Name:</strong> {{ physician.first_name }} {{ physician.last_name }}
                 </div>
                 <div class="col-md-6">
-                    <strong>Email:</strong> {{ doctor.email }}
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Phone Number:</strong> {{ doctor.phone_number }}
-                </div>
-                <div class="col-md-6">
-                    <strong>Specialization:</strong> {{ doctor.specialization }}
+                    <strong>Email:</strong> {{ physician.email }}
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <strong>License Number:</strong> {{ doctor.license_number }}
+                    <strong>Phone Number:</strong> {{ physician.phone_number }}
                 </div>
                 <div class="col-md-6">
-                    <strong>Address:</strong> {{ doctor.address }}
+                    <strong>Specialization:</strong> {{ physician.specialization }}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>License Number:</strong> {{ physician.license_number }}
+                </div>
+                <div class="col-md-6">
+                    <strong>Address:</strong> {{ physician.address }}
                 </div>
             </div>
             <div class="text-end">
-                <a href="{% url 'doctor_update' doctor.pk %}" class="btn btn-primary">Edit</a>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal">Delete</button>
+                <a href="{% url 'physician_update' physician.pk %}" class="btn btn-primary">Edit</a>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePhysicianModal">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteDoctorModal" tabindex="-1" aria-labelledby="deleteDoctorModalLabel" aria-hidden="true">
+<div class="modal fade" id="deletePhysicianModal" tabindex="-1" aria-labelledby="deletePhysicianModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteDoctorModalLabel">Confirm Deletion</h5>
+                <h5 class="modal-title" id="deletePhysicianModalLabel">Confirm Deletion</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this doctor?
+                Are you sure you want to delete this physician?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="{% url 'doctor_delete' doctor.pk %}">
+                <form method="post" action="{% url 'physician_delete' physician.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Yes, Delete</button>
                 </form>
