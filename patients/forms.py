@@ -10,6 +10,8 @@ class PatientForm(forms.ModelForm):
         model = Patient
         fields = [
             "username",
+            "first_name",
+            "last_name",
             "email",
             "phone_number",
             "address",
@@ -17,6 +19,12 @@ class PatientForm(forms.ModelForm):
         widgets = {
             "username": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
+            ),
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter your last name"}
             ),
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "Enter your email"}

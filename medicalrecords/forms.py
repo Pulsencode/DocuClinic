@@ -7,9 +7,15 @@ from .models import Appointment, PrescriptionMedicine, Prescription
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ["patient", "doctor", "appointment_datetime", "status"]
+        fields = [
+            "patient",
+            "physician",
+            "date",
+            "time",
+            "status",
+        ]
 
-    doctor = forms.ModelChoiceField(
+    physician = forms.ModelChoiceField(
         queryset=Physician.objects.all(),
         widget=forms.Select(attrs={"class": "form-control"}),
     )
@@ -18,9 +24,21 @@ class AppointmentForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-control"}),
     )
 
-    appointment_datetime = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-local", "class": "form-control"}
+    date = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "class": "form-control",
+            }
+        ),
+    )
+
+    time = forms.TimeField(
+        widget=forms.TimeInput(
+            attrs={
+                "type": "time",
+                "class": "form-control",
+            }
         ),
     )
 

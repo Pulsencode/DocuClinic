@@ -26,7 +26,7 @@
                     {% for appointment in appointments %}
                         <tr>
                             <td>{{ appointment.patient.username }}</td>
-                            <td>{{ appointment.appointment_datetime|date:"Y-m-d H:i" }}</td>
+                            <td>{{ appointment.date|date:"d/m/y" }} - {{ appointment.time }} </td>
                             <td>
                                 <!-- Current status of the appointment -->
                                 <span class="badge {% if appointment.status == 'Scheduled' %} bg-info {% elif appointment.status == 'Pending' %} bg-warning {% elif appointment.status == 'Completed' %} bg-success {% elif appointment.status == 'Cancelled' %} bg-danger {% endif %} ">

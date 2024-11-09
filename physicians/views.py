@@ -100,7 +100,7 @@ class PhysicianDashboardView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # Show only appointments related to the logged-in Physician
         return Appointment.objects.filter(physician=self.request.user).order_by(
-            "-appointment_datetime"
+            "-date", "-time"
         )
 
     def get_context_data(self, **kwargs):
