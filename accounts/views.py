@@ -1,6 +1,9 @@
+from django.contrib.auth import authenticate, login
+
+
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,8 +14,8 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .models import Nurse, Accountant, Receptionist
-from .forms import NurseForm, AccountantForm, ReceptionistForm
+from .models import Nurse, Accountant, Receptionist, User
+from .forms import NurseForm, AccountantForm, ReceptionistForm, UserLoginForm
 
 
 @login_required
@@ -153,7 +156,10 @@ class ReceptionistCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Failed to create Receptionist. Please check the form for errors.")
+        messages.error(
+            self.request,
+            "Failed to create Receptionist. Please check the form for errors.",
+        )
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -175,7 +181,10 @@ class ReceptionistUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Failed to update Receptionist. Please check the form for errors.")
+        messages.error(
+            self.request,
+            "Failed to update Receptionist. Please check the form for errors.",
+        )
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -233,7 +242,10 @@ class AccountantCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Failed to create Accountant. Please check the form for errors.")
+        messages.error(
+            self.request,
+            "Failed to create Accountant. Please check the form for errors.",
+        )
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -255,7 +267,10 @@ class AccountantUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Failed to update Accountant. Please check the form for errors.")
+        messages.error(
+            self.request,
+            "Failed to update Accountant. Please check the form for errors.",
+        )
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -274,3 +289,52 @@ class AccountantDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Accountant successfully deleted.")
         return super().delete(request, *args, **kwargs)
+
+
+def login_user(request):
+    if request.method == "POST":
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Username is invalid!",
+                    extra_tags="alert-danger",
+                )
+                return redirect("login")
+
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "You have been logged in!",
+                    extra_tags="success-subtle",
+                )
+                return redirect("user_redirect")
+            else:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Password is invalid!",
+                    extra_tags="alert-danger",
+                )
+                return redirect("login")
+        else:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Please fill these two fields",
+                extra_tags="alert-danger",
+            )
+            return redirect("login")
+    else:
+        form = UserLoginForm()
+        context = {"page_title": "Login", "form": form}
+        return render(request, "registration/login.html", context=context)
