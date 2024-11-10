@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Account, GeneralLedgerEntry, AccountsPayable, AccountsReceivable, Asset,Invoice
+
+from .models import (
+    Account,
+    AccountsPayable,
+    AccountsReceivable,
+    Asset,
+    GeneralLedgerEntry,
+    Invoice,
+)
 
 admin.site.register(Account)
 admin.site.register(GeneralLedgerEntry)
