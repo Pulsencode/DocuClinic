@@ -29,7 +29,7 @@ DATABASES = {
 DATA_GENERATOR_EXCLUDE_APPS = ["accounts"]
 
 DATA_GENERATOR_EXCLUDE_MODELS = [
-    "patients.PatientDetail",
+    "accounts.PatientDetail",
     "medicalrecords.Appointment",
     "medicalrecords.Prescription",
     "medicalrecords.PrescriptionMedicine",

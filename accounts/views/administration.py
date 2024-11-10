@@ -18,7 +18,7 @@ from medicalrecords.models import Appointment
 
 
 class AdminDashboard(TemplateView):
-    template_name = "administration/admin_dashboard.html"
+    template_name = "accounts/administration/admin_dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -28,16 +28,13 @@ class AdminDashboard(TemplateView):
         start_date = end_date - timedelta(days=6)
 
         appointment_data = (
-            Appointment.objects.filter(
-                date__range=[start_date, end_date]
-            )
+            Appointment.objects.filter(date__range=[start_date, end_date])
             .values("date")
             .annotate(count=Count("id"))
             .order_by("date", "time")
         )
         appointment_data_list = [
-            (entry["date"], entry["count"])
-            for entry in appointment_data
+            (entry["date"], entry["count"]) for entry in appointment_data
         ]
 
         date_counts = dict(appointment_data_list)
@@ -50,9 +47,7 @@ class AdminDashboard(TemplateView):
         context.update(
             {
                 "page_title": "Admin Dashboard",
-                "todays_appointment": Appointment.objects.filter(
-                    date=today
-                ).count(),
+                "todays_appointment": Appointment.objects.filter(date=today).count(),
                 "total_doctors": Physician.objects.all().count(),
                 # "total_operators": Operator.objects.all().count(),
                 "appointment_data": all_dates,
@@ -64,7 +59,7 @@ class AdminDashboard(TemplateView):
 
 class GroupListView(ListView):
     model = Group
-    template_name = "administration/group_list.html"
+    template_name = "accounts/administration/group_list.html"
     context_object_name = "groups"
 
     def get_context_data(self, **kwargs):
@@ -75,7 +70,7 @@ class GroupListView(ListView):
 
 class GroupCreateView(CreateView):
     model = Group
-    template_name = "administration/group_list.html"
+    template_name = "accounts/administration/group_list.html"
     fields = ["name"]
     success_url = reverse_lazy("group_list")
 
@@ -98,7 +93,7 @@ class GroupCreateView(CreateView):
 class GroupUpdateView(UpdateView):
     model = Group
     fields = ["name"]
-    template_name = "administration/group_list.html"
+    template_name = "accounts/administration/group_list.html"
     success_url = reverse_lazy("group_list")
 
     def form_valid(self, form):
@@ -118,7 +113,7 @@ class GroupUpdateView(UpdateView):
 
 class GroupDeleteView(DeleteView):
     model = Group
-    template_name = "administration/group_list.html"
+    template_name = "accounts/administration/group_list.html"
     success_url = reverse_lazy("group_list")
 
     def delete(self, request, *args, **kwargs):
@@ -158,4 +153,4 @@ def group_permissions(request, group_id):
         "assigned_permissions": group.permissions.values_list("id", flat=True),
     }
 
-    return render(request, "administration/group_permission.html", context)
+    return render(request, "accounts/administration/group_permission.html", context)

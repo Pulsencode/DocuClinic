@@ -84,18 +84,6 @@ Then run the program in the development server
 python manage.py runserver
 ```
 
-**Creating and filling the database table with fake data**
-
-1. To Populate user fake data
-```bash
-python manage.py populate_user_data
-```
-
-2. To populate project fake data
-```bash
-python manage.py populate_project_data
-```
-
 **Development Requirements**
 1. Needed Extensions
     1.1. Flake8

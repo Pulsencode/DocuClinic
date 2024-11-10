@@ -1,75 +1,137 @@
 from django.urls import path
 
-from . import views
-
+from .views import (
+    accountant,
+    administration,
+    base,
+    nurse,
+    patient,
+    physician,
+    receptionist,
+)
 
 urlpatterns = [
-    # path("signup/", views.SignUpView.as_view(), name="signup"),
-    path("redirect/", views.user_redirect, name="user_redirect"),
-    # Nurse Crud
-    path("list/nurse/", views.NurseListView.as_view(), name="nurse_list"),
+    path("redirect/", base.user_redirect, name="user_redirect"),
+    # Physician
+    path("list/", physician.PhysicianListView.as_view(), name="physician_list"),
+    path("<int:pk>/", physician.PhysicianDetailView.as_view(), name="physician_detail"),
+    path("create/", physician.PhysicianCreateView.as_view(), name="physician_create"),
     path(
-        "detail/nurse/<int:pk>/", views.NurseDetailView.as_view(), name="nurse_detail"
+        "update/<int:pk>/",
+        physician.PhysicianUpdateView.as_view(),
+        name="physician_update",
     ),
-    path("create/nurse/", views.NurseCreateView.as_view(), name="nurse_create"),
+    path(
+        "delete/<int:pk>/",
+        physician.PhysicianDeleteView.as_view(),
+        name="physician_delete",
+    ),
+    path(
+        "physician_dashboard/",
+        physician.PhysicianDashboardView.as_view(),
+        name="physician_dashboard",
+    ),
+    # Patient
+    path("list", patient.PatientListView.as_view(), name="patient_list"),
+    path("add/", patient.PatientCreateView.as_view(), name="patient_create"),
+    path(
+        "detail/<int:pk>/", patient.PatientDetailView.as_view(), name="patient_detail"
+    ),
+    path(
+        "update/<int:pk>/", patient.PatientUpdateView.as_view(), name="patient_update"
+    ),
+    path(
+        "delete/<int:pk>/", patient.PatientDeleteView.as_view(), name="patient_delete"
+    ),
+    # Administration
+    path(
+        "administration_dashboard/",
+        administration.AdminDashboard.as_view(),
+        name="administration_dashboard",
+    ),
+    path("list/groups/", administration.GroupListView.as_view(), name="group_list"),
+    path("add/groups/", administration.GroupCreateView.as_view(), name="group_add"),
+    path(
+        "update/groups/<int:pk>/",
+        administration.GroupUpdateView.as_view(),
+        name="group_update",
+    ),
+    path(
+        "delete/groups/<int:pk>/",
+        administration.GroupDeleteView.as_view(),
+        name="group_delete",
+    ),
+    path(
+        "groups/permissions/<int:group_id>/",
+        administration.group_permissions,
+        name="group_permissions",
+    ),
+    # Nurse
+    path("list/nurse/", nurse.NurseListView.as_view(), name="nurse_list"),
+    path(
+        "detail/nurse/<int:pk>/", nurse.NurseDetailView.as_view(), name="nurse_detail"
+    ),
+    path("create/nurse/", nurse.NurseCreateView.as_view(), name="nurse_create"),
     path(
         "update/nurse/<int:pk>/",
-        views.NurseUpdateView.as_view(),
+        nurse.NurseUpdateView.as_view(),
         name="nurse_update",
     ),
     path(
         "delete/nurse/<int:pk>/",
-        views.NurseDeleteView.as_view(),
+        nurse.NurseDeleteView.as_view(),
         name="nurse_delete",
     ),
     # Receptionist
     path(
         "list/receptionist/",
-        views.ReceptionistListView.as_view(),
+        receptionist.ReceptionistListView.as_view(),
         name="receptionist_list",
     ),
     path(
         "detail/receptionist/<int:pk>/",
-        views.ReceptionistDetailView.as_view(),
+        receptionist.ReceptionistDetailView.as_view(),
         name="receptionist_detail",
     ),
     path(
         "create/receptionist/",
-        views.ReceptionistCreateView.as_view(),
+        receptionist.ReceptionistCreateView.as_view(),
         name="receptionist_create",
     ),
     path(
         "update/receptionist/<int:pk>/",
-        views.ReceptionistUpdateView.as_view(),
+        receptionist.ReceptionistUpdateView.as_view(),
         name="receptionist_update",
     ),
     path(
         "delete/receptionist/<int:pk>/",
-        views.ReceptionistDeleteView.as_view(),
+        receptionist.ReceptionistDeleteView.as_view(),
         name="receptionist_delete",
     ),
     # accountant
     path(
-        "list/accountant/", views.AccountantListView.as_view(), name="accountant_list"
+        "list/accountant/",
+        accountant.AccountantListView.as_view(),
+        name="accountant_list",
     ),
     path(
         "detail/accountant/<int:pk>/",
-        views.AccountantDetailView.as_view(),
+        accountant.AccountantDetailView.as_view(),
         name="accountant_detail",
     ),
     path(
         "create/accountant/",
-        views.AccountantCreateView.as_view(),
+        accountant.AccountantCreateView.as_view(),
         name="accountant_create",
     ),
     path(
         "update/accountant/<int:pk>/",
-        views.AccountantUpdateView.as_view(),
+        accountant.AccountantUpdateView.as_view(),
         name="accountant_update",
     ),
     path(
         "delete/accountant/<int:pk>/",
-        views.AccountantDeleteView.as_view(),
+        accountant.AccountantDeleteView.as_view(),
         name="accountant_delete",
     ),
 ]

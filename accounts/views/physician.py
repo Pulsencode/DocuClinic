@@ -1,21 +1,23 @@
-from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 from django.views.generic import (
-    ListView,
-    DetailView,
     CreateView,
-    UpdateView,
     DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
 )
+
 from accounts.models import Physician
-from .forms import PhysicianForm
 from medicalrecords.models import Appointment
+
+from ..forms import PhysicianForm
 
 
 class PhysicianListView(LoginRequiredMixin, ListView):
     model = Physician
-    template_name = "physicians/physicians_list.html"
+    template_name = "accounts/physician/physicians_list.html"
     context_object_name = "physicians"
 
     def get_context_data(self, **kwargs):
@@ -26,7 +28,7 @@ class PhysicianListView(LoginRequiredMixin, ListView):
 
 class PhysicianDetailView(LoginRequiredMixin, DetailView):
     model = Physician
-    template_name = "physicians/physician_detail.html"
+    template_name = "accounts/physician/physician_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -37,7 +39,7 @@ class PhysicianDetailView(LoginRequiredMixin, DetailView):
 class PhysicianCreateView(LoginRequiredMixin, CreateView):
     model = Physician
     form_class = PhysicianForm
-    template_name = "physicians/create_update_physician.html"
+    template_name = "accounts/physician/create_update_physician.html"
     success_url = reverse_lazy("physician_list")
 
     def form_valid(self, form):
@@ -46,7 +48,8 @@ class PhysicianCreateView(LoginRequiredMixin, CreateView):
 
     def form_invalid(self, form):
         messages.error(
-            self.request, "Failed to create Physician. Please check the form for errors."
+            self.request,
+            "Failed to create Physician. Please check the form for errors.",
         )
         return super().form_invalid(form)
 
@@ -59,7 +62,7 @@ class PhysicianCreateView(LoginRequiredMixin, CreateView):
 class PhysicianUpdateView(LoginRequiredMixin, UpdateView):
     model = Physician
     form_class = PhysicianForm
-    template_name = "physicians/create_update_physician.html"
+    template_name = "accounts/physician/create_update_physician.html"
 
     def get_success_url(self):
         return reverse_lazy("physician_detail", kwargs={"pk": self.object.pk})
@@ -70,7 +73,8 @@ class PhysicianUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         messages.error(
-            self.request, "Failed to update Physician. Please check the form for errors."
+            self.request,
+            "Failed to update Physician. Please check the form for errors.",
         )
         return super().form_invalid(form)
 
@@ -94,7 +98,9 @@ class PhysicianDeleteView(LoginRequiredMixin, DeleteView):
 
 class PhysicianDashboardView(LoginRequiredMixin, ListView):
     model = Appointment
-    template_name = "physicians/physician_dashboard.html"  # Physician dashboard template
+    template_name = (
+        "accounts/physician/physician_dashboard.html"  # Physician dashboard template
+    )
     context_object_name = "appointments"
 
     def get_queryset(self):

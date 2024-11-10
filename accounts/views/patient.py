@@ -10,15 +10,15 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Physician, Patient
+from accounts.models import Patient, Physician
 
-from .forms import PatientDetailsForm, PatientForm
-from .models import PatientDetail
+from ..forms import PatientDetailsForm, PatientForm
+from ..models import PatientDetail
 
 
 class PatientListView(ListView):
     model = Patient
-    template_name = "patients/patient_list.html"
+    template_name = "accounts/patient/patient_list.html"
     context_object_name = "patients"
 
     def get_context_data(self, **kwargs):
@@ -32,7 +32,7 @@ class PatientListView(ListView):
 class PatientCreateUpdateMixin:
     model = Patient
     form_class = PatientForm
-    template_name = "patients/add_update_patient.html"
+    template_name = "accounts/patient/add_update_patient.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -84,7 +84,7 @@ class PatientUpdateView(PatientCreateUpdateMixin, UpdateView):
 
 class PatientDetailView(DetailView):
     model = Patient
-    template_name = "patients/patient_detail.html"
+    template_name = "accounts/patient/patient_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
