@@ -3,7 +3,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -32,6 +31,7 @@ EXTERNAL_APPS = [
     "medicalrecords.apps.MedicalrecordsConfig",
     "administration.apps.AdministrationConfig",
     "physicians.apps.PhysiciansConfig",
+    "data_generator",  # TODO TO Generate Fake Data for the DB - Remove in Production
 ]
 
 AUTH_USER_MODEL = "accounts.User"
