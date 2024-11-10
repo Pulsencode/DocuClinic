@@ -38,7 +38,7 @@ class PhysicianCreateView(LoginRequiredMixin, CreateView):
     model = Physician
     form_class = PhysicianForm
     template_name = "physicians/create_update_physician.html"
-    success_url = reverse_lazy("doctor_list")
+    success_url = reverse_lazy("physician_list")
 
     def form_valid(self, form):
         messages.success(self.request, "Physician successfully created.")
@@ -62,7 +62,7 @@ class PhysicianUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "physicians/create_update_physician.html"
 
     def get_success_url(self):
-        return reverse_lazy("doctor_detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("physician_detail", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
         messages.success(self.request, "Physician successfully updated.")
@@ -82,7 +82,7 @@ class PhysicianUpdateView(LoginRequiredMixin, UpdateView):
 
 class PhysicianDeleteView(LoginRequiredMixin, DeleteView):
     model = Physician
-    success_url = reverse_lazy("doctor_list")
+    success_url = reverse_lazy("physician_list")
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
@@ -105,5 +105,5 @@ class PhysicianDashboardView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Doctors Dashboard"  # Set the page title
+        context["page_title"] = "Physicians Dashboard"  # Set the page title
         return context
