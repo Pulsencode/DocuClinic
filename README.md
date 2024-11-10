@@ -122,3 +122,10 @@ pre-commit clean
 ```bash
 python manage.py test
 ```
+
+**Generate Fake Data For the Models**
+Documentation of the library
+- https://pypi.org/project/dj-data-generator/
+```bash
+python manage.py generate_data --num-records=1000
+```

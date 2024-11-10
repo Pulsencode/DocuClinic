@@ -25,3 +25,16 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",  # noqa: F405
     }
 }
+
+DATA_GENERATOR_EXCLUDE_APPS = ["accounts"]
+
+DATA_GENERATOR_EXCLUDE_MODELS = [
+    "patients.PatientDetail",
+    "medicalrecords.Appointment",
+    "medicalrecords.Prescription",
+    "medicalrecords.PrescriptionMedicine",
+]
+
+DATA_GENERATOR_CUSTOM_FIELD_VALUES = {
+    "auth.User": {"first_name": "sample", "email": "sample@example.com"}
+}
