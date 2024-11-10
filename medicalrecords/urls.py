@@ -36,4 +36,9 @@ urlpatterns = [
         views.PrescriptionDetailView.as_view(),
         name="prescription_detail",
     ),
+    path(
+        "prescription/delete/<int:pk>/",
+        views.PrescriptionDeleteView.as_view(),
+        name="prescription_delete",
+    ),
 ]

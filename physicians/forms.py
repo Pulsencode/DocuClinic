@@ -1,9 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from accounts.models import Physician
 
 
-class PhysicianForm(UserCreationForm):
+class PhysicianForm(forms.ModelForm):
     class Meta:
         model = Physician
         fields = [
