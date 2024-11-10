@@ -1,14 +1,20 @@
-from django.views.generic import (
-    TemplateView,
-    ListView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
-from .models import Supplier, RouteOfAdministration, Medicine, MedicineSupplier
-from .forms import MedicineForm, MedicineSupplierForm, RouteOfAdministrationForm, SupplierForm
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
+
+from .forms import (
+    MedicineForm,
+    MedicineSupplierForm,
+    RouteOfAdministrationForm,
+    SupplierForm,
+)
+from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
 
 
 class InventoryDashboard(TemplateView):
@@ -17,8 +23,9 @@ class InventoryDashboard(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Inventory Dashboard"
-        context["total_medicine"] = Medicine.objects.all().count()
-        context["total_supplier"] = Supplier.objects.all().count()
+        context["total_medicines"] = Medicine.objects.all().count()
+        context["total_suppliers"] = Supplier.objects.all().count()
+        context["total_medicine_suppliers"] = MedicineSupplier.objects.all().count()
         return context
 
 
@@ -104,7 +111,6 @@ class RouteOfAdministrationListView(ListView):
         return context
 
 
-# Create View for RouteOfAdministration
 class RouteOfAdministrationCreateView(CreateView):
     model = RouteOfAdministration
     form_class = RouteOfAdministrationForm

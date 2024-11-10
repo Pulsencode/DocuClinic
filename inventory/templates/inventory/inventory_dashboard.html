@@ -7,10 +7,10 @@
                     <h5 class="card-title">Total Medicine</h5>
                     <div class="row">
                         <div class="col">
-                            <p class="card-text h3">{{ total_medicine }}</p>
+                            <p class="card-text h3">{{ total_medicines }}</p>
                         </div>
                         <div class="col text-end">
-                            <a href="{% url "list_medicine" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Medicine</i></a>
+                            <a href="{% url "list_medicine" %}" class="btn btn-sm btn-primary">All Medicine</a>
                         </div>
                     </div>
                 </div>
@@ -22,20 +22,35 @@
                     <h5 class="card-title">Total Supplier</h5>
                     <div class="row">
                         <div class="col">
-                            <p class="card-text h3">{{ total_supplier }}</p>
+                            <p class="card-text h3">{{ total_suppliers }}</p>
                         </div>
                         <div class="col text-end">
-                            <a href="{% url "list_supplier" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Supplier</i></a>
+                            <a href="{% url "list_supplier" %}" class="btn btn-sm btn-primary">All Supplier</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col text-end">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Medicine Suppliers</h5>
+                    <div class="row">
+                        <div class="col">
+                            <p class="card-text h3">{{ total_medicine_suppliers }}</p>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{% url "list_medicine_supplier" %}" class="btn btn-sm btn-primary">Medicine Suppliers</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% comment %} <div class="col text-end">
             <a href="{% url "list_medicine_supplier" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Medicine Supplier</i></a>
         </div>
         <div class="col text-end">
             <a href="{% url "list_route_of_administration" %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Route of Administration</i></a>
-        </div>
+        </div> {% endcomment %}
     </div>
 {% endblock content %}

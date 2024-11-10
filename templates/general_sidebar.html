@@ -1,0 +1,62 @@
+<nav id="sidebar"
+     class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar">
+    <div class="position-sticky">
+        <h4 class="sidebar-title text-light">Docu Clinic</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{% url 'user_redirect' %}">Dashboard</a>
+            </li>
+            <li class="nav-item ">
+                <div class="dropdown">
+                    <a class="nav-link text-light dropdown-toggle"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">Users</a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'physician_list' %}">Physicians</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'accountant_list' %}">Accountants</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'nurse_list' %}">Nurses</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'receptionist_list' %}">Receptionists</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{% url 'patient_list' %}">Patients</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{% url 'list_appointments' %}">Appoinments</a>
+            </li>
+            <li class="nav-item ">
+                <div class="dropdown">
+                    <a class="nav-link text-light dropdown-toggle"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">Inventory</a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'inventory_dashboard' %}">Inventory Dashboard</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'list_medicine' %}">Medicines</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'list_route_of_administration' %}">Route of Administration</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'list_supplier' %}">Suppliers</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'list_medicine_supplier' %}">Medicine Suppliers</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

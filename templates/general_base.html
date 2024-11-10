@@ -28,35 +28,7 @@
         <div class="container-fluid">
             <div class="row vh-100">
                 <!-- Sidebar -->
-                <nav id="sidebar"
-                     class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar">
-                    <div class="position-sticky">
-                        <h4 class="sidebar-title text-light">Docu Clinic</h4>
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'user_redirect' %}">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'physician_list' %}">Physician's</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'accountant_list' %}">Accountant's</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'nurse_list' %}">Nurse's</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'receptionist_list' %}">Receptionist's</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'patient_list' %}">Patient's</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="{% url 'inventory_dashboard' %}">Inventory</a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+                {% include "general_sidebar.html" %}
                 <!-- Main Content -->
                 <div class="col-md-9 ms-sm-auto col-lg-10 px-0">
                     <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
@@ -114,18 +86,18 @@
             {% endif %}
         </div>
         <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        {% if messages %}
-            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-            var toastList = toastElList.map(function (toastEl) {
-                return new bootstrap.Toast(toastEl)
-            })
-            toastList.forEach(toast => toast.show())
-        {% endif %}
-    });
+            document.addEventListener('DOMContentLoaded', function () {
+                {% if messages %}
+                var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+                var toastList = toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl)
+                })
+                toastList.forEach(toast => toast.show())
+                {% endif %}
+            });
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

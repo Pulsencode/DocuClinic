@@ -1,21 +1,23 @@
+from datetime import datetime
+
+from django.contrib import messages
 from django.forms import modelformset_factory
 from django.urls import reverse, reverse_lazy
-from django.contrib import messages
+from django.utils import timezone
 from django.views.generic import (
     CreateView,
-    UpdateView,
     DeleteView,
-    ListView,
-    FormView,
     DetailView,
+    FormView,
+    ListView,
+    UpdateView,
 )
 
+from accounts.models import Patient, Physician
 from inventory.models import Medicine
-from .models import Appointment, Prescription, PrescriptionMedicine
-from accounts.models import Physician, Patient
+
 from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
-from datetime import datetime
-from django.utils import timezone
+from .models import Appointment, Prescription, PrescriptionMedicine
 
 
 class AppointmentListView(ListView):
@@ -100,10 +102,9 @@ class AppointmentCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("user_redirect")
+        return reverse_lazy("list_appointments")
 
 
-# Update Appointment Status View
 class AppointmentUpdateView(UpdateView):
     model = Appointment
     form_class = AppointmentForm
@@ -126,7 +127,7 @@ class AppointmentUpdateView(UpdateView):
             return Appointment.objects.none()
 
     def get_success_url(self):
-        return reverse_lazy("user_redirect")
+        return reverse_lazy("list_appointments")
 
 
 class AppointmentDeleteView(DeleteView):
@@ -137,7 +138,7 @@ class AppointmentDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy("user_redirect")
+        return reverse_lazy("list_appointments")
 
 
 class PrescriptionListView(ListView):

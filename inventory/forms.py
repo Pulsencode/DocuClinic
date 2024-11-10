@@ -1,9 +1,9 @@
 from django import forms
-from .models import Supplier, RouteOfAdministration, Medicine, MedicineSupplier
+
+from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
 
 
 class SupplierForm(forms.ModelForm):
-
     class Meta:
         model = Supplier
         fields = ["name", "contact_details", "email", "address"]
@@ -38,23 +38,12 @@ class SupplierForm(forms.ModelForm):
 class RouteOfAdministrationForm(forms.ModelForm):
     class Meta:
         model = RouteOfAdministration
-        fields = ["name", "route_of_administration"]
+        fields = ["name"]
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter name"}
             ),
         }
-
-    route_of_administration = forms.CharField(
-        required=True,
-        widget=forms.Textarea(
-            attrs={
-                "class": "form-control",
-                "rows": 2,
-                "placeholder": "Enter route of administration",
-            }
-        ),
-    )
 
 
 class MedicineForm(forms.ModelForm):

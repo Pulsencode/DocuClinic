@@ -14,7 +14,6 @@
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Route of Administration</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -24,7 +23,6 @@
                             <td>{{ route.id }}</td>
                             <!-- Assuming "id" is the identifier -->
                             <td>{{ route.name }}</td>
-                            <td>{{ route.route_of_administration }}</td>
                             <td class="text-center">
                                 <a href="{% url "update_route_of_administration" route.pk %}"
                                    class="btn btn-sm btn-warning"

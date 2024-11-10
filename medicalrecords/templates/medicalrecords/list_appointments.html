@@ -4,8 +4,11 @@
         <!-- Filters Row -->
         <div class="row mb-4 border rounded-4 p-3">
             <div class="col-md-3">
-                <select name="physician" class="form-select form-select-sm" id="physicianFilter">
-                    <option value="">All Physicians</option>
+                <label for="dateFrom" class="form-label">Physicians</label>
+                <select name="physician"
+                        class="form-select form-select-sm"
+                        id="physicianFilter">
+                    <option value="">Physicians</option>
                     {% for physician in physicians %}
                         <option value="{{ physician.id }}"
                                 {% if selected_physician == physician.id|stringformat:"s" %}selected{% endif %}>
@@ -15,8 +18,9 @@
                 </select>
             </div>
             <div class="col-md-3">
+                <label for="dateFrom" class="form-label">Status</label>
                 <select name="status" class="form-select form-select-sm" id="statusFilter">
-                    <option value="">All Status</option>
+                    <option value="">Status</option>
                     {% for status_value, status_label in status_choices %}
                         <option value="{{ status_value }}"
                                 {% if selected_status == status_value %}selected{% endif %}>{{ status_label }}</option>
@@ -39,7 +43,7 @@
                        class="form-control form-control-sm"
                        id="dateTo">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 mt-auto">
                 <div class="d-flex gap-2">
                     <button onclick="clearFilters()" class="btn btn-danger btn-sm">Clear</button>
                     <button onclick="applyFilters()" class="btn btn-primary btn-sm w-75">Apply</button>
@@ -52,14 +56,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Total Appointments</h5>
-                        <div class="row">
-                            <div class="col">
-                                <p class="card-text h3">{{ total_appointments }}</p>
-                            </div>
-                            <div class="col text-end">
-                                <a href="{% url 'list_appointments' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg">All Appoinment</i></a>
-                            </div>
-                        </div>
+                        <p class="card-text h3">{{ total_appointments }}</p>
                     </div>
                 </div>
             </div>
@@ -106,7 +103,7 @@
                         <tr>
                             <td>{{ appointments.physician }}</td>
                             <td>{{ appointments.patient }}</td>
-                            <td>{{ appointments.date|date:"d/m/y" }} - {{ appointments.time }} </td>
+                            <td>{{ appointments.date|date:"d/m/y" }} - {{ appointments.time }}</td>
                             <td>{{ appointments.status }}</td>
                             <td>
                                 <a href="{% url "update_appointment" appointments.pk %}"
@@ -157,35 +154,35 @@
         document.getElementById('statusFilter').value = '';
         document.getElementById('dateFrom').value = '';
         document.getElementById('dateTo').value = '';
-        
+
         // Redirect to base URL without parameters
         window.location.href = window.location.pathname;
     }
-    
+
     function applyFilters() {
         const physician = document.getElementById('physicianFilter').value;
         const status = document.getElementById('statusFilter').value;
         const dateFrom = document.getElementById('dateFrom').value;
         const dateTo = document.getElementById('dateTo').value;
-        
+
         // Only add parameters if they have values
         const params = new URLSearchParams();
         if (physician) params.append('physician', physician);
         if (status) params.append('status', status);
         if (dateFrom) params.append('date_from', dateFrom);
         if (dateTo) params.append('date_to', dateTo);
-        
+
         // Redirect with parameters only if there are any
         const queryString = params.toString();
         window.location.href = window.location.pathname + (queryString ? `?${queryString}` : '');
     }
-    
+
     // Clear filters on page reload if "clear_filters" parameter is present
     document.addEventListener('DOMContentLoaded', function() {
         if (window.location.href.includes('?clear_filters')) {
             window.location.href = window.location.pathname;
         }
     });
-    
+
     </script>
 {% endblock scripts %}
