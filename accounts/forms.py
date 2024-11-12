@@ -94,10 +94,10 @@ class NurseForm(BaseUserForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={"class": "form-control", "placeholder": "Enter your first name", "required": "required"}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={"class": "form-control", "placeholder": "Enter your last name", "required": "required"}
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -127,10 +127,10 @@ class ReceptionistForm(BaseUserForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={"class": "form-control", "placeholder": "Enter your first name", "required": "required"}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={"class": "form-control", "placeholder": "Enter your last name", "required": "required"}
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -160,10 +160,10 @@ class AccountantForm(BaseUserForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={"class": "form-control", "placeholder": "Enter your first name", "required": "required"}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={"class": "form-control", "placeholder": "Enter your last name", "required": "required"}
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -204,10 +204,10 @@ class PatientForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={"class": "form-control", "placeholder": "Enter your first name", "required": "required"}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={"class": "form-control", "placeholder": "Enter your last name", "required": "required"}
             ),
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
@@ -294,10 +294,10 @@ class PhysicianForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={"class": "form-control", "placeholder": "Enter your first name", "required": "required"}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={"class": "form-control", "placeholder": "Enter your last name", "required": "required"}
             ),
             "phone_number": forms.TextInput(
                 attrs={
