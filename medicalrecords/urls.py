@@ -9,6 +9,11 @@ urlpatterns = [
         name="list_appointments",
     ),
     path(
+        "appointment/detail/<int:pk>/",
+        views.AppointmentDetailView.as_view(),
+        name="appointments_detail",
+    ),
+    path(
         "create/appointment",
         views.AppointmentCreateView.as_view(),
         name="create_appointment",
@@ -27,7 +32,7 @@ urlpatterns = [
         "prescriptions/", views.PrescriptionListView.as_view(), name="prescription_list"
     ),
     path(
-        "prescription/create/",
+        "prescription/create/<int:appointment_id>",
         views.PrescriptionCreateView.as_view(),
         name="create_prescription",
     ),

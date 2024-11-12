@@ -58,13 +58,11 @@ class PrescriptionForm(forms.ModelForm):
     class Meta:
         model = Prescription
         fields = [
-            "patient",
             "notes",
             "diagnosis",
             "follow_up_date",
         ]
         widgets = {
-            "patient": forms.Select(attrs={"class": "form-select"}),
             "notes": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
             "diagnosis": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
             "follow_up_date": forms.DateInput(

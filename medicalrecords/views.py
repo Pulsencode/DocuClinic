@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.forms import modelformset_factory
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
@@ -80,6 +81,17 @@ class AppointmentListView(ListView):
         context["today_appointments"] = self.model.objects.filter(
             date=timezone.now().date()
         ).count()
+        return context
+
+
+class AppointmentDetailView(DetailView):
+    model = Appointment
+    template_name = "medicalrecords/appointments_detail.html"
+    context_object_name = "appointments"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Appointment Details"
         return context
 
 
@@ -171,7 +183,18 @@ class PrescriptionCreateView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Initialize the PrescriptionMedicine formset with delete option enabled
+        # Retrieve the appointment using the appointment_id from the URL
+        appointment_id = self.kwargs.get('appointment_id')
+
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+
+        # Set patient and physician information from the appointment
+        context["patient"] = appointment.patient
+        context["physician"] = (
+            appointment.physician
+        )  # No need to show this in the template
+
+        # Initialize the PrescriptionMedicine formset
         PrescriptionMedicineFormSet = modelformset_factory(
             PrescriptionMedicine,
             form=PrescriptionMedicineForm,
@@ -181,13 +204,12 @@ class PrescriptionCreateView(FormView):
                 "dose",
                 "frequency",
                 "timing",
-                "amount",
                 "additional_instructions",
             ),
-            can_delete=True,  # Allows the user to delete rows in the formset
+            can_delete=True,
         )
 
-        # Handle GET and POST requests differently
+        # Determine formset handling for GET or POST
         if self.request.POST:
             context["medicine_formset"] = PrescriptionMedicineFormSet(self.request.POST)
         else:
@@ -196,44 +218,45 @@ class PrescriptionCreateView(FormView):
             )
 
         context["page_title"] = "Create Prescription"
-        context["physician"] = self.request.user.physician
         context["medicines"] = Medicine.objects.all()
 
         return context
 
     def form_valid(self, form):
-        # Get the medicine formset from the context
         context = self.get_context_data()
         medicine_formset = context["medicine_formset"]
 
         if form.is_valid() and medicine_formset.is_valid():
-            # Save the prescription instance
+            # Get the appointment ID and fetch the related Patient and Physician
+            appointment_id = self.kwargs.get('appointment_id')
+
+            appointment = get_object_or_404(Appointment, id=appointment_id)
+
+            # Save the prescription, linking to patient and physician from the appointment
             prescription = form.save(commit=False)
-            prescription.physician = self.request.user.physician
-            prescription.date_prescribed = (
-                self.request.POST.get("date_prescribed") or timezone.now().date()
-            )
+            prescription.patient = appointment.patient
+            prescription.physician = appointment.physician
+            prescription.date_prescribed = timezone.now().date()
             prescription.save()
 
-            # Save each valid medicine form linked to the prescription, handle deletions
+            # Save each medicine form linked to the prescription
             for medicine_form in medicine_formset:
-                if medicine_form.cleaned_data:
-                    if medicine_form.cleaned_data.get("DELETE", False):
-                        if medicine_form.instance.pk:
-                            # Delete the instance if it already exists in the database
-                            medicine_form.instance.delete()
-                    else:
-                        # Assign prescription and save if not marked for deletion
-                        medicine = medicine_form.save(commit=False)
-                        medicine.prescription = prescription
-                        medicine.save()
+                if medicine_form.cleaned_data and not medicine_form.cleaned_data.get(
+                    "DELETE", False
+                ):
+                    medicine = medicine_form.save(commit=False)
+                    medicine.prescription = prescription
+                    medicine.save()
+                elif medicine_form.cleaned_data.get("DELETE", False):
+                    if medicine_form.instance.pk:
+                        medicine_form.instance.delete()
 
             return super().form_valid(form)
         else:
             return self.form_invalid(form, medicine_formset)
 
     def form_invalid(self, form, medicine_formset=None):
-        # Ensure medicine_formset is initialized if not provided
+        print(form.errors, "invalid")
         if medicine_formset is None:
             medicine_formset = self.get_context_data()["medicine_formset"]
         return self.render_to_response(
