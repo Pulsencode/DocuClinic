@@ -2,8 +2,47 @@
 {% load static %}
 {% block content %}
     <div class="container-fluid mb-3">
-        <div class="d-flex justify-content-end px-2 mb-1">
-            <a href="{% url "add_medicine" %}" class="btn btn-primary btn-sm">Add Medicine</a>
+        <div class="d-flex justify-content-end  mb-3">
+            <!-- Search Bar on the Left -->
+            <div class="d-flex align-items-center">
+                <input type="text"
+                       id="searchInput"
+                       class="form-control form-control-sm me-2"
+                       placeholder="Search by name, generic or brand name"
+                       autocomplete="off">
+            </div>
+            <!-- Add Medicine Button on the Right -->
+            <a href="{% url 'add_medicine' %}" class="btn btn-primary btn-sm">Add Medicine</a>
+        </div>
+        <!-- Filters Section -->
+        <div class="d-flex flex-wrap mb-3">
+            <!-- Route of Administration Filter -->
+            <div class="me-3">
+                <select id="routeInput" class="form-select form-select-sm">
+                    <option value="">Select Route of Administration</option>
+                    {% for route in routes %}<option value="{{ route.id }}">{{ route.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <!-- Storage Location Filter -->
+            <div class="me-3">
+                <select id="locationInput" class="form-select form-select-sm">
+                    <option value="">Select Storage Location</option>
+                    {% for location in storage_locations %}<option value="{{ location }}">{{ location }}</option>{% endfor %}
+                </select>
+            </div>
+            <!-- Expiration Date Filter -->
+            <div class="me-3">
+                <select id="expirationFilter" class="form-select form-select-sm">
+                    <option value="">Expiration Filter</option>
+                    <option value="expiring_today">Expiring Today</option>
+                    <option value="expiring_this_month">Expiring This Month</option>
+                </select>
+            </div>
+            <!-- Filter Action Buttons -->
+            <div class="d-flex align-items-center">
+                <button type="button" id="applyFilter" class="btn btn-sm btn-success me-2">Apply Filter</button>
+                <button type="button" id="clearFilter" class="btn btn-sm btn-secondary">Clear Filter</button>
+            </div>
         </div>
         {% if not medicines %}
             <div class="alert alert-info text-center ms-3 me-3" role="alert">No Medicines Registered!</div>
@@ -19,7 +58,7 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="table-group-divider">
+                <tbody id="medicine-table-body" class="table-group-divider">
                     {% for medicine in medicines %}
                         <tr>
                             <td>{{ medicine.id }}</td>
@@ -28,7 +67,7 @@
                             <td>{{ medicine.brand_name }}</td>
                             <td>{{ medicine.quantity }}</td>
                             <td class="text-center">
-                                <a href="{% url "update_medicine" medicine.pk %}"
+                                <a href="{% url 'update_medicine' medicine.pk %}"
                                    class="btn btn-sm btn-warning"
                                    title="Edit Medicine">
                                     <i class="bi bi-pencil"></i>
@@ -39,35 +78,6 @@
                                         data-bs-target="#deleteModal{{ medicine.pk }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                                <!-- Delete Confirmation Modal -->
-                                <div class="modal fade"
-                                     id="deleteModal{{ medicine.pk }}"
-                                     tabindex="-1"
-                                     aria-labelledby="deleteModalLabel{{ medicine.pk }}"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel{{ medicine.pk }}">Delete Confirmation</h5>
-                                                <button type="button"
-                                                        class="btn-close"
-                                                        data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete the medicine <strong>{{ medicine.name }}</strong>?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{% url "delete_medicine" medicine.pk %}" method="post">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Modal -->
                             </td>
                         </tr>
                     {% empty %}
@@ -80,3 +90,70 @@
         {% endif %}
     </div>
 {% endblock content %}
+{% block scripts %}
+    <script>
+    $(document).ready(function() {
+        // Search filter
+        $('#searchInput').on('keyup', function() {
+            applyFilters();
+        });
+
+        // Apply filter button click
+        $('#applyFilter').on('click', function() {
+            applyFilters();
+        });
+        
+        function applyFilters() {
+            var searchQuery = $('#searchInput').val();
+            var routeQuery = $('#routeInput').val();  // Get the selected value from the dropdown
+            var locationQuery = $('#locationInput').val();
+            var expirationQuery = $('#expirationFilter').val();
+        
+            // Send AJAX request with all the filters
+            $.ajax({
+                url: "{% url 'list_medicine' %}",
+                data: {
+                    'search': searchQuery,
+                    'route': routeQuery,  // Make sure this value is being passed
+                    'location': locationQuery,
+                    'expiration': expirationQuery,
+                },
+                success: function(response) {
+                    var medicines = response.medicines;
+                    var tableBody = $('#medicine-table-body');
+                    tableBody.empty();
+        
+                    if (medicines.length === 0) {
+                        tableBody.append('<tr><td colspan="6" class="text-center">No medicines available</td></tr>');
+                    } else {
+                        medicines.forEach(function(medicine) {
+                            var row = `<tr>
+                                        <td>${medicine.id}</td>
+                                        <td>${highlightText(medicine.name, searchQuery)}</td>
+                                        <td>${highlightText(medicine.generic_name, searchQuery)}</td>
+                                        <td>${highlightText(medicine.brand_name, searchQuery)}</td>
+                                        <td>${medicine.quantity}</td>
+                                        <td class="text-center">
+                                            <a href="/inventory/update/medicine/${medicine.id}/" class="btn btn-sm btn-warning" title="Edit Medicine">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal${medicine.id}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                            tableBody.append(row);
+                        });
+                    }
+                }
+            });
+        }        
+
+        // Highlight matching text in the table
+        function highlightText(text, query) {
+            var regex = new RegExp('(' + query + ')', 'gi');
+            return text.replace(regex, '<span class="bg-warning">$1</span>');
+        }
+    });
+    </script>
+{% endblock scripts %}

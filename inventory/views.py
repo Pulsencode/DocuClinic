@@ -15,6 +15,9 @@ from .forms import (
     SupplierForm,
 )
 from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
+from django.db.models import Q
+from django.http import JsonResponse
+from django.utils.timezone import localdate
 
 
 class InventoryDashboard(TemplateView):
@@ -176,8 +179,58 @@ class MedicineListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Medicine list"
+        context["page_title"] = "Medicine List"
+        context["routes"] = (
+            RouteOfAdministration.objects.all()
+        )  # Fetch all routes for the dropdown
+        context["storage_locations"] = Medicine.objects.values_list(
+            "storage_location", flat=True
+        ).distinct()  # Get unique storage locations
         return context
+
+    def get_queryset(self):
+        query = self.request.GET.get("search", "")
+        route = self.request.GET.get("route", "")
+        location = self.request.GET.get("location", "")
+        expiration = self.request.GET.get("expiration", "")
+
+        queryset = Medicine.objects.all()
+
+        # Search filter
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query)
+                | Q(generic_name__icontains=query)
+                | Q(brand_name__icontains=query)
+            )
+
+        # Route of Administration filter (linked model)
+        if route:
+            queryset = queryset.filter(route_of_administration__id=route)
+
+        # Storage Location filter (text field)
+        if location:
+            queryset = queryset.filter(storage_location__icontains=location)
+
+        # Expiration Date filter
+        if expiration == "expiring_today":
+            today = localdate()  # Use current local date
+            queryset = queryset.filter(expiration_date=today)
+        elif expiration == "expiring_this_month":
+            today = localdate()  # Use current local date
+            queryset = queryset.filter(
+                expiration_date__month=today.month, expiration_date__year=today.year
+            )
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        # Check if the request is an AJAX request
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            medicines = self.get_queryset()
+            return JsonResponse({"medicines": list(medicines.values())})
+
+        return super().get(request, *args, **kwargs)
 
 
 # Create View for Medicine
