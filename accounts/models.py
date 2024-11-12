@@ -55,6 +55,7 @@ class Administrator(User):
 class Physician(User):
     specialization = models.CharField(max_length=100)
     license_number = models.CharField(max_length=50, unique=True)
+    fee_per_consultation = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Physician"
