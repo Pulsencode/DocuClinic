@@ -34,6 +34,8 @@
                                 </span>
                             </td>
                             <td>
+                                <a href="{% url "appointments_detail" appointment.pk %}"
+                                   class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
                                 <a href="{% url "update_appointment" appointment.pk %}"
                                    class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
                                 <!-- Button to trigger the delete confirmation modal -->

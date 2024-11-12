@@ -106,6 +106,8 @@
                             <td>{{ appointments.date|date:"d/m/y" }} - {{ appointments.time }}</td>
                             <td>{{ appointments.status }}</td>
                             <td>
+                                <a href="{% url "appointments_detail" appointments.pk %}"
+                                   class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
                                 <a href="{% url "update_appointment" appointments.pk %}"
                                    class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
                                 <button type="button"

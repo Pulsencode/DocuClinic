@@ -5,11 +5,11 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
-                <!-- Patient Info -->
+                <!-- Patient Info (display only patient name) -->
                 <div class="col-md-2">
                     <div class="form-group">
                         <label for="id_patient">Patient</label>
-                        {{ form.patient }}
+                        <p>{{ patient.get_full_name }}</p> <!-- Displaying the patient's name -->
                     </div>
                 </div>
                 <!-- Follow-up Date -->
@@ -45,7 +45,6 @@
                             <th>Dose</th>
                             <th>Frequency</th>
                             <th>Timing</th>
-                            <th>Amount</th>
                             <th>Additional Instructions</th>
                             <th>Remove</th>
                         </tr>
@@ -57,23 +56,25 @@
                                 <td>{{ form.dose }}</td>
                                 <td>{{ form.frequency }}</td>
                                 <td>{{ form.timing }}</td>
-                                <td>{{ form.amount }}</td>
                                 <td>{{ form.additional_instructions }}</td>
-                                <td>{{ form.DELETE }}</td>
+                                <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                <button type="button" id="add-medicine" class="btn btn-secondary">+</button>
+            </div>
+            <div class="text-end mb-2">
+                <button type="button" id="add-medicine" class="btn btn-secondary btn-sm">+</button>
             </div>
             <!-- Save & Print -->
             <div class="form-group text-end">
-                <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save & Print</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="goBackAndRefresh()">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm">Save & Print</button>
             </div>
         </form>
     </div>
 {% endblock content %}
+
 {% block scripts %}
     <script>
     $(document).ready(function() {
@@ -91,16 +92,13 @@
             var newRow = `
                 <tr class="medicine-row">
                     <td><select name="form-${formIndex}-medicine" class="form-select">
-                        {% for medicine in medicines %}
-                            <option value="{{ medicine.id }}">{{ medicine.name }}</option>
-                        {% endfor %}
+                        {% for medicine in medicines %}<option value="{{ medicine.id }}">{{ medicine.name }}</option>{% endfor %}
                     </select></td>
                     <td><input type="text" name="form-${formIndex}-dose" class="form-control" /></td>
                     <td><input type="text" name="form-${formIndex}-frequency" class="form-control" /></td>
                     <td><input type="text" name="form-${formIndex}-timing" class="form-control" /></td>
-                    <td><input type="number" name="form-${formIndex}-amount" class="form-control" /></td>
                     <td><input type="text" name="form-${formIndex}-additional_instructions" class="form-control" /></td>
-                    <td><input type="checkbox" name="form-${formIndex}-DELETE" class="form-check-input" /></td>
+                    <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
                 </tr>`;
 
             // Append the new row to the table
@@ -110,7 +108,15 @@
             formIndex++;
             updateTotalForms();
         });
+
+        // Remove the row when the "Remove" button is clicked
+        $(document).on('click', '.remove-row', function() {
+            $(this).closest('tr').remove();
+
+            // Update the total forms count after removing a row
+            formIndex--;
+            updateTotalForms();
+        });
     });
     </script>
 {% endblock scripts %}
-
