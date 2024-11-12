@@ -50,9 +50,13 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <h6>License Number:</h6>
                             {{ form.license_number }}
+                        </div>
+                        <div class="col-md-3">
+                            <h6>License Number:</h6>
+                            {{ form.fee_per_consultation }}
                         </div>
                         {% if not form.instance.pk %}
                             <div class="col-3">

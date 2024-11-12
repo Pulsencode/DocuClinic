@@ -285,6 +285,7 @@ class PhysicianForm(forms.ModelForm):
             "address",
             "specialization",
             "license_number",
+            "fee_per_consultation",
         ]
         widgets = {
             "username": forms.TextInput(
@@ -311,6 +312,7 @@ class PhysicianForm(forms.ModelForm):
             "license_number": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter license number"}
             ),
+            "fee_per_consultation": forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter consultation fee"})
         }
 
     address = forms.CharField(
