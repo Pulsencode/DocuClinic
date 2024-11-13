@@ -14,6 +14,9 @@ urlpatterns = [
         name="appointments_detail",
     ),
     path(
+        "check-patient-vip/", views.check_patient_vip_status, name="check_patient_vip"
+    ),
+    path(
         "create/appointment",
         views.AppointmentCreateView.as_view(),
         name="create_appointment",

@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django.contrib import messages
 from django.forms import modelformset_factory
@@ -14,11 +15,14 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Patient, Physician
+from accounts.models import Patient, PatientDetail, Physician
 from inventory.models import Medicine
 
 from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
 from .models import Appointment, Prescription, PrescriptionMedicine
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 
 class AppointmentListView(ListView):
@@ -95,6 +99,29 @@ class AppointmentDetailView(DetailView):
         return context
 
 
+@require_http_methods(["GET"])
+def check_patient_vip_status(request):
+    patient_id = request.GET.get("patient_id")
+    try:
+        # Get the patient's detail through the relationship
+        patient_detail = PatientDetail.objects.get(patient_id=patient_id)
+        print("try")
+        return JsonResponse(
+            {
+                "is_vip": patient_detail.vip_status,
+            }
+        )
+    except PatientDetail.DoesNotExist:
+        return JsonResponse(
+            {
+                "is_vip": False,  # Default to non-VIP if no details exist
+                "error": "Patient details not found",
+            }
+        )
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
 class AppointmentCreateView(CreateView):
     model = Appointment
     form_class = AppointmentForm
@@ -109,8 +136,21 @@ class AppointmentCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.patient = Patient.objects.get(pk=self.request.POST["patient"])
+        physician = form.cleaned_data["physician"]
+        base_fee = physician.fee_per_consultation
+        if form.cleaned_data.get("discount"):
+            discount = form.cleaned_data["discount"]
+            discount_amount = (base_fee * Decimal(discount.percentage)) / Decimal("100")
+            consultation_fee = base_fee - discount_amount
+        else:
+            consultation_fee = base_fee
+        form.instance.consultation_fee = consultation_fee
         self.object = form.save()
         messages.success(self.request, "Appointment created successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "error occurred couldn't create appointment")
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -129,14 +169,39 @@ class AppointmentUpdateView(UpdateView):
         context["model"] = "Appointment"
         return context
 
-    def get_queryset(self):
-        user = self.request.user
-        if hasattr(user, "operator"):
-            return Appointment.objects.all()
-        elif hasattr(user, "physician"):
-            return Appointment.objects.filter(physician=user)
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     if hasattr(user, "operator"):
+    #         return Appointment.objects.all()
+    #     elif hasattr(user, "physician"):
+    #         appointment_id = self.kwargs.get('pk')
+    #         appointment = get_object_or_404(Appointment, id=appointment_id)
+    #         if appointment.physician != user:
+    #             messages.error(self.request, "You can't change appointment not assigned to you")
+    #             return None
+    #         else:
+    #             return Appointment.objects.filter(physician=user)
+    #     else:
+    #         return Appointment.objects.none()
+
+    def form_valid(self, form):
+        form.instance.patient = Patient.objects.get(pk=self.request.POST["patient"])
+        physician = form.cleaned_data["physician"]
+        base_fee = physician.fee_per_consultation
+        if form.cleaned_data.get("discount"):
+            discount = form.cleaned_data["discount"]
+            discount_amount = (base_fee * Decimal(discount.percentage)) / Decimal("100")
+            consultation_fee = base_fee - discount_amount
         else:
-            return Appointment.objects.none()
+            consultation_fee = base_fee
+        form.instance.consultation_fee = consultation_fee
+        self.object = form.save()
+        messages.success(self.request, "Appointment update successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "error occurred couldn't update appointment")
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy("list_appointments")
@@ -184,7 +249,7 @@ class PrescriptionCreateView(FormView):
         context = super().get_context_data(**kwargs)
 
         # Retrieve the appointment using the appointment_id from the URL
-        appointment_id = self.kwargs.get('appointment_id')
+        appointment_id = self.kwargs.get("appointment_id")
 
         appointment = get_object_or_404(Appointment, id=appointment_id)
 
@@ -228,7 +293,7 @@ class PrescriptionCreateView(FormView):
 
         if form.is_valid() and medicine_formset.is_valid():
             # Get the appointment ID and fetch the related Patient and Physician
-            appointment_id = self.kwargs.get('appointment_id')
+            appointment_id = self.kwargs.get("appointment_id")
 
             appointment = get_object_or_404(Appointment, id=appointment_id)
 
