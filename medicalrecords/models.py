@@ -6,6 +6,13 @@ from django.utils import timezone
 from inventory.models import Medicine
 
 
+class Discount(models.Model):
+    percentage = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.percentage}%"
+
+
 class Appointment(models.Model):
     STATUS_CHOICES = [
         ("Scheduled", "Scheduled"),
@@ -20,6 +27,8 @@ class Appointment(models.Model):
     time = models.TimeField(null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
+    discount = models.ForeignKey(Discount, null=True, blank=True, on_delete=models.SET_NULL)
+    consultation_fee = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ["date", "time"]

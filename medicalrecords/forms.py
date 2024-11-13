@@ -1,7 +1,7 @@
 from django import forms
 
 from accounts.models import Physician, Patient
-from .models import Appointment, PrescriptionMedicine, Prescription
+from .models import Appointment, PrescriptionMedicine, Prescription, Discount
 
 
 class AppointmentForm(forms.ModelForm):
@@ -13,6 +13,7 @@ class AppointmentForm(forms.ModelForm):
             "date",
             "time",
             "status",
+            "discount",
         ]
 
     physician = forms.ModelChoiceField(
@@ -48,10 +49,18 @@ class AppointmentForm(forms.ModelForm):
         required=False,
     )
 
+    discount = forms.ModelChoiceField(
+        queryset=Discount.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not (self.instance and self.instance.pk):
             self.fields.pop("status")
+        self.fields["discount"].required = False
+        self.fields["discount"].empty_label = "Select Discount"
 
 
 class PrescriptionForm(forms.ModelForm):

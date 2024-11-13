@@ -24,8 +24,64 @@
 {% endblock content %}
 {% block scripts %}
     <script>
-    document.getElementById('clearButton').addEventListener('click', function() {
-        document.getElementById('form').reset();
+    $(document).ready(function() {
+        // Function to check VIP status and handle discount field visibility
+        function checkVipStatus(patientId) {
+            if (patientId) {
+                // Get CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Make AJAX request to check VIP status
+                $.ajax({
+                    url: '{% url "check_patient_vip" %}',
+                    type: 'GET',
+                    data: {
+                        'patient_id': patientId
+                    },
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    success: function(response) {
+                        if (response.is_vip) {
+                            // Show discount field if patient is VIP
+                            $('#id_discount').closest('p').show();
+                        } else {
+                            // Hide discount field if patient is not VIP
+                            $('#id_discount').closest('p').hide();
+                            // Clear any selected discount
+                            $('#id_discount').val('');
+                        }
+                    },
+                    error: function(xhr, errmsg, err) {
+                        console.error('Error checking VIP status:', errmsg);
+                        // Hide discount field on error
+                        $('#id_discount').closest('p').hide();
+                        $('#id_discount').val('');
+                    }
+                });
+            } else {
+                // Hide discount field if no patient is selected
+                $('#id_discount').closest('p').hide();
+                $('#id_discount').val('');
+            }
+        }
+    
+        // Check VIP status on page load if patient is already selected
+        const initialPatientId = $('#id_patient').val();
+        checkVipStatus(initialPatientId);
+    
+        // When patient selection changes
+        $('#id_patient').change(function() {
+            const patientId = $(this).val();
+            checkVipStatus(patientId);
+        });
+    
+        // Clear button functionality
+        document.getElementById('clearButton').addEventListener('click', function() {
+            document.getElementById('form').reset();
+            // Hide discount field when form is cleared
+            $('#id_discount').closest('p').hide();
+        });
     });
     </script>
 {% endblock scripts %}
