@@ -1,4 +1,5 @@
-from datetime import datetime
+import logging
+
 from decimal import Decimal
 
 from django.contrib import messages
@@ -15,14 +16,17 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Patient, PatientDetail, Physician
+from accounts.models import Patient, PatientDetail, Physician, PhysicianAvailability
 from inventory.models import Medicine
 
 from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
 from .models import Appointment, Prescription, PrescriptionMedicine
-
 from django.http import JsonResponse
+from datetime import datetime, timedelta
+import calendar
 from django.views.decorators.http import require_http_methods
+
+logger = logging.getLogger(__name__)
 
 
 class AppointmentListView(ListView):
@@ -122,6 +126,86 @@ def check_patient_vip_status(request):
         return JsonResponse({"error": str(e)}, status=400)
 
 
+def get_available_dates(request):
+    physician_id = request.GET.get("physician_id")
+    logger.debug(f"Received request for physician_id: {physician_id}")
+
+    if not physician_id:
+        logger.error("No physician_id provided")
+        return JsonResponse({"error": "Physician ID not provided."}, status=400)
+
+    try:
+        # Add debugging for physician availability
+        physician_availability = PhysicianAvailability.objects.filter(
+            physician_id=physician_id
+        ).first()
+
+        if not physician_availability:
+            logger.error(f"No availability found for physician_id: {physician_id}")
+            return JsonResponse(
+                {"error": "No availability found for this physician."}, status=404
+            )
+
+        # Debug the work days
+        work_days = physician_availability.work_days.all()
+        logger.debug(f"Work days found: {[day.name for day in work_days]}")
+
+        # Fix: Convert localized day names to standard weekday integers (0-6)
+        work_days_indices = []
+        for day in work_days:
+            day_name = str(day.name).strip().upper()
+            # Map day names to integers (0 = Monday, 6 = Sunday)
+            day_mapping = {
+                "MONDAY": 0,
+                "TUESDAY": 1,
+                "WEDNESDAY": 2,
+                "THURSDAY": 3,
+                "FRIDAY": 4,
+                "SATURDAY": 5,
+                "SUNDAY": 6,
+            }
+            if day_name in day_mapping:
+                work_days_indices.append(day_mapping[day_name])
+
+        work_start = physician_availability.work_time_start
+        work_end = physician_availability.work_time_end
+        logger.debug(f"Work hours: {work_start} - {work_end}")
+
+        # Generate time slots
+        time_slots = []
+        current_time = work_start
+        while current_time < work_end:
+            next_time = (
+                datetime.combine(datetime.today(), current_time) + timedelta(minutes=30)
+            ).time()
+            time_slots.append(
+                {
+                    "start": current_time.strftime("%H:%M"),
+                    "end": next_time.strftime("%H:%M"),
+                }
+            )
+            current_time = next_time
+
+        # Generate dates
+        today = datetime.now().date()
+        available_dates = []
+        for i in range(30):
+            day = today + timedelta(days=i)
+            if (
+                day.weekday() in work_days_indices
+            ):  # weekday() returns 0-6 (Monday to Sunday)
+                available_dates.append(
+                    {"date": day.strftime("%Y-%m-%d"), "times": time_slots}
+                )
+
+        logger.debug(f"Generated {len(available_dates)} available dates")
+        return JsonResponse({"available_dates": available_dates})
+
+    except Exception as e:
+        logger.exception("Error in get_available_dates")
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 class AppointmentCreateView(CreateView):
     model = Appointment
     form_class = AppointmentForm
@@ -151,7 +235,7 @@ class AppointmentCreateView(CreateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "error occurred couldn't create appointment")
-        return super().form_valid(form)
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse_lazy("list_appointments")
