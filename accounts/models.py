@@ -1,6 +1,5 @@
 import random
 from datetime import datetime
-
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -198,3 +197,35 @@ class PatientDetail(models.Model):
             else:
                 self.bmi_status = "Obese"
             self.save()
+
+
+class Weekday(models.Model):
+    DAY_CHOICES = [
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+        ("Sunday", "Sunday"),
+    ]
+
+    name = models.CharField(max_length=9, choices=DAY_CHOICES, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class PhysicianAvailability(models.Model):
+    physician = models.ForeignKey(
+        "Physician", on_delete=models.CASCADE, related_name="availabilities"
+    )
+    work_days = models.ManyToManyField(Weekday)
+    work_time_start = models.TimeField(null=True)
+    work_time_end = models.TimeField(null=True)
+    lunch_start = models.TimeField(null=True, blank=True)
+    lunch_end = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        days = ", ".join(day.name for day in self.work_days.all())
+        return f"{self.physician.username} available on {days}"
