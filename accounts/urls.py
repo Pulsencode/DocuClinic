@@ -13,39 +13,39 @@ from .views import (
 urlpatterns = [
     path("redirect/", base.user_redirect, name="user_redirect"),
     # Physician
-    path("list/", physician.PhysicianListView.as_view(), name="physician_list"),
-    path("<int:pk>/", physician.PhysicianDetailView.as_view(), name="physician_detail"),
-    path("create/", physician.PhysicianCreateView.as_view(), name="physician_create"),
+    path("list/physician/", physician.PhysicianListView.as_view(), name="physician_list"),
+    path("detail/physician/<int:pk>/", physician.PhysicianDetailView.as_view(), name="physician_detail"),
+    path("create/physician/", physician.PhysicianCreateView.as_view(), name="physician_create"),
     path(
-        "update/<int:pk>/",
+        "update/physician/<int:pk>/",
         physician.PhysicianUpdateView.as_view(),
         name="physician_update",
     ),
     path(
-        "delete/<int:pk>/",
+        "delete/physician/<int:pk>/",
         physician.PhysicianDeleteView.as_view(),
         name="physician_delete",
     ),
     path(
-        "physician_dashboard/",
+        "physician/dashboard/",
         physician.PhysicianDashboardView.as_view(),
         name="physician_dashboard",
     ),
     # Patient
-    path("list", patient.PatientListView.as_view(), name="patient_list"),
-    path("add/", patient.PatientCreateView.as_view(), name="patient_create"),
+    path("list/patient/", patient.PatientListView.as_view(), name="patient_list"),
+    path("add/patient/", patient.PatientCreateView.as_view(), name="patient_create"),
     path(
-        "detail/<int:pk>/", patient.PatientDetailView.as_view(), name="patient_detail"
+        "detail/patient/<int:pk>/", patient.PatientDetailView.as_view(), name="patient_detail"
     ),
     path(
-        "update/<int:pk>/", patient.PatientUpdateView.as_view(), name="patient_update"
+        "update/patient/<int:pk>/", patient.PatientUpdateView.as_view(), name="patient_update"
     ),
     path(
-        "delete/<int:pk>/", patient.PatientDeleteView.as_view(), name="patient_delete"
+        "delete/patient/<int:pk>/", patient.PatientDeleteView.as_view(), name="patient_delete"
     ),
     # Administration
     path(
-        "administration_dashboard/",
+        "administration/dashboard/",
         administration.AdminDashboard.as_view(),
         name="administration_dashboard",
     ),
