@@ -16,6 +16,7 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     {{ form.as_p }}
+                    {{ details_form.as_p }}
                     <div class="text-end">
                         <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
                         <button type="submit" id="saveButton" class="btn btn-success">Submit</button>
