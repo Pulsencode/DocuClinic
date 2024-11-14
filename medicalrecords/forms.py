@@ -27,12 +27,12 @@ class AppointmentForm(forms.ModelForm):
     )
     date = forms.DateField(
         required=True,
-        widget=forms.Select(attrs={"class": "form-control", "id": "id_date"}),
+        widget=forms.Select(attrs={"class": "form-control", "id": "id_date", "required": "required"}),
         input_formats=["%Y-%m-%d"],
     )
     time = forms.TimeField(
         required=True,
-        widget=forms.Select(attrs={"class": "form-control", "id": "id_time"}),
+        widget=forms.Select(attrs={"class": "form-control", "id": "id_time", "required": "required"}),
         input_formats=["%H:%M"],
     )
     status = forms.ChoiceField(
