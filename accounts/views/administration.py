@@ -18,7 +18,7 @@ from medicalrecords.models import Appointment
 
 
 class AdminDashboard(TemplateView):
-    template_name = "accounts/administration/admin_dashboard.html"
+    template_name = "accounts/dashboard/admin_dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -7,10 +7,20 @@ from django.views.generic import (
     DetailView,
     ListView,
     UpdateView,
+    TemplateView,
 )
 
 from ..forms import AccountantForm
 from ..models import Accountant
+
+
+class AccountantDashboard(TemplateView):
+    template_name = "accounts/dashboard/accountant_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Accountant Dashboard"
+        return context
 
 
 class AccountantListView(LoginRequiredMixin, ListView):

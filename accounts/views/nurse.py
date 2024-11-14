@@ -7,10 +7,20 @@ from django.views.generic import (
     DetailView,
     ListView,
     UpdateView,
+    TemplateView,
 )
 
 from ..forms import NurseForm
 from ..models import Nurse
+
+
+class NurseDashboard(TemplateView):
+    template_name = "accounts/dashboard/nurse_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Nurse Dashboard"
+        return context
 
 
 class NurseListView(LoginRequiredMixin, ListView):

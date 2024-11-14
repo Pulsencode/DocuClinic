@@ -99,7 +99,7 @@ class PhysicianDeleteView(LoginRequiredMixin, DeleteView):
 class PhysicianDashboardView(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = (
-        "accounts/physician/physician_dashboard.html"  # Physician dashboard template
+        "accounts/dashboard/physician_dashboard.html"  # Physician dashboard template
     )
     context_object_name = "appointments"
 

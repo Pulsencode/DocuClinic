@@ -16,8 +16,12 @@ def user_redirect(request):
 
     if hasattr(request.user, "physician"):
         return redirect("physician_dashboard")
+    elif hasattr(request.user, "nurse"):
+        return redirect("nurse_dashboard")
     elif hasattr(request.user, "accountant"):
-        return redirect("operator_dashboard")
+        return redirect("accountant_dashboard")
+    elif hasattr(request.user, "receptionist"):
+        return redirect("receptionist_dashboard")
     elif hasattr(request.user, "administrator"):
         return redirect("administration_dashboard")
     else:

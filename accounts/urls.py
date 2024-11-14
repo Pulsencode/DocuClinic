@@ -67,6 +67,11 @@ urlpatterns = [
         name="group_permissions",
     ),
     # Nurse
+    path(
+        "nurse/dashboard/",
+        nurse.NurseDashboard.as_view(),
+        name="nurse_dashboard",
+    ),
     path("list/nurse/", nurse.NurseListView.as_view(), name="nurse_list"),
     path(
         "detail/nurse/<int:pk>/", nurse.NurseDetailView.as_view(), name="nurse_detail"
@@ -83,6 +88,11 @@ urlpatterns = [
         name="nurse_delete",
     ),
     # Receptionist
+    path(
+        "receptionist/dashboard/",
+        receptionist.ReceptionistDashboard.as_view(),
+        name="receptionist_dashboard",
+    ),
     path(
         "list/receptionist/",
         receptionist.ReceptionistListView.as_view(),
@@ -109,6 +119,11 @@ urlpatterns = [
         name="receptionist_delete",
     ),
     # accountant
+    path(
+        "accountant/dashboard/",
+        accountant.AccountantDashboard.as_view(),
+        name="accountant_dashboard",
+    ),
     path(
         "list/accountant/",
         accountant.AccountantListView.as_view(),
