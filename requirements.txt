@@ -6,6 +6,8 @@ cssbeautifier==1.15.1
 distlib==0.3.9
 dj-data-generator==1.0.1
 Django==5.1.1
+django-multiselectfield==0.1.13
+django-phonenumber-field==8.0.0
 djlint==1.35.2
 EditorConfig==0.12.4
 filelock==3.16.1
@@ -17,6 +19,8 @@ json5==0.9.25
 mysqlclient==2.2.4
 nodeenv==1.9.1
 pathspec==0.12.1
+phonenumbers==8.13.49
+phonenumberslite==8.13.49
 pillow==11.0.0
 platformdirs==4.3.6
 pre_commit==4.0.1
