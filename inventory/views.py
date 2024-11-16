@@ -32,7 +32,6 @@ class InventoryDashboard(TemplateView):
         return context
 
 
-# List View for Suppliers
 class SupplierListView(ListView):
     model = Supplier
     template_name = "inventory/list_supplier.html"
@@ -44,7 +43,6 @@ class SupplierListView(ListView):
         return context
 
 
-# Create View for Suppliers
 class SupplierCreateView(CreateView):
     model = Supplier
     form_class = SupplierForm
@@ -67,7 +65,6 @@ class SupplierCreateView(CreateView):
         return super().form_invalid(form)
 
 
-# Update View for Suppliers
 class SupplierUpdateView(UpdateView):
     model = Supplier
     form_class = SupplierForm
@@ -90,7 +87,6 @@ class SupplierUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-# Delete View for Suppliers
 class SupplierDeleteView(DeleteView):
     model = Supplier
     success_url = reverse_lazy("list_supplier")
@@ -136,7 +132,6 @@ class RouteOfAdministrationCreateView(CreateView):
         return super().form_invalid(form)
 
 
-# Update View for RouteOfAdministration
 class RouteOfAdministrationUpdateView(UpdateView):
     model = RouteOfAdministration
     form_class = RouteOfAdministrationForm
@@ -159,7 +154,6 @@ class RouteOfAdministrationUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-# Delete View for RouteOfAdministration
 class RouteOfAdministrationDeleteView(DeleteView):
     model = RouteOfAdministration
     success_url = reverse_lazy("list_route_of_administration")
@@ -182,10 +176,10 @@ class MedicineListView(ListView):
         context["page_title"] = "Medicine List"
         context["routes"] = (
             RouteOfAdministration.objects.all()
-        )  # Fetch all routes for the dropdown
+        )
         context["storage_locations"] = Medicine.objects.values_list(
             "storage_location", flat=True
-        ).distinct()  # Get unique storage locations
+        ).distinct()
         return context
 
     def get_queryset(self):
@@ -204,20 +198,17 @@ class MedicineListView(ListView):
                 | Q(brand_name__icontains=query)
             )
 
-        # Route of Administration filter (linked model)
         if route:
             queryset = queryset.filter(route_of_administration__id=route)
 
-        # Storage Location filter (text field)
         if location:
             queryset = queryset.filter(storage_location__icontains=location)
 
-        # Expiration Date filter
         if expiration == "expiring_today":
             today = localdate()  # Use current local date
             queryset = queryset.filter(expiration_date=today)
         elif expiration == "expiring_this_month":
-            today = localdate()  # Use current local date
+            today = localdate()
             queryset = queryset.filter(
                 expiration_date__month=today.month, expiration_date__year=today.year
             )
@@ -233,7 +224,6 @@ class MedicineListView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-# Create View for Medicine
 class MedicineCreateView(CreateView):
     model = Medicine
     form_class = MedicineForm

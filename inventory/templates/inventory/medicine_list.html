@@ -102,10 +102,15 @@
         $('#applyFilter').on('click', function() {
             applyFilters();
         });
+
+        // Clear filters button click
+        $('#clearFilter').on('click', function() {
+            clearFilters();
+        });
         
         function applyFilters() {
             var searchQuery = $('#searchInput').val();
-            var routeQuery = $('#routeInput').val();  // Get the selected value from the dropdown
+            var routeQuery = $('#routeInput').val();
             var locationQuery = $('#locationInput').val();
             var expirationQuery = $('#expirationFilter').val();
         
@@ -114,7 +119,7 @@
                 url: "{% url 'list_medicine' %}",
                 data: {
                     'search': searchQuery,
-                    'route': routeQuery,  // Make sure this value is being passed
+                    'route': routeQuery,
                     'location': locationQuery,
                     'expiration': expirationQuery,
                 },
@@ -147,12 +152,22 @@
                     }
                 }
             });
-        }        
+        }
+        
+        // Function to clear all filters and reload the table
+        function clearFilters() {
+            $('#searchInput').val('');
+            $('#routeInput').val('');
+            $('#locationInput').val('');
+            $('#expirationFilter').val('');
+            // Re-apply filters (with no values) to fetch all data
+            applyFilters();
+        }
 
-        // Highlight matching text in the table
+
         function highlightText(text, query) {
             var regex = new RegExp('(' + query + ')', 'gi');
-            return text.replace(regex, '<span class="bg-warning">$1</span>');
+            return text.replace(regex, '<span class="bg-info">$1</span>');
         }
     });
     </script>
