@@ -28,3 +28,6 @@ use_parentheses = true
 [tool.mypy]
 django_settings_module = "core.settings"
 plugins = ["mypy_django_plugin.main"]
+
+[tool.djlint]
+profile="django"
