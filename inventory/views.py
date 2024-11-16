@@ -174,9 +174,7 @@ class MedicineListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Medicine List"
-        context["routes"] = (
-            RouteOfAdministration.objects.all()
-        )
+        context["routes"] = RouteOfAdministration.objects.all()
         context["storage_locations"] = Medicine.objects.values_list(
             "storage_location", flat=True
         ).distinct()
@@ -287,10 +285,48 @@ class MedicineSupplierListView(ListView):
     template_name = "inventory/medicine_supplier_list.html"
     context_object_name = "medicine_suppliers"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        medicine = self.request.GET.get("medicine")
+        supplier = self.request.GET.get("supplier")
+        supply_date = self.request.GET.get("supply_date")
+
+        if medicine:
+            queryset = queryset.filter(medicine_id=medicine)
+        if supplier:
+            queryset = queryset.filter(supplier_id=supplier)
+        if supply_date:
+            queryset = queryset.filter(supply_date=supply_date)
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Medicine supplier list"
+        context["medicines"] = Medicine.objects.all()
+        context["suppliers"] = Supplier.objects.all()
         return context
+
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                queryset = self.get_queryset()
+                data = {
+                    "medicine_suppliers": list(
+                        queryset.values(
+                            "id",
+                            "supplier__name",
+                            "medicine__name",
+                            "price",
+                            "supply_date",
+                        )
+                    )
+                }
+                return JsonResponse(data)
+        except Exception as e:
+            print(f"Error in AJAX view: {e}")
+            return JsonResponse({"error": str(e)}, status=500)
+
+        return super().get(request, *args, **kwargs)
 
 
 # Create View for Medicine Supplier

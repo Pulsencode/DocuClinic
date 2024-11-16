@@ -2,9 +2,40 @@
 {% load static %}
 {% block content %}
     <div class="container-fluid mb-3">
-        <div class="d-flex justify-content-end px-2 mb-1">
-            <a href="{% url "add_medicine_supplier" %}"
-               class="btn btn-primary btn-sm">Add Medicine Supplier</a>
+        <div class="d-flex flex-wrap">
+            <div class="me-3">
+                <select id="supplierFilter" class="form-select form-select-sm">
+                    <option value="">Select Supplier</option>
+                    {% for supplier in suppliers %}<option value="{{ supplier.id }}">{{ supplier.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="me-3">
+                <select id="medicineFilter" class="form-select form-select-sm">
+                    <option value="">Select Medicine</option>
+                    {% for medicine in medicines %}<option value="{{ medicine.id }}">{{ medicine.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="me-3">
+                <select id="supplierFilter" class="form-select form-select-sm">
+                    <option value="">Select Supplier</option>
+                    {% for supplier in suppliers %}<option value="{{ supplier.id }}">{{ supplier.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="me-3">
+                <input type="date"
+                       id="supplyDateFilter"
+                       class="form-control form-control-sm">
+            </div>
+            <div class="me-3">
+                <button id="applyFilter" class="btn btn-success btn-sm">Apply Filter</button>
+            </div>
+            <div class="me-3">
+                <button id="clearFilter" class="btn btn-secondary btn-sm">Clear Filter</button>
+            </div>
+            <div>
+                <a href="{% url 'add_medicine_supplier' %}"
+                   class="btn btn-primary btn-sm">Add Medicine Supplier</a>
+            </div>
         </div>
         {% if not medicine_suppliers %}
             <div class="alert alert-info text-center ms-3 me-3" role="alert">No Medicine Suppliers Registered!</div>
@@ -20,14 +51,14 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="table-group-divider">
+                <tbody id="medicine-supplier-table-bod"y class="table-group-divider">
                     {% for medicine_supplier in medicine_suppliers %}
                         <tr>
                             <td>{{ medicine_supplier.id }}</td>
                             <td>{{ medicine_supplier.supplier.name }}</td>
                             <td>{{ medicine_supplier.medicine.name }}</td>
                             <td>{{ medicine_supplier.price }}</td>
-                            <td>{{ medicine_supplier.supply_date }}</td>
+                            <td>{{ medicine_supplier.supply_date|date:"d/m/y" }}</td>
                             <td class="text-center">
                                 <a href="{% url "update_medicine_supplier" medicine_supplier.pk %}"
                                    class="btn btn-sm btn-warning"
@@ -82,3 +113,75 @@
         {% endif %}
     </div>
 {% endblock content %}
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            // Apply filters dynamically
+            $('#applyFilter').on('click', function () {
+                applyFilters();
+            });
+        
+            // Clear filters
+            $('#clearFilter').on('click', function () {
+                $('#medicineFilter').val('');
+                $('#supplierFilter').val('');
+                $('#supplyDateFilter').val('');
+                applyFilters(); // Refresh the table with no filters
+            });
+        
+            function applyFilters() {
+                const medicine = $('#medicineFilter').val();
+                const supplier = $('#supplierFilter').val();
+                const supplyDate = $('#supplyDateFilter').val();
+        
+                // Send AJAX request to fetch filtered data
+                $.ajax({
+                    url: "/inventory/medicine/supplier/", // Update if needed
+                    method: "GET",
+                    data: {
+                        medicine: medicine,
+                        supplier: supplier,
+                        supply_date: supplyDate,
+                    },
+                    success: function (response) {
+                        const tableBody = $('#medicine-supplier-table-body');
+                        tableBody.empty();
+        
+                        if (response.medicine_suppliers.length === 0) {
+                            tableBody.append('<tr><td colspan="6" class="text-center">No medicine suppliers available</td></tr>');
+                        } else {
+                            response.medicine_suppliers.forEach(function (medicineSupplier) {
+                                 // Convert supply_date to a Date object and format it as 'd/m/y'
+                                const supplyDate = new Date(medicineSupplier.supply_date);
+                                const formattedDate = `${String(supplyDate.getDate()).padStart(2, '0')}/${String(supplyDate.getMonth() + 1).padStart(2, '0')}/${String(supplyDate.getFullYear()).slice(-2)}`;
+                                const row = `
+                                    <tr>
+                                        <td>${medicineSupplier.id}</td>
+                                        <td>${medicineSupplier.supplier__name}</td>
+                                        <td>${medicineSupplier.medicine__name}</td>
+                                        <td>${medicineSupplier.price}</td>
+                                        <td>${formattedDate}</td>
+                                        <td class="text-center">
+                                            <a href="/inventory/update/medicine-supplier/${medicineSupplier.id}/" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal${medicineSupplier.id}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                                tableBody.append(row);
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", xhr.responseText);
+                        alert("Error: " + (xhr.responseText || "Unknown error"));
+                    },
+                });
+            }
+        });
+        
+
+    </script>
+{% endblock scripts %}
