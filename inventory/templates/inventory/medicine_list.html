@@ -87,6 +87,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% include "pagination.html" %}
         {% endif %}
     </div>
 {% endblock content %}
@@ -107,13 +108,13 @@
         $('#clearFilter').on('click', function() {
             clearFilters();
         });
-        
+
         function applyFilters() {
             var searchQuery = $('#searchInput').val();
             var routeQuery = $('#routeInput').val();
             var locationQuery = $('#locationInput').val();
             var expirationQuery = $('#expirationFilter').val();
-        
+
             // Send AJAX request with all the filters
             $.ajax({
                 url: "{% url 'list_medicine' %}",
@@ -127,7 +128,7 @@
                     var medicines = response.medicines;
                     var tableBody = $('#medicine-table-body');
                     tableBody.empty();
-        
+
                     if (medicines.length === 0) {
                         tableBody.append('<tr><td colspan="6" class="text-center">No medicines available</td></tr>');
                     } else {
@@ -153,7 +154,7 @@
                 }
             });
         }
-        
+
         // Function to clear all filters and reload the table
         function clearFilters() {
             $('#searchInput').val('');

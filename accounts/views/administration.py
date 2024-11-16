@@ -48,8 +48,7 @@ class AdminDashboard(TemplateView):
             {
                 "page_title": "Admin Dashboard",
                 "todays_appointment": Appointment.objects.filter(date=today).count(),
-                "total_doctors": Physician.objects.all().count(),
-                # "total_operators": Operator.objects.all().count(),
+                "total_physicians": Physician.objects.all().count(),
                 "appointment_data": all_dates,
             }
         )

@@ -1,0 +1,58 @@
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            {% comment %} <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">
+                    <span class="sr-only">First</span>
+                </a>
+            </li> {% endcomment %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page_obj.previous_page_number }}"
+                   aria-label="Previous">
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true"><i class="bi bi-chevron-double-left"></i></span>
+            </li>
+        {% endif %}
+        {% with " "|center:page_obj.paginator.num_pages as range %}
+            {% for _ in range %}
+                {% with forloop.counter as i %}
+                    {% if i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
+                        {% if page_obj.number == i %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ i }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        {% endwith %}
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page_obj.next_page_number }}"
+                   aria-label="Next">
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+            {% comment %} <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                    <span class="sr-only">Last</span>
+                </a>
+            </li> {% endcomment %}
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true"><i class="bi bi-chevron-double-right"></i></span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+<p class="text-center">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>

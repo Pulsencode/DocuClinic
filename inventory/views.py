@@ -1,5 +1,8 @@
 from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
 from django.urls import reverse_lazy
+from django.utils.timezone import localdate
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -15,9 +18,6 @@ from .forms import (
     SupplierForm,
 )
 from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
-from django.db.models import Q
-from django.http import JsonResponse
-from django.utils.timezone import localdate
 
 
 class InventoryDashboard(TemplateView):
@@ -33,6 +33,8 @@ class InventoryDashboard(TemplateView):
 
 
 class SupplierListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Supplier
     template_name = "inventory/list_supplier.html"
     context_object_name = "suppliers"
@@ -100,6 +102,8 @@ class SupplierDeleteView(DeleteView):
 
 
 class RouteOfAdministrationListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = RouteOfAdministration
     template_name = "inventory/routes_of_administration_list.html"
     context_object_name = "routes"
@@ -167,6 +171,8 @@ class RouteOfAdministrationDeleteView(DeleteView):
 
 
 class MedicineListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Medicine
     template_name = "inventory/medicine_list.html"
     context_object_name = "medicines"
@@ -281,6 +287,8 @@ class MedicineDeleteView(DeleteView):
 
 
 class MedicineSupplierListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = MedicineSupplier
     template_name = "inventory/medicine_supplier_list.html"
     context_object_name = "medicine_suppliers"

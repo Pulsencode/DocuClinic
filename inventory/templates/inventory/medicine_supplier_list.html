@@ -110,6 +110,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% include "pagination.html" %}
         {% endif %}
     </div>
 {% endblock content %}
@@ -120,7 +121,7 @@
             $('#applyFilter').on('click', function () {
                 applyFilters();
             });
-        
+
             // Clear filters
             $('#clearFilter').on('click', function () {
                 $('#medicineFilter').val('');
@@ -128,12 +129,12 @@
                 $('#supplyDateFilter').val('');
                 applyFilters(); // Refresh the table with no filters
             });
-        
+
             function applyFilters() {
                 const medicine = $('#medicineFilter').val();
                 const supplier = $('#supplierFilter').val();
                 const supplyDate = $('#supplyDateFilter').val();
-        
+
                 // Send AJAX request to fetch filtered data
                 $.ajax({
                     url: "/inventory/medicine/supplier/", // Update if needed
@@ -146,7 +147,7 @@
                     success: function (response) {
                         const tableBody = $('#medicine-supplier-table-body');
                         tableBody.empty();
-        
+
                         if (response.medicine_suppliers.length === 0) {
                             tableBody.append('<tr><td colspan="6" class="text-center">No medicine suppliers available</td></tr>');
                         } else {
@@ -181,7 +182,7 @@
                 });
             }
         });
-        
+
 
     </script>
 {% endblock scripts %}

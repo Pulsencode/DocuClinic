@@ -16,6 +16,8 @@ from ..forms import PhysicianForm
 
 
 class PhysicianListView(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Physician
     template_name = "accounts/physician/physicians_list.html"
     context_object_name = "physicians"
