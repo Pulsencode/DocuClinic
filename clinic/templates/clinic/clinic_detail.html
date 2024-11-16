@@ -1,0 +1,66 @@
+{% extends "general_base.html" %}
+{% block content %}
+    <h1>{{ page_title }}</h1>
+    <div class="clinic-detail">
+        <h2>{{ clinic.name }}</h2>
+        <div class="clinic-info">
+            <p>
+                <strong>Address:</strong> {{ clinic.address }}
+            </p>
+            <p>
+                <strong>Email:</strong> {{ clinic.email }}
+            </p>
+            <p>
+                <strong>Contact Number:</strong> {{ clinic.contact_number }}
+            </p>
+            <p>
+                <strong>GST Number:</strong> {{ clinic.gst_number }}
+            </p>
+            <p>
+                <strong>License Number:</strong> {{ clinic.license_number }}
+            </p>
+            <p>
+                <strong>Consultation Duration:</strong> {{ clinic.consultation_duration }} minutes
+            </p>
+        </div>
+        {% comment %} <div class="clinic-logo">
+            {% if clinic.logo %}
+                <img src="{{ clinic.logo.url }}" alt="{{ clinic.name }} Logo" class="clinic-logo-img">
+            {% else %}
+                <img src="{% static 'default_clinic_logo.webp' %}" alt="Default Logo" class="clinic-logo-img">
+            {% endif %}
+        </div> {% endcomment %}
+        <div class="actions">
+            <a href="{% url 'clinic_update' pk=clinic.pk %}" class="btn btn-primary">Edit</a>
+            <!-- Trigger Modal for Delete -->
+            <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        </div>
+    </div>
+    <!-- Modal for Delete Confirmation -->
+    <div class="modal fade"
+         id="deleteModal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure you want to delete this clinic? This action cannot be undone.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <!-- Form for Delete Confirmation -->
+                    <form action="{% url 'clinic_delete' pk=clinic.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
