@@ -1,214 +1,138 @@
 {% extends "general_base.html" %}
 {% block page_specific_links %}
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 {% endblock page_specific_links %}
-
 {% block content %}
-<div class="container mt-2">
-    <div class="container col-8 border rounded-4">
-        <div class="text-center py-2">
-            <h4>{{ action }} {{ model }}</h4>
-        </div>
-        <form method="post" id="form">
-            {% csrf_token %}
-            <div class="mb-3">
-                {{ form.as_p }}
-                <div class="d-grid gap-2 d-md-block text-end">
-                    <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
-                    <button type="submit" class="btn btn-primary w-25">Add {{ model }}</button>
-                </div>
+    <div class="container mt-2">
+        <div class="container col-8 border rounded-4">
+            <div class="text-center py-2">
+                <h4>{{ action }} {{ model }}</h4>
             </div>
-        </form>
+            <form method="post" id="form">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 d-md-block text-end">
+                        <button type="button" class="btn btn-danger" onclick="goBackAndRefresh()">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="clearButton">Clear</button>
+                        <button type="submit" class="btn btn-primary w-25">Add {{ model }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock content %}
-
 {% block scripts %}
-<script>
-$(document).ready(function() {
-    let availableTimeSlots = [];
-
-    // Function to check VIP status and handle discount field visibility
-    function checkVipStatus(patientId) {
-        if (patientId) {
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            $.ajax({
-                url: '{% url "check_patient_vip" %}',
-                type: 'GET',
-                data: { 'patient_id': patientId },
-                headers: { 'X-CSRFToken': csrftoken },
-                success: function(response) {
-                    if (response.is_vip) {
-                        $('#id_discount').closest('p').show();
-                    } else {
-                        $('#id_discount').closest('p').hide();
-                        $('#id_discount').val('');
-                    }
-                },
-                error: function(xhr, errmsg, err) {
-                    console.error('Error checking VIP status:', errmsg);
-                    $('#id_discount').closest('p').hide();
-                    $('#id_discount').val('');
-                }
-            });
-        } else {
-            $('#id_discount').closest('p').hide();
-            $('#id_discount').val('');
-        }
-    }
-
-    // Function to fetch available dates - with improved error handling and debugging
-    function fetchAvailableDates() {
-        const physicianId = $("#id_physician").val();
-        console.log("Fetching dates for physician:", physicianId);
-        
-        // Reset date and time fields
-        $("#id_date").empty().append('<option value="">Select Date</option>');
-        $("#id_time").empty().append('<option value="">Select Time</option>');
-        
-        if (physicianId) {
-            const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-            
-            $.ajax({
-                url: '{% url "get_available_dates" %}',
-                type: 'GET',
-                data: { 'physician_id': physicianId }, // Ensure parameter name matches backend
-                dataType: "json",
-                headers: { 
-                    "X-CSRFToken": csrftoken,
-                    "Accept": "application/json"
-                },
-                beforeSend: function(xhr) {
-                    console.log("Making AJAX request for physician:", physicianId);
-                    $("#id_date").html('<option value="">Loading dates...</option>');
-                },
-                success: function(response) {
-                    console.log("Success - Full response:", response);
-                    $("#id_date").empty().append('<option value="">Select Date</option>');
-                    
-                    if (response && response.available_dates && Array.isArray(response.available_dates)) {
-                        availableTimeSlots = response.available_dates;
-                        
-                        if (availableTimeSlots.length === 0) {
-                            $("#id_date").html("<option value=''>No available dates</option>");
-                            return;
-                        }
-                        
-                        response.available_dates.forEach(function(item) {
-                            if (item && item.date) {
-                                try {
-                                    const date = new Date(item.date);
-                                    const formattedDate = date.toLocaleDateString('en-US', {
-                                        weekday: 'long',
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    });
-                                    $("#id_date").append(
-                                        `<option value="${item.date}">${formattedDate}</option>`
-                                    );
-                                } catch (error) {
-                                    console.error("Date formatting error:", error, "for date:", item.date);
-                                }
-                            }
-                        });
-                    } else {
-                        console.error("Invalid response format:", response);
-                        $("#id_date").html("<option value=''>Invalid date format received</option>");
-                    }
-                },
-                error: function(xhr, errmsg, err) {
-                    console.error("Ajax Error:", {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        responseText: xhr.responseText,
-                        error: err
-                    });
-                    
-                    let errorMessage = "Error loading dates";
-                    try {
-                        const errorResponse = JSON.parse(xhr.responseText);
-                        if (errorResponse.error) {
-                            errorMessage = errorResponse.error;
-                        }
-                    } catch (e) {
-                        console.error("Error parsing error response:", e);
-                    }
-                    
-                    $("#id_date").html(`<option value=''>${errorMessage}</option>`);
-                    $("#id_time").html("<option value=''>Select Time</option>");
-                }
+    <script>
+    $(document).ready(function () {
+        let availableTimeSlots = [];
+  
+        // Format dates for display
+          function formatDateForDisplay(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
             });
         }
-    }
-
-    // Function to populate time slots
-    function populateTimeSlots(selectedDate) {
-        console.log("Populating time slots for date:", selectedDate);
-        $("#id_time").empty().append('<option value="">Select Time</option>');
-        
-        if (selectedDate) {
-            const dateData = availableTimeSlots.find(d => d.date === selectedDate);
-            if (dateData && dateData.times) {
-                console.log("Found time slots:", dateData.times);
-                dateData.times.forEach(function (time) {
-                    const timeValue = time.start;
-                    const timeDisplay = `${time.start} - ${time.end}`;
-                    $("#id_time").append(
-                        `<option value="${timeValue}">${timeDisplay}</option>`
-                    );
-                });
-            } else {
-                console.log("No time slots found for selected date");
-                $("#id_time").html("<option value=''>No available times</option>");
+    
+        // Prepopulate the date and time fields
+        function prepopulateDateTime(savedDate, savedTime) {
+            if (savedDate) {
+                console.log("Pre-selecting saved date:", savedDate);
+                fetchAvailableDates(savedDate, savedTime);
             }
         }
-    }
-
-    // Event Handlers
-    // Check VIP status on page load if patient is already selected
-    const initialPatientId = $('#id_patient').val();
-    checkVipStatus(initialPatientId);
-
-    // Initialize dates if physician is already selected
-    const initialPhysicianId = $("#id_physician").val();
-    if (initialPhysicianId) {
-        console.log("Initial physician ID:", initialPhysicianId);
-        fetchAvailableDates();
-    }
-
-    // When patient selection changes
-    $('#id_patient').change(function() {
-        const patientId = $(this).val();
-        checkVipStatus(patientId);
+    
+        // Fetch available dates and pre-select the saved date and time
+        function fetchAvailableDates(savedDate = null, savedTime = null) {
+            const physicianId = $("#id_physician").val();
+    
+            $("#id_date").empty().append('<option value="">Select Date</option>');
+            $("#id_time").empty().append('<option value="">Select Time</option>');
+    
+            if (physicianId) {
+                const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+                $.ajax({
+                    url: '{% url "get_available_dates" %}',
+                    type: "GET",
+                    data: { physician_id: physicianId },
+                    dataType: "json",
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        Accept: "application/json",
+                    },
+                    success: function (response) {
+                        console.log("Success - Full response:", response);
+    
+                        if (response.available_dates) {
+                            availableTimeSlots = response.available_dates;
+    
+                            response.available_dates.forEach(function (item) {
+                                if (item && item.date) {
+                                    const formattedDate = formatDateForDisplay(item.date);
+                                    const isSelected = savedDate === item.date ? "selected" : "";
+                                    $("#id_date").append(
+                                        `<option value="${item.date}" ${isSelected}>${formattedDate}</option>`
+                                    );
+    
+                                    // Populate time slots for the selected date
+                                    if (isSelected && savedTime) {
+                                        populateTimeSlots(savedDate, savedTime);
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.error("Error fetching dates:", errmsg);
+                    },
+                });
+            }
+        }
+    
+        // Populate time slots and pre-select the saved time
+        function populateTimeSlots(selectedDate, savedTime = null) {
+            $("#id_time").empty().append('<option value="">Select Time</option>');
+    
+            if (selectedDate) {
+                const dateData = availableTimeSlots.find((d) => d.date === selectedDate);
+                if (dateData && dateData.times) {
+                    dateData.times.forEach(function (time) {
+                        const isSelected = savedTime === time.start ? "selected" : "";
+                        $("#id_time").append(
+                            `<option value="${time.start}" ${isSelected}>${time.start} - ${time.end}</option>`
+                        );
+                    });
+                }
+            }
+        }
+    
+        // Initialize date and time fields on page load
+        const savedDate = "{{ form.date.value|escapejs }}";
+        const savedTime = "{{ form.time.value|escapejs }}";
+        prepopulateDateTime(savedDate, savedTime);
+    
+        // Fetch available dates when physician changes
+        $("#id_physician").change(function () {
+            fetchAvailableDates();
+        });
+    
+        // Fetch time slots when date changes
+        $("#id_date").change(function () {
+            populateTimeSlots($(this).val());
+        });
+    
+        // Clear button functionality
+        $("#clearButton").click(function () {
+            document.getElementById("form").reset();
+            $("#id_date").html('<option value="">Select Date</option>');
+            $("#id_time").html('<option value="">Select Time</option>');
+            availableTimeSlots = [];
+        });
     });
-
-    // When physician selection changes
-    $("#id_physician").change(function () {
-        console.log("Physician changed to:", $(this).val());
-        fetchAvailableDates();
-    });
-
-    // When date selection changes
-    $("#id_date").change(function () {
-        console.log("Date changed to:", $(this).val());
-        populateTimeSlots($(this).val());
-    });
-
-    // Clear button functionality
-    $('#clearButton').click(function() {
-        document.getElementById('form').reset();
-        $('#id_discount').closest('p').hide();
-        $("#id_date").html('<option value="">Select Date</option>');
-        $("#id_time").html('<option value="">Select Time</option>');
-        availableTimeSlots = [];
-    });
-});
-
-// Function for Cancel button
-function goBackAndRefresh() {
-    window.location.href = document.referrer;
-}
-</script>
+    
+    </script>
 {% endblock scripts %}
