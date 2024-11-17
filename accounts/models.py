@@ -113,8 +113,6 @@ class Receptionist(User):
 
 
 class Patient(User):
-    is_vip = models.BooleanField(default=False)
-
     class Meta:
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
@@ -151,7 +149,7 @@ class PatientDetail(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    vip_status = models.BooleanField(default=False)
+    is_vip = models.BooleanField(default=False)
     # condition = models.TextField(max_length=100, null=True)
     age = models.PositiveIntegerField(null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)

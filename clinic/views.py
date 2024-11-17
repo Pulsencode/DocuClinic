@@ -1,8 +1,9 @@
-from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
-from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from .models import Clinic
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+
 from .forms import ClinicForm
+from .models import Clinic
 
 
 class ClinicCreateView(CreateView):
@@ -11,7 +12,7 @@ class ClinicCreateView(CreateView):
     template_name = "general_create_update.html"
 
     def get_success_url(self):
-        return reverse('clinic_detail', kwargs={'pk': self.object.pk})
+        return reverse("clinic_detail", kwargs={"pk": self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -35,7 +36,7 @@ class ClinicUpdateView(UpdateView):
     template_name = "general_create_update.html"
 
     def get_success_url(self):
-        return reverse('clinic_detail', kwargs={'pk': self.object.pk})
+        return reverse("clinic_detail", kwargs={"pk": self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -55,9 +56,7 @@ class ClinicUpdateView(UpdateView):
 
 class ClinicDetailView(DetailView):
     model = Clinic
-    template_name = (
-        "clinic/clinic_detail.html"
-    )
+    template_name = "clinic/clinic_detail.html"
     context_object_name = "clinic"
 
     def get_context_data(self, **kwargs):

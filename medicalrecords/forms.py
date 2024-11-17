@@ -1,7 +1,8 @@
 from django import forms
 
-from accounts.models import Physician, Patient, PhysicianAvailability
-from .models import Appointment, PrescriptionMedicine, Prescription, Discount
+from accounts.models import Patient, Physician, PhysicianAvailability
+
+from .models import Appointment, Discount, Prescription, PrescriptionMedicine
 
 
 # forms.py
@@ -27,12 +28,16 @@ class AppointmentForm(forms.ModelForm):
     )
     date = forms.DateField(
         required=True,
-        widget=forms.Select(attrs={"class": "form-control", "id": "id_date", "required": "required"}),
+        widget=forms.Select(
+            attrs={"class": "form-control", "id": "id_date", "required": "required"}
+        ),
         input_formats=["%Y-%m-%d"],
     )
     time = forms.TimeField(
         required=True,
-        widget=forms.Select(attrs={"class": "form-control", "id": "id_time", "required": "required"}),
+        widget=forms.Select(
+            attrs={"class": "form-control", "id": "id_time", "required": "required"}
+        ),
         input_formats=["%H:%M"],
     )
     status = forms.ChoiceField(

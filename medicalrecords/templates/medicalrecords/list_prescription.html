@@ -39,6 +39,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% include "pagination.html" %}
         {% else %}
             <div class="alert alert-info text-center ms-3 me-3" role="alert">No Prescription !</div>
         {% endif %}

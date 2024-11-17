@@ -1,12 +1,15 @@
 import logging
-
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.contrib import messages
 from django.forms import modelformset_factory
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.timezone import make_aware
+from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -21,15 +24,13 @@ from inventory.models import Medicine
 
 from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
 from .models import Appointment, Prescription, PrescriptionMedicine
-from django.http import JsonResponse
-from datetime import datetime, timedelta
-from django.views.decorators.http import require_http_methods
-from django.utils.timezone import make_aware
 
 logger = logging.getLogger(__name__)
 
 
 class AppointmentListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Appointment
     template_name = "medicalrecords/list_appointments.html"
     context_object_name = "all_appointments"
@@ -112,7 +113,7 @@ def check_patient_vip_status(request):
         print("try")
         return JsonResponse(
             {
-                "is_vip": patient_detail.vip_status,
+                "is_vip": patient_detail.is_vip,
             }
         )
     except PatientDetail.DoesNotExist:
@@ -314,6 +315,8 @@ class AppointmentDeleteView(DeleteView):
 
 
 class PrescriptionListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Prescription
     template_name = "medicalrecords/list_prescription.html"
     context_object_name = "prescriptions"
@@ -350,9 +353,9 @@ class PrescriptionCreateView(FormView):
 
         # Set patient and physician information from the appointment
         context["patient"] = appointment.patient
-        context["physician"] = (
-            appointment.physician
-        )  # No need to show this in the template
+        context[
+            "physician"
+        ] = appointment.physician  # No need to show this in the template
 
         # Initialize the PrescriptionMedicine formset
         PrescriptionMedicineFormSet = modelformset_factory(

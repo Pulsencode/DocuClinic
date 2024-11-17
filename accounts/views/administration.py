@@ -13,7 +13,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Physician
+from accounts.models import Accountant, Nurse, Patient, Physician, Receptionist
 from medicalrecords.models import Appointment
 
 
@@ -49,6 +49,10 @@ class AdminDashboard(TemplateView):
                 "page_title": "Admin Dashboard",
                 "todays_appointment": Appointment.objects.filter(date=today).count(),
                 "total_physicians": Physician.objects.all().count(),
+                "total_nurses": Nurse.objects.all().count(),
+                "total_accountants": Accountant.objects.all().count(),
+                "total_receptionists": Receptionist.objects.all().count(),
+                "total_patients": Patient.objects.all().count(),
                 "appointment_data": all_dates,
             }
         )
@@ -57,6 +61,8 @@ class AdminDashboard(TemplateView):
 
 
 class GroupListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Group
     template_name = "accounts/administration/group_list.html"
     context_object_name = "groups"

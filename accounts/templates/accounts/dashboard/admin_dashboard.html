@@ -5,56 +5,113 @@
         <div class="row g-3 mb-4">
             <!-- Total Physicians Card -->
             <div class="col-xl-4 col-md-6">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Physicians</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_physicians|default:"0" }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-clipboard2-pulse fs-2 text-gray-300"></i>
+                <a href="{% url 'physician_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Physicians</div>
+                                    <div class="h5 mb-0 font-weight-bold">{{ total_physicians|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-clipboard2-pulse fs-2 text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-
-            <!-- Total Operators Card -->
+            <!-- Total Nurses Card -->
             <div class="col-xl-4 col-md-6">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Operators</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_operators|default:"0" }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-person-workspace fs-2 text-gray-300"></i>
+                <a href="{% url 'nurse_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Nurses</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_nurses|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-thermometer-half fs-2 text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-
+            <!-- Total Accountants Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'accountant_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Accountants</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_accountants|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-wallet2 fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Total Receptionists Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'receptionist_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Receptionists</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_receptionists|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-person-workspace fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Total Patients Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'patient_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Patients</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_patients|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-person-heart fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
             <!-- Today's Appointments Card -->
             <div class="col-xl-4 col-md-6">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today's Appointments</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ todays_appointment|default:"0" }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-calendar2-check fs-2 text-gray-300"></i>
+                <a href="{% url 'list_appointments' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today's Appointments</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ todays_appointment|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-calendar2-check fs-2 text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
-
         <!-- Chart Row -->
         <div class="row">
             <div class="col-12">
@@ -79,9 +136,7 @@
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 ['Date', 'Appointments'],
-                {% for date, count in appointment_data %}
-                    ['{{ date|date:"M d" }}', {{ count }}],
-                {% endfor %}
+                {% for date, count in appointment_data %}['{{ date|date:"M d" }}', {{ count }}],{% endfor %}
             ]);
 
             var options = {

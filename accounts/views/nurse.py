@@ -6,8 +6,8 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
-    UpdateView,
     TemplateView,
+    UpdateView,
 )
 
 from ..forms import NurseForm
@@ -24,6 +24,8 @@ class NurseDashboard(TemplateView):
 
 
 class NurseListView(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Nurse
     template_name = "accounts/list_view.html"
     context_object_name = "users"

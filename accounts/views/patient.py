@@ -1,5 +1,5 @@
 from django.contrib import messages
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -8,13 +8,16 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 from accounts.models import Patient
+
 from ..forms import PatientDetailsForm, PatientForm
 from ..models import PatientDetail
 
 
 class PatientListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Patient
     template_name = "accounts/patient/patient_list.html"
     context_object_name = "patients"
