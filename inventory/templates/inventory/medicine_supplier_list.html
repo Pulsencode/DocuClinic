@@ -2,7 +2,11 @@
 {% load static %}
 {% block content %}
     <div class="container-fluid mb-3">
-        <div class="d-flex flex-wrap">
+        <div class="text-end mt-2">
+            <a href="{% url 'add_medicine_supplier' %}"
+               class="btn btn-primary btn-sm">Add Medicine Supplier</a>
+        </div>
+        <div class="d-flex flex-wrap mb-3">
             <div class="me-3">
                 <select id="supplierFilter" class="form-select form-select-sm">
                     <option value="">Select Supplier</option>
@@ -15,12 +19,7 @@
                     {% for medicine in medicines %}<option value="{{ medicine.id }}">{{ medicine.name }}</option>{% endfor %}
                 </select>
             </div>
-            <div class="me-3">
-                <select id="supplierFilter" class="form-select form-select-sm">
-                    <option value="">Select Supplier</option>
-                    {% for supplier in suppliers %}<option value="{{ supplier.id }}">{{ supplier.name }}</option>{% endfor %}
-                </select>
-            </div>
+            
             <div class="me-3">
                 <input type="date"
                        id="supplyDateFilter"
@@ -32,10 +31,7 @@
             <div class="me-3">
                 <button id="clearFilter" class="btn btn-secondary btn-sm">Clear Filter</button>
             </div>
-            <div>
-                <a href="{% url 'add_medicine_supplier' %}"
-                   class="btn btn-primary btn-sm">Add Medicine Supplier</a>
-            </div>
+            
         </div>
         {% if not medicine_suppliers %}
             <div class="alert alert-info text-center ms-3 me-3" role="alert">No Medicine Suppliers Registered!</div>
@@ -51,7 +47,7 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="medicine-supplier-table-bod"y class="table-group-divider">
+                <tbody id="medicine-supplier-table-body" class="table-group-divider">
                     {% for medicine_supplier in medicine_suppliers %}
                         <tr>
                             <td>{{ medicine_supplier.id }}</td>
