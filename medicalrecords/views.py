@@ -111,7 +111,6 @@ def check_patient_vip_status(request):
     try:
         # Get the patient's detail through the relationship
         patient_detail = PatientDetail.objects.get(patient_id=patient_id)
-        print("try")
         return JsonResponse(
             {
                 "is_vip": patient_detail.is_vip,
