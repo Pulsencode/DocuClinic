@@ -20,6 +20,7 @@ from django.views.generic import (
 )
 
 from accounts.models import Patient, PatientDetail, Physician, PhysicianAvailability
+from clinic.models import Clinic
 from inventory.models import Medicine
 
 from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
@@ -143,6 +144,10 @@ def get_available_dates(request):
                 {"error": "No availability found for this physician."}, status=404
             )
 
+        # Get the consultation duration from the first clinic (assuming single clinic system)
+        clinic = Clinic.objects.first()
+        consultation_duration = clinic.consultation_duration if clinic else 30
+
         work_days = physician_availability.work_days.all()
 
         # Convert day names to weekday integers (0 = Monday, 6 = Sunday)
@@ -168,10 +173,16 @@ def get_available_dates(request):
 
         time_slots = []
         current_time = work_start
+
         while current_time < work_end:
-            next_time = (
-                datetime.combine(datetime.today(), current_time) + timedelta(minutes=30)
-            ).time()
+            # Calculate next time slot based on clinic's consultation duration
+            current_datetime = datetime.combine(datetime.today(), current_time)
+            next_datetime = current_datetime + timedelta(minutes=consultation_duration)
+            next_time = next_datetime.time()
+
+            # If the next time would go beyond work_end, break the loop
+            if next_time > work_end:
+                break
 
             if lunch_start and lunch_end:
                 lunch_start_time = make_aware(
@@ -206,7 +217,8 @@ def get_available_dates(request):
 
         today = datetime.now().date()
         available_dates = []
-        for i in range(30):
+
+        for i in range(30):  # Next 30 days
             day = today + timedelta(days=i)
             if day.weekday() in work_days_indices:
                 available_slots_for_day = [
