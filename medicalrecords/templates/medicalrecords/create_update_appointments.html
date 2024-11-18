@@ -26,17 +26,7 @@
     <script>
         $(document).ready(function () {
             let availableTimeSlots = [];
-          
-            // Format dates for display
-            function formatDateForDisplay(dateStr) {
-                const date = new Date(dateStr);
-                return date.toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                });
-            }
-        
+            
             // Check VIP status and handle discount field visibility
             function checkVipStatus(patientId) {
                 if (patientId) {
@@ -66,149 +56,123 @@
                 }
             }
         
-            // Prepopulate the date and time fields for updates
-            function prepopulateDateTime(savedDate, savedTime) {
-                if (savedDate) {
-                    console.log("Pre-selecting saved date:", savedDate);
-                    console.log("Pre-selecting saved time:", savedTime);
-                    const physicianId = $("#id_physician").val();
-                    if (physicianId) {
-                        // For updates, we want to keep the time field enabled
-                        $("#id_time").prop('disabled', false);
-                        fetchAvailableDates(savedDate, savedTime);
-                    }
-                }
-            }
-        
             function fetchAvailableDates(savedDate = null, savedTime = null) {
                 const physicianId = $("#id_physician").val();
-                const isUpdate = savedDate && savedTime;
+                if (!physicianId) return;
             
-                // Always enable time selection during updates
-                $("#id_time").prop('disabled', false);
+                const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                $.ajax({
+                    url: '{% url "get_available_dates" %}',
+                    type: "GET",
+                    data: { physician_id: physicianId },
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        Accept: "application/json",
+                    },
+                    success: function (response) {
+                        if (response.available_dates) {
+                            availableTimeSlots = response.available_dates;
+                            
+                            // Populate dates dropdown
+                            $("#id_date").empty().append('<option value="">Select Date</option>');
+                            response.available_dates.forEach(function (item) {
+                                if (item?.date) {
+                                    const date = new Date(item.date);
+                                    const formattedDate = date.toLocaleDateString("en-US", {
+                                        weekday: "short",
+                                        month: "short",
+                                        day: "numeric",
+                                    });
+                                    $("#id_date").append(
+                                        `<option value="${item.date}">${formattedDate}</option>`
+                                    );
+                                }
+                            });
             
-                $("#id_date").empty().append('<option value="">Select Date</option>');
-                if (!isUpdate) {
-                    $("#id_time").empty().append('<option value="">Select Time</option>');
-                }
-            
-                if (physicianId) {
-                    const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-            
-                    $.ajax({
-                        url: '{% url "get_available_dates" %}',
-                        type: "GET",
-                        data: { physician_id: physicianId },
-                        dataType: "json",
-                        headers: {
-                            "X-CSRFToken": csrftoken,
-                            Accept: "application/json",
-                        },
-                        success: function (response) {
-                            console.log("Success - Full response:", response);
-            
-                            if (response.available_dates) {
-                                availableTimeSlots = response.available_dates;
-            
-                                // Add available dates to the dropdown
-                                response.available_dates.forEach(function (item) {
-                                    if (item && item.date) {
-                                        const formattedDate = formatDateForDisplay(item.date);
-                                        const isSelected = savedDate === item.date ? "selected" : "";
-                                        $("#id_date").append(
-                                            `<option value="${item.date}" ${isSelected}>${formattedDate}</option>`
-                                        );
-                                    }
-                                });
-            
-                                // For updates, we want to ensure the saved date is selected
-                                if (isUpdate) {
-                                    $("#id_date").val(savedDate);
-                                    populateTimeSlots(savedDate, savedTime, true);
+                            // If we have a saved date and time
+                            if (savedDate && savedTime) {
+                                // Set the date field value
+                                $("#id_date").val(savedDate);
+                                
+                                // First, display the saved time in HH:mm - HH:mm format
+                                const savedTimeHHMM = savedTime.substring(0, 5);
+                                // Calculate end time (assuming 15-minute slots)
+                                const startTime = new Date(`2000-01-01T${savedTimeHHMM}`);
+                                const endTime = new Date(startTime.getTime() + 15 * 60000);
+                                const endTimeStr = endTime.toTimeString().substring(0, 5);
+                                const timeDisplay = `${savedTimeHHMM} - ${endTimeStr}`;
+                                
+                                // Set the time dropdown with the formatted time
+                                $("#id_time").empty().append(
+                                    `<option value="${savedTimeHHMM}" selected>${timeDisplay}</option>`
+                                );
+                                
+                                // Then populate the rest of the available times
+                                const dateData = availableTimeSlots.find(d => d.date === savedDate);
+                                if (dateData?.times) {
+                                    dateData.times.forEach(function (time) {
+                                        if (time.start !== savedTimeHHMM) {  // Don't add the saved time again
+                                            const timeRange = `${time.start} - ${time.end}`;
+                                            $("#id_time").append(
+                                                `<option value="${time.start}">${timeRange}</option>`
+                                            );
+                                        }
+                                    });
                                 }
                             }
-                        },
-                        error: function (xhr, errmsg, err) {
-                            console.error("Error fetching dates:", errmsg);
-                        },
-                    });
-                }
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.error("Error fetching dates:", errmsg);
+                    },
+                });
             }
-            
         
-            function populateTimeSlots(selectedDate, savedTime = null, isUpdate = false) {
-                // Always enable time selection during updates
-                $("#id_time").prop('disabled', false);
-            
-                if (!isUpdate) {
-                    $("#id_time").empty().append('<option value="">Select Time</option>');
-                }
-            
-                if (selectedDate) {
-                    const dateData = availableTimeSlots.find((d) => d.date === selectedDate);
-                    if (dateData && dateData.times && dateData.times.length > 0) {
-                        dateData.times.forEach(function (time) {
-                            const timeRange = `${time.start} - ${time.end}`;
-                            const isSelected = savedTime === timeRange ? "selected" : "";
-                            $("#id_time").append(
-                                `<option value="${time.start}" ${isSelected}>${timeRange}</option>`
-                            );
-                        });
-                    } else if (!isUpdate) {
-                        $("#id_time").html('<option value="">No available times</option>');
-                    }
-                } else if (!isUpdate) {
-                    $("#id_time").prop('disabled', true);
-                }
-            }
-            
-        
-            // Initialize everything
+            // Initialize
             const savedDate = "{{ form.date.value|escapejs }}";
             const savedTime = "{{ form.time.value|escapejs }}";
             
-            // Check VIP status on page load if patient is already selected
-            const initialPatientId = $('#id_patient').val();
-            checkVipStatus(initialPatientId);
+            // Check initial VIP status
+            checkVipStatus($('#id_patient').val());
             
-            // Handle saved instance
+            // Load dates if physician is selected
             if ($("#id_physician").val()) {
-                prepopulateDateTime(savedDate, savedTime);
+                fetchAvailableDates(savedDate, savedTime);
             }
         
             // Event Handlers
             $('#id_patient').change(function() {
-                const patientId = $(this).val();
-                checkVipStatus(patientId);
+                checkVipStatus($(this).val());
             });
         
-            $("#id_physician").change(function () {
-                // Reset saved values when physician changes
+            $("#id_physician").change(function() {
                 fetchAvailableDates();
             });
         
-            $("#id_date").change(function () {
+            $("#id_date").change(function() {
                 const selectedDate = $(this).val();
-                if (selectedDate) {
-                    populateTimeSlots(selectedDate);
-                } else {
-                    $("#id_time").prop('disabled', true);
-                    $("#id_time").html('<option value="">Select Date First</option>');
+                const dateData = availableTimeSlots.find(d => d.date === selectedDate);
+                
+                $("#id_time").empty().append('<option value="">Select Time</option>');
+                if (dateData?.times) {
+                    dateData.times.forEach(function (time) {
+                        const timeRange = `${time.start} - ${time.end}`;
+                        $("#id_time").append(`<option value="${time.start}">${timeRange}</option>`);
+                    });
                 }
             });
         
             // Clear button functionality
-            $("#clearButton").click(function () {
+            $("#clearButton").click(function() {
                 document.getElementById("form").reset();
                 $("#id_date").html('<option value="">Select Date</option>');
-                $("#id_time").html('<option value="">Select Time</option>').prop('disabled', true);
+                $("#id_time").html('<option value="">Select Time</option>');
                 $('#id_discount').closest('p').hide();
                 $('#id_discount').val('');
                 availableTimeSlots = [];
             });
-        }); 
+        });
         
-        // Function for Cancel button
         function goBackAndRefresh() {
             window.location.href = document.referrer;
         }
