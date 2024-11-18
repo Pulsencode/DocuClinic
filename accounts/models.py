@@ -181,11 +181,12 @@ class PatientDetail(models.Model):
         return f"{self.pulse} bpm"
 
     def calculate_bmi(self):
-        if self.height_in_centimeter and self.weight:
+        if self.height_in_centimeter and self.weight_in_kg:
             height_in_meters = self.height_in_centimeter / 100
             bmi = self.weight_in_kg / (height_in_meters**2)
             self.bmi = round(bmi, 2)
             self.save()
+            return self.bmi
 
     def determine_bmi_status(self):
         if self.bmi:
@@ -198,6 +199,7 @@ class PatientDetail(models.Model):
             else:
                 self.bmi_status = "Obese"
             self.save()
+            return self.bmi_status
 
 
 class Weekday(models.Model):
