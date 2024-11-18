@@ -269,8 +269,6 @@ class PatientDetailsForm(forms.ModelForm):
             "temperature",
             "temperature_method",
             "pulse",
-            "bmi",
-            "bmi_status",
             "blood_type",
             "blood_pressure_systolic",
             "blood_pressure_diastolic",
@@ -288,8 +286,6 @@ class PatientDetailsForm(forms.ModelForm):
             "temperature": forms.NumberInput(attrs={"class": "form-control"}),
             "temperature_method": forms.TextInput(attrs={"class": "form-control"}),
             "pulse": forms.NumberInput(attrs={"class": "form-control"}),
-            "bmi": forms.NumberInput(attrs={"class": "form-control"}),
-            "bmi_status": forms.TextInput(attrs={"class": "form-control"}),
             "blood_type": forms.Select(
                 choices=PatientDetail.BLOOD_TYPE_CHOICES, attrs={"class": "form-select"}
             ),
@@ -315,8 +311,6 @@ class PatientDetailsForm(forms.ModelForm):
         self.fields["temperature"].required = False
         self.fields["temperature_method"].required = False
         self.fields["pulse"].required = False
-        self.fields["bmi"].required = False
-        self.fields["bmi_status"].required = False
         self.fields["blood_type"].required = False
         self.fields["blood_pressure_systolic"].required = False
         self.fields["blood_pressure_diastolic"].required = False

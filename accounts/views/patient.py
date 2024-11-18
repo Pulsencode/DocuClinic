@@ -112,7 +112,7 @@ class PatientDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["patient"] = self.object
         context["page_title"] = "Patient Details"
-        context["details"] = PatientDetail.objects.get_or_create(patient=self.object)[0]
+        context["details"] = PatientDetail.objects.filter(patient=self.object).first()
         return context
 
 
