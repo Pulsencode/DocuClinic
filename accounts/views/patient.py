@@ -1,6 +1,5 @@
 from django.contrib import messages
-from django.db import transaction
-from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -10,13 +9,15 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Patient, Physician
+from accounts.models import Patient
 
 from ..forms import PatientDetailsForm, PatientForm
 from ..models import PatientDetail
 
 
 class PatientListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Patient
     template_name = "accounts/patient/patient_list.html"
     context_object_name = "patients"
@@ -25,60 +26,81 @@ class PatientListView(ListView):
         context = super().get_context_data(**kwargs)
         context["form"] = PatientForm()
         context["page_title"] = "Patient List"
-        context["physician"] = Physician.objects.all()
+        context["patient"] = Patient.objects.all()
         return context
 
 
-class PatientCreateUpdateMixin:
+class PatientCreateView(LoginRequiredMixin, CreateView):
     model = Patient
     form_class = PatientForm
-    template_name = "accounts/patient/add_update_patient.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["details_form"] = PatientDetailsForm(
-            instance=getattr(self.object, "patient_details", None)
-        )
-        return context
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("patient_list")
 
     def form_valid(self, form):
-        details_form = PatientDetailsForm(
-            self.request.POST, instance=getattr(self.object, "patient_details", None)
-        )
+        # Save Patient form data
+        patient = form.save()
 
-        if form.is_valid() and details_form.is_valid():
-            with transaction.atomic():
-                patient = form.save()
-                details = details_form.save(commit=False)
-                details.patient = patient
-                details.save()
+        # Save PatientDetails form data
+        details_form = PatientDetailsForm(self.request.POST)
+        if details_form.is_valid():
+            details = details_form.save(commit=False)
+            details.patient = patient  # link PatientDetails to the patient
+            details.save()
 
-            messages.success(
-                self.request,
-                f"Patient '{patient.username}' {'updated' if self.object else 'created'} successfully!",
-            )
-            return redirect("patient_detail", pk=patient.pk)
-        else:
-            return self.form_invalid(form)
+        messages.success(self.request, "Patient successfully created.")
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
-            self.request, "Error occurred. Please check the form and try again."
+            self.request,
+            "Failed to create Patient. Please check the form for errors.",
         )
         return super().form_invalid(form)
 
-
-class PatientCreateView(PatientCreateUpdateMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Add New Patient"
+        context["page_title"] = "Add Patient"
+        context["details_form"] = PatientDetailsForm()
         return context
 
 
-class PatientUpdateView(PatientCreateUpdateMixin, UpdateView):
+class PatientUpdateView(LoginRequiredMixin, UpdateView):
+    model = Patient
+    form_class = PatientForm
+    template_name = "general_create_update.html"
+
+    def get_success_url(self):
+        return reverse_lazy("patient_detail", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        # Save the Patient form data
+        patient = form.save()
+
+        # Save PatientDetails form data
+        details_form = PatientDetailsForm(
+            self.request.POST, instance=self.object.patient_details
+        )
+        if details_form.is_valid():
+            details = details_form.save(commit=False)
+            details.patient = patient  # Ensure the correct patient is linked
+            details.save()
+
+        messages.success(self.request, "Patient successfully updated.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "Failed to update Patient. Please check the form for errors.",
+        )
+        return super().form_invalid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Update Patient"
+        context["details_form"] = PatientDetailsForm(
+            instance=self.object.patient_details
+        )
         return context
 
 
@@ -90,7 +112,7 @@ class PatientDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["patient"] = self.object
         context["page_title"] = "Patient Details"
-        context["details"] = PatientDetail.objects.get_or_create(patient=self.object)[0]
+        context["details"] = PatientDetail.objects.filter(patient=self.object).first()
         return context
 
 

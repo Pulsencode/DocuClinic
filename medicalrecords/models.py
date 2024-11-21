@@ -1,9 +1,15 @@
 from django.db import models
+from django.utils import timezone
 
 from accounts.models import Patient, Physician
-
-from django.utils import timezone
 from inventory.models import Medicine
+
+
+class Discount(models.Model):
+    percentage = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.percentage}%"
 
 
 class Appointment(models.Model):
@@ -20,6 +26,10 @@ class Appointment(models.Model):
     time = models.TimeField(null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
+    discount = models.ForeignKey(
+        Discount, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    consultation_fee = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ["date", "time"]
@@ -29,8 +39,6 @@ class Appointment(models.Model):
 
 
 class Prescription(models.Model):
-    """Ividay adhyam prescription create akkumm anit prescription medicine model vech medicine add akkaam"""
-
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, related_name="prescriptions"
     )
@@ -46,8 +54,6 @@ class Prescription(models.Model):
 
 
 class PrescriptionMedicine(models.Model):
-    """Appaam avasnaam print edukaan ith use akkaam, ith vech multiple medicine add akkaam"""
-
     prescription = models.ForeignKey(
         Prescription, on_delete=models.CASCADE, related_name="medicines"
     )

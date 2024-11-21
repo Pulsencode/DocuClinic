@@ -16,6 +16,8 @@ from ..forms import PhysicianForm
 
 
 class PhysicianListView(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Physician
     template_name = "accounts/physician/physicians_list.html"
     context_object_name = "physicians"
@@ -99,7 +101,7 @@ class PhysicianDeleteView(LoginRequiredMixin, DeleteView):
 class PhysicianDashboardView(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = (
-        "accounts/physician/physician_dashboard.html"  # Physician dashboard template
+        "accounts/dashboard/physician_dashboard.html"  # Physician dashboard template
     )
     context_object_name = "appointments"
 

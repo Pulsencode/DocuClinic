@@ -55,6 +55,7 @@ class Administrator(User):
 class Physician(User):
     specialization = models.CharField(max_length=100)
     license_number = models.CharField(max_length=50, unique=True)
+    fee_per_consultation = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Physician"
@@ -148,6 +149,7 @@ class PatientDetail(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
+    is_vip = models.BooleanField(default=False)
     # condition = models.TextField(max_length=100, null=True)
     age = models.PositiveIntegerField(null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
@@ -179,11 +181,12 @@ class PatientDetail(models.Model):
         return f"{self.pulse} bpm"
 
     def calculate_bmi(self):
-        if self.height_in_centimeter and self.weight:
+        if self.height_in_centimeter and self.weight_in_kg:
             height_in_meters = self.height_in_centimeter / 100
             bmi = self.weight_in_kg / (height_in_meters**2)
             self.bmi = round(bmi, 2)
             self.save()
+            return self.bmi
 
     def determine_bmi_status(self):
         if self.bmi:
@@ -196,3 +199,36 @@ class PatientDetail(models.Model):
             else:
                 self.bmi_status = "Obese"
             self.save()
+            return self.bmi_status
+
+
+class Weekday(models.Model):
+    DAY_CHOICES = [
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+        ("Sunday", "Sunday"),
+    ]
+
+    name = models.CharField(max_length=9, choices=DAY_CHOICES, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class PhysicianAvailability(models.Model):
+    physician = models.ForeignKey(
+        "Physician", on_delete=models.CASCADE, related_name="availabilities"
+    )
+    work_days = models.ManyToManyField(Weekday)
+    work_time_start = models.TimeField(null=True)
+    work_time_end = models.TimeField(null=True)
+    lunch_start = models.TimeField(null=True, blank=True)
+    lunch_end = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        days = ", ".join(day.name for day in self.work_days.all())
+        return f"{self.physician.username} available on {days}"

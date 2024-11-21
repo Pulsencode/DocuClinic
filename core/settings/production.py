@@ -3,7 +3,6 @@ from .base import *  # noqa: F401, F403
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "192.168.1.11",
     "localhost",
 ]  # Example - Need to Replace with the server IP - Do not remove localhost
 

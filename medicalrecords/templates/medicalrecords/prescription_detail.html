@@ -108,7 +108,7 @@
                 <h1>{{ clinic_name }}</h1>
                 <p class="clinic-address">{{ clinic_address }}</p>
             </div>
-            <!-- Patient and Doctor Information -->
+            <!-- Patient and Physicians Information -->
             <div class="row info-section">
                 <!-- Patient Info -->
                 <div class="col-6">
@@ -122,10 +122,10 @@
                         <strong>Gender:</strong> {{ prescription.patient.patient_details.gender }}
                     </p>
                 </div>
-                <!-- Doctor Info -->
+                <!-- Physicians Info -->
                 <div class="col-6 text-end">
                     <p>
-                        <strong>Doctor:</strong> Dr. {{ prescription.physician.get_full_name }}
+                        <strong>Physician:</strong> Dr. {{ prescription.physician.get_full_name }}
                     </p>
                     <p>
                         <strong>Date:</strong> {{ prescription.prescription_date|date:"d/m/Y" }}
@@ -166,9 +166,9 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <!-- Doctor's Signature -->
+            <!-- Physician's Signature -->
             <div class="signature">
-                <p>Doctor's Signature</p>
+                <p>Physician's Signature</p>
             </div>
             <!-- Print Button -->
             <div class="text-center print-button">

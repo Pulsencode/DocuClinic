@@ -24,8 +24,157 @@
 {% endblock content %}
 {% block scripts %}
     <script>
-    document.getElementById('clearButton').addEventListener('click', function() {
-        document.getElementById('form').reset();
-    });
+        $(document).ready(function () {
+            let availableTimeSlots = [];
+            
+            // Check VIP status and handle discount field visibility
+            function checkVipStatus(patientId) {
+                if (patientId) {
+                    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    $.ajax({
+                        url: '{% url "check_patient_vip" %}',
+                        type: 'GET',
+                        data: { 'patient_id': patientId },
+                        headers: { 'X-CSRFToken': csrftoken },
+                        success: function(response) {
+                            if (response.is_vip) {
+                                $('#id_discount').closest('p').show();
+                            } else {
+                                $('#id_discount').closest('p').hide();
+                                $('#id_discount').val('');
+                            }
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.error('Error checking VIP status:', errmsg);
+                            $('#id_discount').closest('p').hide();
+                            $('#id_discount').val('');
+                        }
+                    });
+                } else {
+                    $('#id_discount').closest('p').hide();
+                    $('#id_discount').val('');
+                }
+            }
+        
+            function fetchAvailableDates(savedDate = null, savedTime = null) {
+                const physicianId = $("#id_physician").val();
+                if (!physicianId) return;
+            
+                const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                $.ajax({
+                    url: '{% url "get_available_dates" %}',
+                    type: "GET",
+                    data: { physician_id: physicianId },
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        Accept: "application/json",
+                    },
+                    success: function (response) {
+                        if (response.available_dates) {
+                            availableTimeSlots = response.available_dates;
+                            
+                            // Populate dates dropdown
+                            $("#id_date").empty().append('<option value="">Select Date</option>');
+                            response.available_dates.forEach(function (item) {
+                                if (item?.date) {
+                                    const date = new Date(item.date);
+                                    const formattedDate = date.toLocaleDateString("en-US", {
+                                        weekday: "short",
+                                        month: "short",
+                                        day: "numeric",
+                                    });
+                                    $("#id_date").append(
+                                        `<option value="${item.date}">${formattedDate}</option>`
+                                    );
+                                }
+                            });
+            
+                            // If we have a saved date and time
+                            if (savedDate && savedTime) {
+                                // Set the date field value
+                                $("#id_date").val(savedDate);
+                                
+                                // First, display the saved time in HH:mm - HH:mm format
+                                const savedTimeHHMM = savedTime.substring(0, 5);
+                                // Calculate end time (assuming 15-minute slots)
+                                const startTime = new Date(`2000-01-01T${savedTimeHHMM}`);
+                                const endTime = new Date(startTime.getTime() + 15 * 60000);
+                                const endTimeStr = endTime.toTimeString().substring(0, 5);
+                                const timeDisplay = `${savedTimeHHMM} - ${endTimeStr}`;
+                                
+                                // Set the time dropdown with the formatted time
+                                $("#id_time").empty().append(
+                                    `<option value="${savedTimeHHMM}" selected>${timeDisplay}</option>`
+                                );
+                                
+                                // Then populate the rest of the available times
+                                const dateData = availableTimeSlots.find(d => d.date === savedDate);
+                                if (dateData?.times) {
+                                    dateData.times.forEach(function (time) {
+                                        if (time.start !== savedTimeHHMM) {  // Don't add the saved time again
+                                            const timeRange = `${time.start} - ${time.end}`;
+                                            $("#id_time").append(
+                                                `<option value="${time.start}">${timeRange}</option>`
+                                            );
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.error("Error fetching dates:", errmsg);
+                    },
+                });
+            }
+        
+            // Initialize
+            const savedDate = "{{ form.date.value|escapejs }}";
+            const savedTime = "{{ form.time.value|escapejs }}";
+            
+            // Check initial VIP status
+            checkVipStatus($('#id_patient').val());
+            
+            // Load dates if physician is selected
+            if ($("#id_physician").val()) {
+                fetchAvailableDates(savedDate, savedTime);
+            }
+        
+            // Event Handlers
+            $('#id_patient').change(function() {
+                checkVipStatus($(this).val());
+            });
+        
+            $("#id_physician").change(function() {
+                fetchAvailableDates();
+            });
+        
+            $("#id_date").change(function() {
+                const selectedDate = $(this).val();
+                const dateData = availableTimeSlots.find(d => d.date === selectedDate);
+                
+                $("#id_time").empty().append('<option value="">Select Time</option>');
+                if (dateData?.times) {
+                    dateData.times.forEach(function (time) {
+                        const timeRange = `${time.start} - ${time.end}`;
+                        $("#id_time").append(`<option value="${time.start}">${timeRange}</option>`);
+                    });
+                }
+            });
+        
+            // Clear button functionality
+            $("#clearButton").click(function() {
+                document.getElementById("form").reset();
+                $("#id_date").html('<option value="">Select Date</option>');
+                $("#id_time").html('<option value="">Select Time</option>');
+                $('#id_discount').closest('p').hide();
+                $('#id_discount').val('');
+                availableTimeSlots = [];
+            });
+        });
+        
+        function goBackAndRefresh() {
+            window.location.href = document.referrer;
+        }
     </script>
 {% endblock scripts %}

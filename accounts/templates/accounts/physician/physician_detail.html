@@ -29,6 +29,11 @@
                     <strong>Address:</strong> {{ physician.address }}
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Consultation Fee:</strong> {{ physician.fee_per_consultation }}
+                </div>
+            </div>
             <div class="text-end">
                 <a href="{% url 'physician_update' physician.pk %}" class="btn btn-primary">Edit</a>
                 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePhysicianModal">Delete</button>

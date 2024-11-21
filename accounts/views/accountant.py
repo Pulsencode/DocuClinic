@@ -6,6 +6,7 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
 )
 
@@ -13,7 +14,18 @@ from ..forms import AccountantForm
 from ..models import Accountant
 
 
+class AccountantDashboard(TemplateView):
+    template_name = "accounts/dashboard/accountant_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Accountant Dashboard"
+        return context
+
+
 class AccountantListView(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Accountant
     template_name = "accounts/list_view.html"
     context_object_name = "users"

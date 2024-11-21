@@ -1,0 +1,6 @@
+# Ignore all files and directories
+*
+
+# Do not ignore this .gitignore file
+!.gitignore
+!default_clinic_logo.png

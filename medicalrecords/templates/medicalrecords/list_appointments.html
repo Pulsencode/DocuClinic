@@ -93,6 +93,7 @@
                     <tr>
                         <th scope="col">Physicians</th>
                         <th scope="col">Patients</th>
+                        <th scope="col">Consultation Fee</th>
                         <th scope="col">Time</th>
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
@@ -103,9 +104,12 @@
                         <tr>
                             <td>{{ appointments.physician }}</td>
                             <td>{{ appointments.patient }}</td>
+                            <td>{{ appointments.consultation_fee }}</td>
                             <td>{{ appointments.date|date:"d/m/y" }} - {{ appointments.time }}</td>
                             <td>{{ appointments.status }}</td>
                             <td>
+                                <a href="{% url "appointments_detail" appointments.pk %}"
+                                   class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
                                 <a href="{% url "update_appointment" appointments.pk %}"
                                    class="btn btn-sm btn-primary"><i class="bi bi-arrow-clockwise"></i></a>
                                 <button type="button"
@@ -140,6 +144,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% include "pagination.html" %}
         {% endif %}
     </div>
 {% endblock content %}

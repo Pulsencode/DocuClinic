@@ -1,0 +1,205 @@
+{% extends "general_base.html" %}
+{% block content %}
+    <div class="container-fluid py-4">
+        <!-- Stats Cards -->
+        <div class="row g-3 mb-4">
+            <!-- Total Physicians Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'physician_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Physicians</div>
+                                    <div class="h5 mb-0 font-weight-bold">{{ total_physicians|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-clipboard2-pulse fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Total Nurses Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'nurse_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Nurses</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_nurses|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-thermometer-half fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Total Accountants Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'accountant_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Accountants</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_accountants|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-wallet2 fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Total Receptionists Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'receptionist_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Receptionists</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_receptionists|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-person-workspace fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Total Patients Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'patient_list' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Patients</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_patients|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-person-heart fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Today's Appointments Card -->
+            <div class="col-xl-4 col-md-6">
+                <a href="{% url 'list_appointments' %}" class="btn w-100 p-0 m-0">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today's Appointments</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ todays_appointment|default:"0" }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-calendar2-check fs-2 text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- Chart Row -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Appointment Analytics</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="appointments_chart" class="chart-height"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <!-- Load Google Charts -->
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Date', 'Appointments'],
+                {% for date, count in appointment_data %}['{{ date|date:"M d" }}', {{ count }}],{% endfor %}
+            ]);
+
+            var options = {
+                title: 'Appointment Trends - Last 7 Days',
+                titleTextStyle: {
+                    color: '#4e73df',
+                    fontSize: 16,
+                    bold: true
+                },
+                curveType: 'function',
+                legend: {
+                    position: 'bottom',
+                    textStyle: {
+                        color: '#5a5c69'
+                    }
+                },
+                colors: ['#4e73df'],
+                backgroundColor: 'transparent',
+                chartArea: {
+                    width: '85%',
+                    height: '75%'
+                },
+                vAxis: {
+                    minValue: 0,
+                    format: '0',
+                    gridlines: {
+                        color: '#f8f9fc',
+                        count: 5
+                    },
+                    textStyle: {
+                        color: '#5a5c69'
+                    }
+                },
+                hAxis: {
+                    gridlines: {
+                        color: '#f8f9fc'
+                    },
+                    textStyle: {
+                        color: '#5a5c69'
+                    }
+                },
+                lineWidth: 3,
+                pointSize: 6,
+                animation: {
+                    startup: true,
+                    duration: 1000,
+                    easing: 'out'
+                },
+                tooltip: {
+                    textStyle: {
+                        color: '#5a5c69',
+                        fontSize: 14
+                    }
+                }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('appointments_chart'));
+            chart.draw(data, options);
+        }
+
+        // Redraw chart on window resize
+        window.addEventListener('resize', function() {
+            drawChart();
+        });
+    </script>
+{% endblock scripts %}

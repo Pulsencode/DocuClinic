@@ -94,10 +94,18 @@ class NurseForm(BaseUserForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your first name",
+                    "required": "required",
+                }
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your last name",
+                    "required": "required",
+                }
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -127,10 +135,18 @@ class ReceptionistForm(BaseUserForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your first name",
+                    "required": "required",
+                }
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your last name",
+                    "required": "required",
+                }
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -160,10 +176,18 @@ class AccountantForm(BaseUserForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your first name",
+                    "required": "required",
+                }
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your last name",
+                    "required": "required",
+                }
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -204,10 +228,18 @@ class PatientForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter your username"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your first name",
+                    "required": "required",
+                }
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your last name",
+                    "required": "required",
+                }
             ),
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
@@ -230,37 +262,58 @@ class PatientDetailsForm(forms.ModelForm):
     class Meta:
         model = PatientDetail
         fields = [
-            # "condition",
             "age",
             "gender",
+            "height_in_centimeter",
+            "weight_in_kg",
+            "temperature",
+            "temperature_method",
+            "pulse",
             "blood_type",
+            "blood_pressure_systolic",
+            "blood_pressure_diastolic",
             "allergies",
             "emergency_contact_name",
             "emergency_contact_number",
         ]
         widgets = {
             "age": forms.NumberInput(attrs={"class": "form-control"}),
-            # "condition": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
-            "allergies": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+            "height_in_centimeter": forms.NumberInput(attrs={"class": "form-control"}),
+            "weight_in_kg": forms.NumberInput(attrs={"class": "form-control"}),
             "gender": forms.Select(
                 choices=PatientDetail.GENDER_CHOICES, attrs={"class": "form-select"}
             ),
+            "temperature": forms.NumberInput(attrs={"class": "form-control"}),
+            "temperature_method": forms.TextInput(attrs={"class": "form-control"}),
+            "pulse": forms.NumberInput(attrs={"class": "form-control"}),
             "blood_type": forms.Select(
-                choices=PatientDetail.BLOOD_TYPE_CHOICES,
-                attrs={"class": "form-select"},
+                choices=PatientDetail.BLOOD_TYPE_CHOICES, attrs={"class": "form-select"}
             ),
+            "blood_pressure_systolic": forms.NumberInput(
+                attrs={"class": "form-control"}
+            ),
+            "blood_pressure_diastolic": forms.NumberInput(
+                attrs={"class": "form-control"}
+            ),
+            "allergies": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
             "emergency_contact_name": forms.TextInput(attrs={"class": "form-control"}),
-            "emergency_contact_number": forms.NumberInput(
+            "emergency_contact_number": forms.TextInput(
                 attrs={"class": "form-control"}
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.fields["condition"].required = False
         self.fields["age"].required = True
         self.fields["gender"].required = True
+        self.fields["height_in_centimeter"].required = True
+        self.fields["weight_in_kg"].required = True
+        self.fields["temperature"].required = False
+        self.fields["temperature_method"].required = False
+        self.fields["pulse"].required = False
         self.fields["blood_type"].required = False
+        self.fields["blood_pressure_systolic"].required = False
+        self.fields["blood_pressure_diastolic"].required = False
         self.fields["allergies"].required = False
         self.fields["emergency_contact_name"].required = True
         self.fields["emergency_contact_number"].required = True
@@ -285,6 +338,7 @@ class PhysicianForm(forms.ModelForm):
             "address",
             "specialization",
             "license_number",
+            "fee_per_consultation",
         ]
         widgets = {
             "username": forms.TextInput(
@@ -294,10 +348,18 @@ class PhysicianForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter your email"}
             ),
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your first name",
+                    "required": "required",
+                }
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your last name",
+                    "required": "required",
+                }
             ),
             "phone_number": forms.TextInput(
                 attrs={
@@ -310,6 +372,9 @@ class PhysicianForm(forms.ModelForm):
             ),
             "license_number": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter license number"}
+            ),
+            "fee_per_consultation": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "Enter consultation fee"}
             ),
         }
 

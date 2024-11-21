@@ -6,6 +6,7 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
 )
 
@@ -13,7 +14,18 @@ from ..forms import ReceptionistForm
 from ..models import Receptionist
 
 
+class ReceptionistDashboard(TemplateView):
+    template_name = "accounts/dashboard/receptionist_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Receptionist Dashboard"
+        return context
+
+
 class ReceptionistListView(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Receptionist
     template_name = "accounts/list_view.html"
     context_object_name = "users"

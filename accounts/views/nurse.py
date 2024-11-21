@@ -6,6 +6,7 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
 )
 
@@ -13,7 +14,18 @@ from ..forms import NurseForm
 from ..models import Nurse
 
 
+class NurseDashboard(TemplateView):
+    template_name = "accounts/dashboard/nurse_dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Nurse Dashboard"
+        return context
+
+
 class NurseListView(LoginRequiredMixin, ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Nurse
     template_name = "accounts/list_view.html"
     context_object_name = "users"

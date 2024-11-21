@@ -1,5 +1,8 @@
 from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
 from django.urls import reverse_lazy
+from django.utils.timezone import localdate
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -29,8 +32,9 @@ class InventoryDashboard(TemplateView):
         return context
 
 
-# List View for Suppliers
 class SupplierListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Supplier
     template_name = "inventory/list_supplier.html"
     context_object_name = "suppliers"
@@ -41,7 +45,6 @@ class SupplierListView(ListView):
         return context
 
 
-# Create View for Suppliers
 class SupplierCreateView(CreateView):
     model = Supplier
     form_class = SupplierForm
@@ -64,7 +67,6 @@ class SupplierCreateView(CreateView):
         return super().form_invalid(form)
 
 
-# Update View for Suppliers
 class SupplierUpdateView(UpdateView):
     model = Supplier
     form_class = SupplierForm
@@ -87,7 +89,6 @@ class SupplierUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-# Delete View for Suppliers
 class SupplierDeleteView(DeleteView):
     model = Supplier
     success_url = reverse_lazy("list_supplier")
@@ -101,6 +102,8 @@ class SupplierDeleteView(DeleteView):
 
 
 class RouteOfAdministrationListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = RouteOfAdministration
     template_name = "inventory/routes_of_administration_list.html"
     context_object_name = "routes"
@@ -133,7 +136,6 @@ class RouteOfAdministrationCreateView(CreateView):
         return super().form_invalid(form)
 
 
-# Update View for RouteOfAdministration
 class RouteOfAdministrationUpdateView(UpdateView):
     model = RouteOfAdministration
     form_class = RouteOfAdministrationForm
@@ -156,7 +158,6 @@ class RouteOfAdministrationUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-# Delete View for RouteOfAdministration
 class RouteOfAdministrationDeleteView(DeleteView):
     model = RouteOfAdministration
     success_url = reverse_lazy("list_route_of_administration")
@@ -170,17 +171,63 @@ class RouteOfAdministrationDeleteView(DeleteView):
 
 
 class MedicineListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = Medicine
     template_name = "inventory/medicine_list.html"
     context_object_name = "medicines"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Medicine list"
+        context["page_title"] = "Medicine List"
+        context["routes"] = RouteOfAdministration.objects.all()
+        context["storage_locations"] = Medicine.objects.values_list(
+            "storage_location", flat=True
+        ).distinct()
         return context
 
+    def get_queryset(self):
+        query = self.request.GET.get("search", "")
+        route = self.request.GET.get("route", "")
+        location = self.request.GET.get("location", "")
+        expiration = self.request.GET.get("expiration", "")
 
-# Create View for Medicine
+        queryset = Medicine.objects.all()
+
+        # Search filter
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query)
+                | Q(generic_name__icontains=query)
+                | Q(brand_name__icontains=query)
+            )
+
+        if route:
+            queryset = queryset.filter(route_of_administration__id=route)
+
+        if location:
+            queryset = queryset.filter(storage_location__icontains=location)
+
+        if expiration == "expiring_today":
+            today = localdate()  # Use current local date
+            queryset = queryset.filter(expiration_date=today)
+        elif expiration == "expiring_this_month":
+            today = localdate()
+            queryset = queryset.filter(
+                expiration_date__month=today.month, expiration_date__year=today.year
+            )
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        # Check if the request is an AJAX request
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            medicines = self.get_queryset()
+            return JsonResponse({"medicines": list(medicines.values())})
+
+        return super().get(request, *args, **kwargs)
+
+
 class MedicineCreateView(CreateView):
     model = Medicine
     form_class = MedicineForm
@@ -240,14 +287,54 @@ class MedicineDeleteView(DeleteView):
 
 
 class MedicineSupplierListView(ListView):
+    paginate_by = 10
+    ordering = ["id"]
     model = MedicineSupplier
     template_name = "inventory/medicine_supplier_list.html"
     context_object_name = "medicine_suppliers"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        medicine = self.request.GET.get("medicine")
+        supplier = self.request.GET.get("supplier")
+        supply_date = self.request.GET.get("supply_date")
+
+        if medicine:
+            queryset = queryset.filter(medicine_id=medicine)
+        if supplier:
+            queryset = queryset.filter(supplier_id=supplier)
+        if supply_date:
+            queryset = queryset.filter(supply_date=supply_date)
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Medicine supplier list"
+        context["medicines"] = Medicine.objects.all()
+        context["suppliers"] = Supplier.objects.all()
         return context
+
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                queryset = self.get_queryset()
+                data = {
+                    "medicine_suppliers": list(
+                        queryset.values(
+                            "id",
+                            "supplier__name",
+                            "medicine__name",
+                            "price",
+                            "supply_date",
+                        )
+                    )
+                }
+                return JsonResponse(data)
+        except Exception as e:
+            print(f"Error in AJAX view: {e}")
+            return JsonResponse({"error": str(e)}, status=500)
+
+        return super().get(request, *args, **kwargs)
 
 
 # Create View for Medicine Supplier
