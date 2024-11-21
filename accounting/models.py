@@ -1,11 +1,9 @@
 from django.db import models
 
-# from datetime import datetime
-
 
 class Account(models.Model):
     name = models.CharField(max_length=100)
-    account_type = models.CharField(
+    type = models.CharField(
         max_length=50,
         choices=[
             ("Asset", "Asset"),
