@@ -1,21 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from accounts.models import Patient
 
 from ..forms import PatientDetailsForm, PatientForm
-from ..models import PatientDetail
 
 
-class PatientListView(ListView):
+class PatientListView(LoginRequiredMixin, ListView):
     paginate_by = 10
     ordering = ["id"]
     model = Patient
@@ -70,7 +63,7 @@ class PatientUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "general_create_update.html"
 
     def get_success_url(self):
-        return reverse_lazy("patient_detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("user_profile", kwargs={"username": self.object.username})
 
     def form_valid(self, form):
         # Save the Patient form data
@@ -101,18 +94,6 @@ class PatientUpdateView(LoginRequiredMixin, UpdateView):
         context["details_form"] = PatientDetailsForm(
             instance=self.object.patient_details
         )
-        return context
-
-
-class PatientDetailView(DetailView):
-    model = Patient
-    template_name = "accounts/patient/patient_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["patient"] = self.object
-        context["page_title"] = "Patient Details"
-        context["details"] = PatientDetail.objects.filter(patient=self.object).first()
         return context
 
 

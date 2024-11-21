@@ -1,8 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import TemplateView
+
+from accounts.models import User
 
 from ..forms import UserLoginForm
 
@@ -64,3 +68,36 @@ def login_user(request):
     form = UserLoginForm()
     context = {"page_title": "Login", "form": form}
     return render(request, "registration/login.html", context=context)
+
+
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    template_name = "accounts/profile/user_profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        if hasattr(user, "physician"):
+            context["user_role"] = "physician"
+            context["user_delete"] = "physician_delete"
+        elif hasattr(user, "nurse"):
+            context["user_role"] = "nurse"
+            context["user_delete"] = "nurse_delete"
+        elif hasattr(user, "accountant"):
+            context["user_role"] = "accountant"
+            context["user_delete"] = "accountant_delete"
+        elif hasattr(user, "receptionist"):
+            context["user_role"] = "receptionist"
+            context["user_delete"] = "receptionist_delete"
+        elif hasattr(user, "administrator"):
+            context["user_role"] = "administrator"
+            context["user_delete"] = "administrator_delete"
+        elif hasattr(user, "patient"):
+            context["user_role"] = "patient"
+            context["user_delete"] = "patient_delete"
+        else:
+            context["user_role"] = "None"
+            raise Http404("You are not registered with the system")
+        context["user"] = user
+        context["page_title"] = "Profile"
+
+        return context

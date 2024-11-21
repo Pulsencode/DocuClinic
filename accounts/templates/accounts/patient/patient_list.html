@@ -34,7 +34,7 @@
                             <td>{{ patient.patient_details.age }}</td>
                             <td>{{ patient.phone_number }}</td>
                             <td class="text-center">
-                                <a href="{% url 'patient_detail' patient.pk %}"><i class="bi bi-eye"></i></a>
+                                <a href="{% url 'user_profile' patient.username %}"><i class="bi bi-eye"></i></a>
                             </td>
                         </tr>
                     {% endfor %}

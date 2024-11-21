@@ -1,0 +1,133 @@
+<div class="card mb-2 bg-danger-subtle">
+    <div class="card-body text-center">
+        <h6 class="card-title">Emergency Contact Details</h6>
+        <p class="mb-0">
+            {{ user.patient.patient_details.emergency_contact_name }} - {{ user.patient.patient_details.emergency_contact_number }}
+        </p>
+    </div>
+</div>
+<div class="row gap-1">
+    <div class="text-end">
+        <p class="mb-0">Last Updated at <span class="fw-bold">{{ user.patient.patient_details.last_updated }}</span></p>
+    </div>
+    <div class="col">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Gender</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.get_gender_display }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Pulse</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.get_pulse_rate }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Temperature</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">
+                            {{ user.patient.patient_details.temperature }}<sup>o</sup>C
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Temperature Method</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.temperature_method }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Blood Pressure</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.get_blood_pressure }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Allergies</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.allergies }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Age</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.age }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Blood Type</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.blood_type }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Height</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.height_in_centimeter }} cm</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">Weight</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.weight_in_kg }} kg</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">BMI</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.calculate_bmi }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0">BMI Status</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="fw-bold mb-0">{{ user.patient.patient_details.determine_bmi_status }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

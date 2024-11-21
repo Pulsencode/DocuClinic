@@ -4,7 +4,6 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
-    DetailView,
     ListView,
     TemplateView,
     UpdateView,
@@ -35,19 +34,6 @@ class ReceptionistListView(LoginRequiredMixin, ListView):
         context["page_title"] = "Receptionist List"
         context["user_create"] = "receptionist_create"
         context["user_detail"] = "receptionist_detail"
-        return context
-
-
-class ReceptionistDetailView(LoginRequiredMixin, DetailView):
-    model = Receptionist
-    template_name = "accounts/detail_view.html"
-    context_object_name = "user"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = "Receptionist Details"
-        context["user_update"] = "receptionist_update"
-        context["user_delete"] = "receptionist_delete"
         return context
 
 

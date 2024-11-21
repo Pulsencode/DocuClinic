@@ -28,7 +28,7 @@
                             <td>{{ physician.phone_number }}</td>
                             <td>{{ physician.email }}</td>
                             <td class="text-center">
-                                <a href="{% url 'physician_detail' physician.pk %}"
+                                <a href="{% url "user_profile" physician.username %}"
                                    class="btn btn-sm"
                                    title="View Details">
                                     <i class="bi bi-eye"></i>

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group, Permission
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,7 +18,7 @@ from accounts.models import Accountant, Nurse, Patient, Physician, Receptionist
 from medicalrecords.models import Appointment
 
 
-class AdminDashboard(TemplateView):
+class AdminDashboard(LoginRequiredMixin, TemplateView):
     template_name = "accounts/dashboard/admin_dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -60,7 +61,7 @@ class AdminDashboard(TemplateView):
         return context
 
 
-class GroupListView(ListView):
+class GroupListView(LoginRequiredMixin, ListView):
     paginate_by = 10
     ordering = ["id"]
     model = Group
@@ -73,7 +74,7 @@ class GroupListView(ListView):
         return context
 
 
-class GroupCreateView(CreateView):
+class GroupCreateView(LoginRequiredMixin, CreateView):
     model = Group
     template_name = "accounts/administration/group_list.html"
     fields = ["name"]
@@ -95,7 +96,7 @@ class GroupCreateView(CreateView):
         return super().form_invalid(form)
 
 
-class GroupUpdateView(UpdateView):
+class GroupUpdateView(LoginRequiredMixin, UpdateView):
     model = Group
     fields = ["name"]
     template_name = "accounts/administration/group_list.html"
@@ -116,7 +117,7 @@ class GroupUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-class GroupDeleteView(DeleteView):
+class GroupDeleteView(LoginRequiredMixin, DeleteView):
     model = Group
     template_name = "accounts/administration/group_list.html"
     success_url = reverse_lazy("group_list")

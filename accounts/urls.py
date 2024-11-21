@@ -12,14 +12,10 @@ from .views import (
 
 urlpatterns = [
     path("redirect/", base.user_redirect, name="user_redirect"),
+    path("profile/<str:username>", base.UserProfileView.as_view(), name="user_profile"),
     # Physician
     path(
         "list/physician/", physician.PhysicianListView.as_view(), name="physician_list"
-    ),
-    path(
-        "detail/physician/<int:pk>/",
-        physician.PhysicianDetailView.as_view(),
-        name="physician_detail",
     ),
     path(
         "create/physician/",
@@ -44,11 +40,6 @@ urlpatterns = [
     # Patient
     path("list/patient/", patient.PatientListView.as_view(), name="patient_list"),
     path("add/patient/", patient.PatientCreateView.as_view(), name="patient_create"),
-    path(
-        "detail/patient/<int:pk>/",
-        patient.PatientDetailView.as_view(),
-        name="patient_detail",
-    ),
     path(
         "update/patient/<int:pk>/",
         patient.PatientUpdateView.as_view(),
@@ -89,9 +80,6 @@ urlpatterns = [
         name="nurse_dashboard",
     ),
     path("list/nurse/", nurse.NurseListView.as_view(), name="nurse_list"),
-    path(
-        "detail/nurse/<int:pk>/", nurse.NurseDetailView.as_view(), name="nurse_detail"
-    ),
     path("create/nurse/", nurse.NurseCreateView.as_view(), name="nurse_create"),
     path(
         "update/nurse/<int:pk>/",
@@ -113,11 +101,6 @@ urlpatterns = [
         "list/receptionist/",
         receptionist.ReceptionistListView.as_view(),
         name="receptionist_list",
-    ),
-    path(
-        "detail/receptionist/<int:pk>/",
-        receptionist.ReceptionistDetailView.as_view(),
-        name="receptionist_detail",
     ),
     path(
         "create/receptionist/",

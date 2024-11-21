@@ -1,13 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from accounts.models import Physician
 from medicalrecords.models import Appointment
@@ -25,16 +19,6 @@ class PhysicianListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Physician List"
-        return context
-
-
-class PhysicianDetailView(LoginRequiredMixin, DetailView):
-    model = Physician
-    template_name = "accounts/physician/physician_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = "Physician Details"
         return context
 
 
