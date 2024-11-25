@@ -262,7 +262,7 @@ class PatientForm(forms.ModelForm):
             if Patient.objects.filter(
                 first_name=first_name,
                 last_name=last_name
-            ).exists():
+            ).exclude(pk=self.instance.pk if self.instance.pk else None).exists():
                 raise forms.ValidationError(
                     "A patient with this first and last name already exists."
                 )
