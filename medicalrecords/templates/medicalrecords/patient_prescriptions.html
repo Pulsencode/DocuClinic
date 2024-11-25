@@ -1,0 +1,35 @@
+{% extends "general_base.html" %}
+{% block content %}
+<!-- In prescriptions_list.html -->
+<h1>Prescriptions for {{ patient.get_full_name }}</h1>
+
+<table class="table table-striped table-hover table-sm table-bordered">
+    <thead>
+        <tr>
+            <th>Date Prescribed</th>
+            <th>Diagnosis</th>
+            <th>Follow-up Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider">
+        {% for prescription in prescriptions %}
+            <tr>
+                <td>{{ prescription.date_prescribed|date:"d/m/y" }}</td>
+                <td>{{ prescription.diagnosis }}</td>
+                <td>{{ prescription.follow_up_date }}</td>
+                <td>
+                    <a href="{% url 'prescription_detail' prescription.id %}" class="btn btn-primary">
+                       <i class="bi bi-eye"></i>
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">No prescriptions found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
