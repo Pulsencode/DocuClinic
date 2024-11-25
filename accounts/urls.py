@@ -37,6 +37,11 @@ urlpatterns = [
         physician.PhysicianDashboardView.as_view(),
         name="physician_dashboard",
     ),
+    # Physician Availability URLs
+    path('physician_availability/create/', physician.PhysicianAvailabilityCreateView.as_view(), name='physicianavailability_create'),
+    path('physician_availability/update/<int:pk>/', physician.PhysicianAvailabilityUpdateView.as_view(), name='physicianavailability_update'),
+    path('physician_availability/delete/<int:pk>/', physician.PhysicianAvailabilityDeleteView.as_view(), name='physicianavailability_delete'),
+    path('physician_availability/<int:pk>/', physician.PhysicianAvailabilityDetailView.as_view(), name='physicianavailability_detail'),
     # Patient
     path("list/patient/", patient.PatientListView.as_view(), name="patient_list"),
     path("add/patient/", patient.PatientCreateView.as_view(), name="patient_create"),
