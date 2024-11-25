@@ -6,10 +6,10 @@
                 <div class="card mb-4">
                     <div class="card-body text-center">
                         {% comment %} <img src="{{ user.registration_id }}"
-      alt="avatar"
-      class="rounded-circle img-fluid"
-      height="100"
-      width="150"> {% endcomment %}
+                        alt="avatar"
+                        class="rounded-circle img-fluid"
+                        height="100"
+                        width="150"> {% endcomment %}
                         <h5 class="my-3">{{ user.username }}</h5>
                         <p class="text-muted mb-1">{{ user.registration_id }}</p>
                         <p class="text-muted mb-1">Date Joined: {{ user.date_joined }}</p>
@@ -49,10 +49,8 @@
                     </div>
                 </div>
                 {% if user_role == "patient" %}
-                    <div class="d-flex justify-content-center">
-                        <a href="{% url 'patient_prescriptions' user.id %}"
-                           class="btn btn-primary btn-sm">View Prescriptions</a>
-                    </div>
+                    <a href="{% url 'patient_prescriptions' user.id %}"
+                       class="btn btn-primary btn-sm">View Prescriptions</a>
                 {% endif %}
             </div>
             <div class="col-lg-8">

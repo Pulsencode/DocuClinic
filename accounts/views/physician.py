@@ -1,12 +1,18 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    UpdateView,
+    DetailView,
+)
 
-from accounts.models import Physician
+from accounts.models import Physician, PhysicianAvailability
 from medicalrecords.models import Appointment
 
-from ..forms import PhysicianForm
+from ..forms import PhysicianAvailabilityForm, PhysicianForm
 
 
 class PhysicianListView(LoginRequiredMixin, ListView):
@@ -99,3 +105,54 @@ class PhysicianDashboardView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Physicians Dashboard"  # Set the page title
         return context
+
+
+class PhysicianAvailabilityCreateView(CreateView):
+    model = PhysicianAvailability
+    form_class = PhysicianAvailabilityForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("user_redirect")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Physician availability successfully created.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "There was an error creating the physician availability. Please check the form.",
+        )
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class PhysicianAvailabilityUpdateView(UpdateView):
+    model = PhysicianAvailability
+    form_class = PhysicianAvailabilityForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("user_redirect")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Physician availability successfully updated.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "There was an error updating the physician availability. Please check the form.",
+        )
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class PhysicianAvailabilityDeleteView(DeleteView):
+    model = PhysicianAvailability
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("user_redirect")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Physician availability successfully deleted.")
+        return super().delete(request, *args, **kwargs)
+
+
+class PhysicianAvailabilityDetailView(DetailView):
+    model = PhysicianAvailability
+    template_name = "physicianavailability_detail.html"
