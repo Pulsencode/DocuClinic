@@ -4,6 +4,7 @@ from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.text import slugify
 
 
 class User(AbstractUser):
@@ -123,6 +124,13 @@ class Patient(User):
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.registration_id = self.generate_registration_id(prefix="PAT")
+
+        if not self.username:
+            self.username = slugify(f"{self.first_name}_{self.last_name}")
+            counter = 1
+            while Patient.objects.filter(username=self.username).exists():
+                self.username = f"{self.username}{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
 

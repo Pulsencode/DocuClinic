@@ -216,7 +216,6 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = [
-            "username",
             "first_name",
             "last_name",
             "email",
@@ -224,9 +223,6 @@ class PatientForm(forms.ModelForm):
             "address",
         ]
         widgets = {
-            "username": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your username"}
-            ),
             "first_name": forms.TextInput(
                 attrs={
                     "class": "form-control",

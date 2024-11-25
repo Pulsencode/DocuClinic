@@ -17,10 +17,7 @@
                             <button class="btn btn-danger"
                                     data-bs-toggle="modal"
                                     data-bs-target="#deleteUserModal">Delete</button>
-                            <button type="button"
-                                    data-mdb-button-init
-                                    data-mdb-ripple-init
-                                    class="btn btn-primary ms-1">Edit</button>
+                            <a href="{% url user_update user.pk %}" class="btn btn-primary btn-sm ms-1">Update</a>
                         </div>
                         <!-- Delete Confirmation Modal -->
                         <div class="modal fade"

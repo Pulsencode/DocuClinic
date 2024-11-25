@@ -79,21 +79,27 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
         if hasattr(user, "physician"):
             context["user_role"] = "physician"
             context["user_delete"] = "physician_delete"
+            context["user_update"] = "physician_update"
         elif hasattr(user, "nurse"):
             context["user_role"] = "nurse"
             context["user_delete"] = "nurse_delete"
+            context["user_update"] = "nurse_update"
         elif hasattr(user, "accountant"):
             context["user_role"] = "accountant"
             context["user_delete"] = "accountant_delete"
+            context["user_update"] = "accountant_update"
         elif hasattr(user, "receptionist"):
             context["user_role"] = "receptionist"
             context["user_delete"] = "receptionist_delete"
+            context["user_update"] = "receptionist_update"
         elif hasattr(user, "administrator"):
             context["user_role"] = "administrator"
             context["user_delete"] = "administrator_delete"
+            context["user_update"] = "administrator_update"
         elif hasattr(user, "patient"):
             context["user_role"] = "patient"
             context["user_delete"] = "patient_delete"
+            context["user_update"] = "patient_update"
         else:
             context["user_role"] = "None"
             raise Http404("You are not registered with the system")
