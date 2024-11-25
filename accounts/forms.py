@@ -253,6 +253,21 @@ class PatientForm(forms.ModelForm):
         required=True, widget=forms.Textarea(attrs={"class": "form-control", "rows": 2})
     )
 
+    def clean(self):
+        cleaned_data = super().clean()
+        first_name = cleaned_data.get('first_name')
+        last_name = cleaned_data.get('last_name')
+
+        if first_name and last_name:
+            if Patient.objects.filter(
+                first_name=first_name,
+                last_name=last_name
+            ).exists():
+                raise forms.ValidationError(
+                    "A patient with this first and last name already exists."
+                )
+        return cleaned_data
+
 
 class PatientDetailsForm(forms.ModelForm):
     class Meta:
