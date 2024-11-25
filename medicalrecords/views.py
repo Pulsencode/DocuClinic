@@ -238,7 +238,12 @@ def get_available_dates(request):
                         }
                     )
 
-        return JsonResponse({"available_dates": available_dates})
+        return JsonResponse(
+            {
+                "available_dates": available_dates,
+                "consultation_duration": consultation_duration,
+            }
+        )
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -364,9 +369,9 @@ class PrescriptionCreateView(FormView):
 
         # Set patient and physician information from the appointment
         context["patient"] = appointment.patient
-        context[
-            "physician"
-        ] = appointment.physician  # No need to show this in the template
+        context["physician"] = (
+            appointment.physician
+        )  # No need to show this in the template
 
         # Initialize the PrescriptionMedicine formset
         PrescriptionMedicineFormSet = modelformset_factory(
