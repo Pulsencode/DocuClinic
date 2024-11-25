@@ -17,7 +17,8 @@
                             <button class="btn btn-danger"
                                     data-bs-toggle="modal"
                                     data-bs-target="#deleteUserModal">Delete</button>
-                            <a href="{% url user_update user.pk %}" class="btn btn-primary btn-sm ms-1">Update</a>
+                            <a href="{% url user_update user.pk %}"
+                               class="btn btn-primary btn-sm ms-1">Update</a>
                         </div>
                         <!-- Delete Confirmation Modal -->
                         <div class="modal fade"
@@ -47,6 +48,12 @@
                         </div>
                     </div>
                 </div>
+                {% if user_role == "patient" %}
+                    <div class="d-flex justify-content-center">
+                        <a href="{% url 'patient_prescriptions' user.id %}"
+                           class="btn btn-primary btn-sm">View Prescriptions</a>
+                    </div>
+                {% endif %}
             </div>
             <div class="col-lg-8">
                 <div class="card mb-4">
