@@ -123,6 +123,9 @@ class Patient(User):
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.registration_id = self.generate_registration_id(prefix="PAT")
+
+        if not self.username:
+            self.username = f"{self.first_name}_{self.last_name}"
         super().save(*args, **kwargs)
 
 
