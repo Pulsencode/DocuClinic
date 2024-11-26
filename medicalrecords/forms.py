@@ -5,7 +5,18 @@ from accounts.models import Patient, Physician, PhysicianAvailability
 from .models import Appointment, Discount, Prescription, PrescriptionMedicine
 
 
-# forms.py
+class DiscountForm(forms.ModelForm):
+    class Meta:
+        model = Discount
+        fields = ['percentage']
+        widgets = {
+            'percentage': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter discount percentage'}),
+        }
+        labels = {
+            'percentage': 'Discount Percentage',
+        }
+
+
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
