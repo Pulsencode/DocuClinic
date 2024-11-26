@@ -24,8 +24,13 @@ from accounts.models import Patient, PatientDetail, Physician, PhysicianAvailabi
 from clinic.models import Clinic
 from inventory.models import Medicine
 
-from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
-from .models import Appointment, Prescription, PrescriptionMedicine
+from .forms import (
+    AppointmentForm,
+    DiscountForm,
+    PrescriptionForm,
+    PrescriptionMedicineForm,
+)
+from .models import Appointment, Discount, Prescription, PrescriptionMedicine
 
 logger = logging.getLogger(__name__)
 
@@ -479,3 +484,43 @@ class PatientPrescriptionsView(View):
             "medicalrecords/patient_prescriptions.html",
             {"patient": patient, "prescriptions": prescriptions},
         )
+
+
+class DiscountCreateView(CreateView):
+    model = Discount
+    form_class = DiscountForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("discount_list")
+    success_message = "Discount added successfully!"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Discount added successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error adding the discount.")
+        return super().form_invalid(form)
+
+
+class DiscountUpdateView(UpdateView):
+    model = Discount
+    form_class = DiscountForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("discount_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Discount updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error updating the discount.")
+        return super().form_invalid(form)
+
+
+class DiscountDeleteView(DeleteView):
+    model = Discount
+    success_url = reverse_lazy("discount_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Discount deleted successfully!")
+        return super().delete(request, *args, **kwargs)
