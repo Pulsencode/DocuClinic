@@ -1,0 +1,78 @@
+{% extends "general_base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-fluid mb-3">
+    <div class="d-flex justify-content-end px-2 mb-1">
+        <a href="{% url 'accounts_receivable_create' %}" class="btn btn-primary btn-sm">Add Receivable</a>
+    </div>
+    {% if not accounts_receivable %}
+        <div class="alert alert-info text-center ms-3 me-3" role="alert">No Accounts Receivable Found!</div>
+    {% else %}
+        <table class="table table-striped table-hover table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for receivable in accounts_receivable %}
+                    <tr>
+                        <td>{{ receivable.name }}</td>
+                        <td>{{ receivable.amount }}</td>
+                        <td>{{ receivable.due_date }}</td>
+                        <td>{{ receivable.description }}</td>
+                        <td>{{ receivable.status }}</td>
+                        <td class="text-center">
+                            <!-- Edit Button -->
+                            <a href="{% url 'accounts_receivable_update' receivable.id %}" class="btn btn-sm btn-warning" title="Edit Entry">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <!-- Delete Button with Modal -->
+                            <button type="button"
+                                    class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ receivable.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade"
+                                 id="deleteModal{{ receivable.id }}"
+                                 tabindex="-1"
+                                 aria-labelledby="deleteModalLabel{{ receivable.id }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ receivable.id }}">Delete Confirmation</h5>
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete the account receivable <strong>{{ receivable.name }}</strong> of {{ receivable.amount }} due on {{ receivable.due_date }}?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <a href="{% url 'accounts_receivable_delete' receivable.id %}" class="btn btn-danger">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Modal -->
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "pagination.html" %}
+    {% endif %}
+</div>
+{% endblock content %}
