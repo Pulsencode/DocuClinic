@@ -2,9 +2,23 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from accounting.models import Account, AccountsReceivable, GeneralLedgerEntry
+from accounting.models import (
+    Account,
+    AccountsReceivable,
+    Asset,
+    GeneralLedgerEntry,
+    AccountsPayable,
+    Invoice,
+)
 
-from .forms import AccountCreateUpdateForm, AccountsReceivableForm, GeneralLedgerEntryForm
+from .forms import (
+    AccountCreateUpdateForm,
+    AccountsPayableForm,
+    AccountsReceivableForm,
+    AssetForm,
+    GeneralLedgerEntryForm,
+    InvoiceForm,
+)
 
 
 class AccountListView(ListView):
@@ -77,7 +91,7 @@ class GeneralLedgerEntryCreateView(SuccessMessageMixin, CreateView):
     success_message = "Ledger entry created successfully!"
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, "Error! Couldn't Create.")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -94,7 +108,7 @@ class GeneralLedgerEntryUpdateView(SuccessMessageMixin, UpdateView):
     success_message = "Ledger entry updated successfully!"
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, "Error! Couldn't Update.")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -133,7 +147,7 @@ class AccountsReceivableCreateView(SuccessMessageMixin, CreateView):
     success_message = "Account receivable created successfully!"
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, "Error! Couldn't Create.")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -150,7 +164,7 @@ class AccountsReceivableUpdateView(SuccessMessageMixin, UpdateView):
     success_message = "Account receivable updated successfully!"
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, "Error! Couldn't Update.")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -163,6 +177,174 @@ class AccountsReceivableDeleteView(SuccessMessageMixin, DeleteView):
     model = AccountsReceivable
     success_url = reverse_lazy("accounts_receivable_list")
     success_message = "Account receivable deleted successfully!"
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+
+class AccountsPayableListView(ListView):
+    model = AccountsPayable
+    template_name = "accounting/list_accounts_payable.html"
+    ordering = ["-due_date"]
+    context_object_name = "accounts_payable"
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Accounts Payable List"
+        return context
+
+
+class AccountsPayableCreateView(SuccessMessageMixin, CreateView):
+    model = AccountsPayable
+    form_class = AccountsPayableForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("accounts_payable_list")
+    success_message = "Account payable created successfully!"
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error! Couldn't Create.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Create Account Payable"
+        return context
+
+
+class AccountsPayableUpdateView(SuccessMessageMixin, UpdateView):
+    model = AccountsPayable
+    form_class = AccountsPayableForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("accounts_payable_list")
+    success_message = "Account payable updated successfully!"
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error! Couldn't Update.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Account Payable"
+        return context
+
+
+class AccountsPayableDeleteView(SuccessMessageMixin, DeleteView):
+    model = AccountsPayable
+    success_url = reverse_lazy("accounts_payable_list")
+    success_message = "Account receivable deleted successfully!"
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+
+class InvoiceListView(ListView):
+    model = Invoice
+    template_name = "accounting/list_invoice.html"
+    ordering = ["-date"]
+    context_object_name = "invoices"
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Invoice List"
+        return context
+
+
+class InvoiceCreateView(SuccessMessageMixin, CreateView):
+    model = Invoice
+    form_class = InvoiceForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("invoice_list")
+    success_message = "Invoice created successfully!"
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error! Couldn't Create.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Create Invoice"
+        return context
+
+
+class InvoiceUpdateView(SuccessMessageMixin, UpdateView):
+    model = Invoice
+    form_class = InvoiceForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("invoice_list")
+    success_message = "Invoice updated successfully!"
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error! Couldn't Update.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Invoice"
+        return context
+
+
+class InvoiceDeleteView(SuccessMessageMixin, DeleteView):
+    model = Invoice
+    success_url = reverse_lazy("invoice_list")
+    success_message = "Invoice deleted successfully!"
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+
+class AssetListView(ListView):
+    model = Asset
+    template_name = "accounting/list_asset.html"
+    ordering = ["-id"]
+    context_object_name = "assets"
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Asset List"
+        return context
+
+
+class AssetCreateView(SuccessMessageMixin, CreateView):
+    model = Asset
+    form_class = AssetForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("asset_list")
+    success_message = "Asset created successfully!"
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error! Couldn't Create.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Create Asset"
+        return context
+
+
+class AssetUpdateView(SuccessMessageMixin, UpdateView):
+    model = Asset
+    form_class = AssetForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("asset_list")
+    success_message = "Asset updated successfully!"
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error! Couldn't Update.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Asset"
+        return context
+
+
+class AssetDeleteView(SuccessMessageMixin, DeleteView):
+    model = Asset
+    success_url = reverse_lazy("asset_list")
+    success_message = "Asset deleted successfully!"
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
