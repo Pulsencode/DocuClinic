@@ -149,26 +149,31 @@ def get_available_dates(request):
                 {"error": "No availability found for this physician."}, status=404
             )
 
-        # Get the consultation duration from the first clinic (assuming single clinic system)
         clinic = Clinic.objects.first()
         consultation_duration = clinic.consultation_duration if clinic else 30
 
         work_days = physician_availability.work_days.all()
-
-        # Convert day names to weekday integers (0 = Monday, 6 = Sunday)
-        day_mapping = {
-            "MONDAY": 0,
-            "TUESDAY": 1,
-            "WEDNESDAY": 2,
-            "THURSDAY": 3,
-            "FRIDAY": 4,
-            "SATURDAY": 5,
-            "SUNDAY": 6,
-        }
         work_days_indices = [
-            day_mapping[str(day.name).strip().upper()]
+            {
+                "MONDAY": 0,
+                "TUESDAY": 1,
+                "WEDNESDAY": 2,
+                "THURSDAY": 3,
+                "FRIDAY": 4,
+                "SATURDAY": 5,
+                "SUNDAY": 6,
+            }[day.name.strip().upper()]
             for day in work_days
-            if str(day.name).strip().upper() in day_mapping
+            if day.name.strip().upper()
+            in {
+                "MONDAY",
+                "TUESDAY",
+                "WEDNESDAY",
+                "THURSDAY",
+                "FRIDAY",
+                "SATURDAY",
+                "SUNDAY",
+            }
         ]
 
         work_start = physician_availability.work_time_start
@@ -176,16 +181,14 @@ def get_available_dates(request):
         lunch_start = physician_availability.lunch_start
         lunch_end = physician_availability.lunch_end
 
+        # Generate time slots
         time_slots = []
         current_time = work_start
-
         while current_time < work_end:
-            # Calculate next time slot based on clinic's consultation duration
-            current_datetime = datetime.combine(datetime.today(), current_time)
-            next_datetime = current_datetime + timedelta(minutes=consultation_duration)
-            next_time = next_datetime.time()
-
-            # If the next time would go beyond work_end, break the loop
+            next_time = (
+                datetime.combine(datetime.today(), current_time)
+                + timedelta(minutes=consultation_duration)
+            ).time()
             if next_time > work_end:
                 break
 
@@ -196,7 +199,6 @@ def get_available_dates(request):
                 lunch_end_time = make_aware(
                     datetime.combine(datetime.today(), lunch_end)
                 )
-
                 current_slot_start = make_aware(
                     datetime.combine(datetime.today(), current_time)
                 )
@@ -204,7 +206,6 @@ def get_available_dates(request):
                     datetime.combine(datetime.today(), next_time)
                 )
 
-                # Skip time slots overlapping with lunch
                 if (
                     current_slot_end > lunch_start_time
                     and current_slot_start < lunch_end_time
@@ -221,28 +222,22 @@ def get_available_dates(request):
             current_time = next_time
 
         today = datetime.now().date()
-        available_dates = []
-
-        for i in range(30):  # Next 30 days
-            day = today + timedelta(days=i)
-            if day.weekday() in work_days_indices:
-                available_slots_for_day = [
+        available_dates = [
+            {
+                "date": (today + timedelta(days=i)).strftime("%Y-%m-%d"),
+                "times": [
                     slot
                     for slot in time_slots
                     if not Appointment.objects.filter(
                         physician_id=physician_id,
-                        date=day,
+                        date=today + timedelta(days=i),
                         time=slot["start"],
                     ).exists()
-                ]
-
-                if available_slots_for_day:
-                    available_dates.append(
-                        {
-                            "date": day.strftime("%Y-%m-%d"),
-                            "times": available_slots_for_day,
-                        }
-                    )
+                ],
+            }
+            for i in range(30)
+            if (today + timedelta(days=i)).weekday() in work_days_indices
+        ]
 
         return JsonResponse(
             {
