@@ -72,6 +72,7 @@
                     success: function (response) {
                         if (response.available_dates) {
                             availableTimeSlots = response.available_dates;
+                            const consultationDuration = response.consultation_duration || 30;
                             
                             // Populate dates dropdown
                             $("#id_date").empty().append('<option value="">Select Date</option>');
@@ -98,7 +99,7 @@
                                 const savedTimeHHMM = savedTime.substring(0, 5);
                                 // Calculate end time (assuming 15-minute slots)
                                 const startTime = new Date(`2000-01-01T${savedTimeHHMM}`);
-                                const endTime = new Date(startTime.getTime() + 15 * 60000);
+                                const endTime = new Date(startTime.getTime() + consultationDuration * 60000);
                                 const endTimeStr = endTime.toTimeString().substring(0, 5);
                                 const timeDisplay = `${savedTimeHHMM} - ${endTimeStr}`;
                                 

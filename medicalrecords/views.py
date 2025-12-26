@@ -5,10 +5,11 @@ from decimal import Decimal
 from django.contrib import messages
 from django.forms import modelformset_factory
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.timezone import make_aware
+from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     CreateView,
@@ -23,8 +24,13 @@ from accounts.models import Patient, PatientDetail, Physician, PhysicianAvailabi
 from clinic.models import Clinic
 from inventory.models import Medicine
 
-from .forms import AppointmentForm, PrescriptionForm, PrescriptionMedicineForm
-from .models import Appointment, Prescription, PrescriptionMedicine
+from .forms import (
+    AppointmentForm,
+    DiscountForm,
+    PrescriptionForm,
+    PrescriptionMedicineForm,
+)
+from .models import Appointment, Discount, Prescription, PrescriptionMedicine
 
 logger = logging.getLogger(__name__)
 
@@ -238,7 +244,12 @@ def get_available_dates(request):
                         }
                     )
 
-        return JsonResponse({"available_dates": available_dates})
+        return JsonResponse(
+            {
+                "available_dates": available_dates,
+                "consultation_duration": consultation_duration,
+            }
+        )
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -364,9 +375,9 @@ class PrescriptionCreateView(FormView):
 
         # Set patient and physician information from the appointment
         context["patient"] = appointment.patient
-        context[
-            "physician"
-        ] = appointment.physician  # No need to show this in the template
+        context["physician"] = (
+            appointment.physician
+        )  # No need to show this in the template
 
         # Initialize the PrescriptionMedicine formset
         PrescriptionMedicineFormSet = modelformset_factory(
@@ -460,3 +471,56 @@ class PrescriptionDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy("prescription_list")
+
+
+class PatientPrescriptionsView(View):
+    def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+
+        prescriptions = patient.prescriptions.all()
+
+        return render(
+            request,
+            "medicalrecords/patient_prescriptions.html",
+            {"patient": patient, "prescriptions": prescriptions},
+        )
+
+
+class DiscountCreateView(CreateView):
+    model = Discount
+    form_class = DiscountForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("discount_list")
+    success_message = "Discount added successfully!"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Discount added successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error adding the discount.")
+        return super().form_invalid(form)
+
+
+class DiscountUpdateView(UpdateView):
+    model = Discount
+    form_class = DiscountForm
+    template_name = "general_create_update.html"
+    success_url = reverse_lazy("discount_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Discount updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error updating the discount.")
+        return super().form_invalid(form)
+
+
+class DiscountDeleteView(DeleteView):
+    model = Discount
+    success_url = reverse_lazy("discount_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Discount deleted successfully!")
+        return super().delete(request, *args, **kwargs)

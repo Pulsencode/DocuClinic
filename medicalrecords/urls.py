@@ -50,4 +50,13 @@ urlpatterns = [
         views.PrescriptionDeleteView.as_view(),
         name="prescription_delete",
     ),
+    path(
+        "patient/prescriptions/<int:patient_id>/",
+        views.PatientPrescriptionsView.as_view(),
+        name="patient_prescriptions",
+    ),
+    # Discount
+    path('discount/add/', views.DiscountCreateView.as_view(), name='discount_add'),
+    path('discount/update/<int:pk>/', views.DiscountUpdateView.as_view(), name='discount_edit'),
+    path('discount/delete/<int:pk>/', views.DiscountDeleteView.as_view(), name='discount_delete'),
 ]

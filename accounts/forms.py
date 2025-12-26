@@ -6,7 +6,9 @@ from accounts.models import (
     Patient,
     PatientDetail,
     Physician,
+    PhysicianAvailability,
     Receptionist,
+    Weekday,
 )
 
 
@@ -255,14 +257,15 @@ class PatientForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        first_name = cleaned_data.get('first_name')
-        last_name = cleaned_data.get('last_name')
+        first_name = cleaned_data.get("first_name")
+        last_name = cleaned_data.get("last_name")
 
         if first_name and last_name:
-            if Patient.objects.filter(
-                first_name=first_name,
-                last_name=last_name
-            ).exists():
+            if (
+                Patient.objects.filter(first_name=first_name, last_name=last_name)
+                .exclude(pk=self.instance.pk if self.instance.pk else None)
+                .exists()
+            ):
                 raise forms.ValidationError(
                     "A patient with this first and last name already exists."
                 )
@@ -449,3 +452,37 @@ class PhysicianForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class PhysicianAvailabilityForm(forms.ModelForm):
+    class Meta:
+        model = PhysicianAvailability
+        fields = [
+            "physician",
+            "work_days",
+            "work_time_start",
+            "work_time_end",
+            "lunch_start",
+            "lunch_end",
+        ]
+
+    physician = forms.ModelChoiceField(
+        queryset=Physician.objects.all(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    work_days = forms.ModelMultipleChoiceField(
+        queryset=Weekday.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check"}),
+    )
+    work_time_start = forms.TimeField(
+        widget=forms.TimeInput(attrs={"class": "form-control"})
+    )
+    work_time_end = forms.TimeField(
+        widget=forms.TimeInput(attrs={"class": "form-control"})
+    )
+    lunch_start = forms.TimeField(
+        required=False, widget=forms.TimeInput(attrs={"class": "form-control"})
+    )
+    lunch_end = forms.TimeField(
+        required=False, widget=forms.TimeInput(attrs={"class": "form-control"})
+    )

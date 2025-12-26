@@ -1,33 +1,28 @@
 {% extends "general_base.html" %}
 {% block content %}
     <div class="row">
-        <div class="col-6">
+        <div class="col-5">
             <h3>Patient Information</h3>
             <p>
                 <strong>Name:</strong> {{ appointments.patient.get_full_name }}
             </p>
-            <p>
-                <strong>Age:</strong> {{ appointments.patient.age }}
-            </p>
-            <p>
-                <strong>Gender:</strong> {{ appointments.patient.gender }}
-            </p>
         </div>
-        <div class="col-6">
+        <div class="col-5">
             <h3>Physician Information</h3>
             <p>
                 <strong>Physician Name:</strong> {{ appointments.physician.get_full_name }}
             </p>
         </div>
-        <div class="appointment-info">
+        <div class="col-2 text-end mb-2">
+            <a href="{% url 'create_prescription' appointments.id %}"
+               class="btn btn-primary">Create Prescription</a>
+        </div>
+        <div>
             <h3>Appointment Details</h3>
             <p>
                 <strong>Appointment Time:</strong> {{ appointments.time }} {{ appointments.date }}
             </p>
         </div>
-        <div class="text-end">
-            <a href="{% url 'create_prescription' appointments.id %}"
-               class="btn btn-primary">Create Prescription</a>
-        </div>
     </div>
+    {% include "accounts/profile/includes/patient_details.html" with user=appointments %}
 {% endblock content %}

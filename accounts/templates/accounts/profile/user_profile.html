@@ -6,10 +6,10 @@
                 <div class="card mb-4">
                     <div class="card-body text-center">
                         {% comment %} <img src="{{ user.registration_id }}"
-      alt="avatar"
-      class="rounded-circle img-fluid"
-      height="100"
-      width="150"> {% endcomment %}
+                        alt="avatar"
+                        class="rounded-circle img-fluid"
+                        height="100"
+                        width="150"> {% endcomment %}
                         <h5 class="my-3">{{ user.username }}</h5>
                         <p class="text-muted mb-1">{{ user.registration_id }}</p>
                         <p class="text-muted mb-1">Date Joined: {{ user.date_joined }}</p>
@@ -17,7 +17,8 @@
                             <button class="btn btn-danger"
                                     data-bs-toggle="modal"
                                     data-bs-target="#deleteUserModal">Delete</button>
-                            <a href="{% url user_update user.pk %}" class="btn btn-primary btn-sm ms-1">Update</a>
+                            <a href="{% url user_update user.pk %}"
+                               class="btn btn-primary btn-sm ms-1">Update</a>
                         </div>
                         <!-- Delete Confirmation Modal -->
                         <div class="modal fade"
@@ -47,6 +48,10 @@
                         </div>
                     </div>
                 </div>
+                {% if user_role == "patient" %}
+                    <a href="{% url 'patient_prescriptions' user.id %}"
+                       class="btn btn-primary btn-sm">View Prescriptions</a>
+                {% endif %}
             </div>
             <div class="col-lg-8">
                 <div class="card mb-4">

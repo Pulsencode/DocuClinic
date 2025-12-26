@@ -32,9 +32,9 @@ EXTERNAL_APPS = [
     "data_generator",  # TODO TO Generate Fake Data for the DB - Remove in Production
 ]
 
-AUTH_USER_MODEL = "accounts.User"
-
 INSTALLED_APPS += EXTERNAL_APPS
+
+AUTH_USER_MODEL = "accounts.User"
 
 LOGIN_REDIRECT_URL = "user_redirect"
 LOGOUT_REDIRECT_URL = "login"
