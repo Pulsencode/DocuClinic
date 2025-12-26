@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 
 from accounts.models import Accountant, Nurse, Patient, Physician, Receptionist
-from medicalrecords.models import Appointment
+from appointments.models import Appointment
 
 
 class AdminDashboard(LoginRequiredMixin, TemplateView):

@@ -30,7 +30,7 @@ DATA_GENERATOR_EXCLUDE_APPS = ["accounts"]
 
 DATA_GENERATOR_EXCLUDE_MODELS = [
     "accounts.PatientDetail",
-    "medicalrecords.Appointment",
+    "appointments.Appointment",
     "medicalrecords.Prescription",
     "medicalrecords.PrescriptionMedicine",
 ]

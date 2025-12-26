@@ -4,13 +4,13 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
+    DetailView,
     ListView,
     UpdateView,
-    DetailView,
 )
 
 from accounts.models import Physician, PhysicianAvailability
-from medicalrecords.models import Appointment
+from appointments.models import Appointment
 
 from ..forms import PhysicianAvailabilityForm, PhysicianForm
 

@@ -29,6 +29,7 @@ EXTERNAL_APPS = [
     "medicalrecords.apps.MedicalrecordsConfig",
     "accounting.apps.AccountingConfig",
     "clinic.apps.ClinicConfig",
+    "appointments.apps.AppointmentsConfig",
     "data_generator",  # TODO TO Generate Fake Data for the DB - Remove in Production
 ]
 
