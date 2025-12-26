@@ -14,6 +14,8 @@ DEBUG = os.getenv("DEBUG", default=False)
 
 
 INSTALLED_APPS = [
+    "semantic_admin",  # Enables Semantic UI in Django Admin
+    "semantic_forms",  # Enables Semantic UI in Django Forms
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
