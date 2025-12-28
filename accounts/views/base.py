@@ -6,9 +6,8 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 
+from accounts.forms import UserLoginForm
 from accounts.models import User
-
-from ..forms import UserLoginForm
 
 
 @login_required

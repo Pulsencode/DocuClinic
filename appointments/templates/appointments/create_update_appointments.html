@@ -26,7 +26,7 @@
     <script>
         $(document).ready(function () {
             let availableTimeSlots = [];
-            
+
             // Check VIP status and handle discount field visibility
             function checkVipStatus(patientId) {
                 if (patientId) {
@@ -55,11 +55,11 @@
                     $('#id_discount').val('');
                 }
             }
-        
+
             function fetchAvailableDates(savedDate = null, savedTime = null) {
                 const physicianId = $("#id_physician").val();
                 if (!physicianId) return;
-            
+
                 const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
                 $.ajax({
                     url: '{% url "get_available_dates" %}',
@@ -73,7 +73,7 @@
                         if (response.available_dates) {
                             availableTimeSlots = response.available_dates;
                             const consultationDuration = response.consultation_duration || 30;
-                            
+
                             // Populate dates dropdown
                             $("#id_date").empty().append('<option value="">Select Date</option>');
                             response.available_dates.forEach(function (item) {
@@ -89,12 +89,12 @@
                                     );
                                 }
                             });
-            
+
                             // If we have a saved date and time
                             if (savedDate && savedTime) {
                                 // Set the date field value
                                 $("#id_date").val(savedDate);
-                                
+
                                 // First, display the saved time in HH:mm - HH:mm format
                                 const savedTimeHHMM = savedTime.substring(0, 5);
                                 // Calculate end time (assuming 15-minute slots)
@@ -102,12 +102,12 @@
                                 const endTime = new Date(startTime.getTime() + consultationDuration * 60000);
                                 const endTimeStr = endTime.toTimeString().substring(0, 5);
                                 const timeDisplay = `${savedTimeHHMM} - ${endTimeStr}`;
-                                
+
                                 // Set the time dropdown with the formatted time
                                 $("#id_time").empty().append(
                                     `<option value="${savedTimeHHMM}" selected>${timeDisplay}</option>`
                                 );
-                                
+
                                 // Then populate the rest of the available times
                                 const dateData = availableTimeSlots.find(d => d.date === savedDate);
                                 if (dateData?.times) {
@@ -128,32 +128,32 @@
                     },
                 });
             }
-        
+
             // Initialize
             const savedDate = "{{ form.date.value|escapejs }}";
             const savedTime = "{{ form.time.value|escapejs }}";
-            
+
             // Check initial VIP status
             checkVipStatus($('#id_patient').val());
-            
+
             // Load dates if physician is selected
             if ($("#id_physician").val()) {
                 fetchAvailableDates(savedDate, savedTime);
             }
-        
+
             // Event Handlers
             $('#id_patient').change(function() {
                 checkVipStatus($(this).val());
             });
-        
+
             $("#id_physician").change(function() {
                 fetchAvailableDates();
             });
-        
+
             $("#id_date").change(function() {
                 const selectedDate = $(this).val();
                 const dateData = availableTimeSlots.find(d => d.date === selectedDate);
-                
+
                 $("#id_time").empty().append('<option value="">Select Time</option>');
                 if (dateData?.times) {
                     dateData.times.forEach(function (time) {
@@ -162,7 +162,7 @@
                     });
                 }
             });
-        
+
             // Clear button functionality
             $("#clearButton").click(function() {
                 document.getElementById("form").reset();
@@ -173,7 +173,7 @@
                 availableTimeSlots = [];
             });
         });
-        
+
         function goBackAndRefresh() {
             window.location.href = document.referrer;
         }

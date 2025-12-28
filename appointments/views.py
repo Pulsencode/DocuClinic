@@ -25,7 +25,7 @@ class AppointmentListView(ListView):
     paginate_by = 10
     ordering = ["id"]
     model = Appointment
-    template_name = "medicalrecords/list_appointments.html"
+    template_name = "appointments/list_appointments.html"
     context_object_name = "all_appointments"
 
     def get_queryset(self):
@@ -88,7 +88,7 @@ class AppointmentListView(ListView):
 
 class AppointmentDetailView(DetailView):
     model = Appointment
-    template_name = "medicalrecords/appointments_detail.html"
+    template_name = "appointments/appointments_detail.html"
     context_object_name = "appointments"
 
     def get_context_data(self, **kwargs):
@@ -100,7 +100,7 @@ class AppointmentDetailView(DetailView):
 class AppointmentCreateView(CreateView):
     model = Appointment
     form_class = AppointmentForm
-    template_name = "medicalrecords/create_update_appointments.html"
+    template_name = "appointments/create_update_appointments.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -132,52 +132,7 @@ class AppointmentCreateView(CreateView):
         return reverse_lazy("list_appointments")
 
 
-class AppointmentUpdateView(UpdateView):
-    model = Appointment
-    form_class = AppointmentForm
-    template_name = "medicalrecords/create_update_appointments.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = "Update Appointment"
-        context["action"] = "Update"
-        context["model"] = "Appointment"
-        return context
-
-    def form_valid(self, form):
-        form.instance.patient = Patient.objects.get(pk=self.request.POST["patient"])
-        physician = form.cleaned_data["physician"]
-        base_fee = physician.fee_per_consultation
-        if form.cleaned_data.get("discount"):
-            discount = form.cleaned_data["discount"]
-            discount_amount = (base_fee * Decimal(discount.percentage)) / Decimal("100")
-            consultation_fee = base_fee - discount_amount
-        else:
-            consultation_fee = base_fee
-        form.instance.consultation_fee = consultation_fee
-        self.object = form.save()
-        messages.success(self.request, "Appointment update successfully!")
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, "error occurred couldn't update appointment")
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy("list_appointments")
-
-
-class AppointmentDeleteView(DeleteView):
-    model = Appointment
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "Appointment removed successfully!")
-        return super().delete(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse_lazy("list_appointments")
-
-
+# TODO This can be a util so that other modules can use it too - will need to refactor if app goes live
 @require_http_methods(["GET"])
 def check_patient_vip_status(request):
     patient_id = request.GET.get("patient_id")
@@ -320,3 +275,49 @@ def get_available_dates(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+class AppointmentUpdateView(UpdateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "appointments/create_update_appointments.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Update Appointment"
+        context["action"] = "Update"
+        context["model"] = "Appointment"
+        return context
+
+    def form_valid(self, form):
+        form.instance.patient = Patient.objects.get(pk=self.request.POST["patient"])
+        physician = form.cleaned_data["physician"]
+        base_fee = physician.fee_per_consultation
+        if form.cleaned_data.get("discount"):
+            discount = form.cleaned_data["discount"]
+            discount_amount = (base_fee * Decimal(discount.percentage)) / Decimal("100")
+            consultation_fee = base_fee - discount_amount
+        else:
+            consultation_fee = base_fee
+        form.instance.consultation_fee = consultation_fee
+        self.object = form.save()
+        messages.success(self.request, "Appointment update successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "error occurred couldn't update appointment")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("list_appointments")
+
+
+class AppointmentDeleteView(DeleteView):
+    model = Appointment
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Appointment removed successfully!")
+        return super().delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy("list_appointments")
