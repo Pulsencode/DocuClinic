@@ -95,3 +95,5 @@ user-agents==2.2.0
 virtualenv==20.27.1
 webencodings==0.5.1
 wheel==0.45.1
+Faker==40.4.0
+faker-healthcare-provider==2.1.0
