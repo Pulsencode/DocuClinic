@@ -9,10 +9,10 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Physician, PhysicianAvailability
-from appointments.models import Appointment
-
-from ..forms import PhysicianAvailabilityForm, PhysicianForm
+from accounts.forms import PhysicianForm
+from accounts.models import Physician
+from appointments.forms import PhysicianAvailabilityForm
+from appointments.models import Appointment, PhysicianAvailability
 
 
 class PhysicianListView(LoginRequiredMixin, ListView):

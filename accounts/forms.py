@@ -6,9 +6,7 @@ from accounts.models import (
     Patient,
     PatientDetail,
     Physician,
-    PhysicianAvailability,
     Receptionist,
-    Weekday,
 )
 
 
@@ -452,37 +450,3 @@ class PhysicianForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-
-
-class PhysicianAvailabilityForm(forms.ModelForm):
-    class Meta:
-        model = PhysicianAvailability
-        fields = [
-            "physician",
-            "work_days",
-            "work_time_start",
-            "work_time_end",
-            "lunch_start",
-            "lunch_end",
-        ]
-
-    physician = forms.ModelChoiceField(
-        queryset=Physician.objects.all(),
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
-    work_days = forms.ModelMultipleChoiceField(
-        queryset=Weekday.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check"}),
-    )
-    work_time_start = forms.TimeField(
-        widget=forms.TimeInput(attrs={"class": "form-control"})
-    )
-    work_time_end = forms.TimeField(
-        widget=forms.TimeInput(attrs={"class": "form-control"})
-    )
-    lunch_start = forms.TimeField(
-        required=False, widget=forms.TimeInput(attrs={"class": "form-control"})
-    )
-    lunch_end = forms.TimeField(
-        required=False, widget=forms.TimeInput(attrs={"class": "form-control"})
-    )

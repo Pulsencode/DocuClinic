@@ -1,40 +1,50 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
+from unfold.admin import ModelAdmin
 
 from .models import (
     Accountant,
     Administrator,
     Nurse,
     Patient,
+    PatientDetail,
     Physician,
     Receptionist,
-    PatientDetail,
-    Weekday,
-    PhysicianAvailability,
 )
 
-# admin.site.register(User) # Do not create users with this model
-admin.site.register(Administrator)
-admin.site.register(Physician)
-admin.site.register(Accountant)
-admin.site.register(Patient)
-admin.site.register(Nurse)
-admin.site.register(Receptionist)
-admin.site.register(PatientDetail)
-admin.site.register(Weekday)
+admin.site.unregister(Group)
 
 
-@admin.register(PhysicianAvailability)
-class PhysicianAvailabilityAdmin(admin.ModelAdmin):
-    list_display = (
-        "physician",
-        "display_work_days",
-        "work_time_start",
-        "work_time_end",
-        "lunch_start",
-        "lunch_end",
-    )
+@admin.register(Administrator)
+class AdministratorAdmin(ModelAdmin):
+    pass
 
-    def display_work_days(self, obj):
-        return ", ".join([day.name for day in obj.work_days.all()])
 
-    display_work_days.short_description = "Work Days"
+@admin.register(Physician)
+class PhysicianAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Accountant)
+class AccountantAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Patient)
+class PatientAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Nurse)
+class NurseAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Receptionist)
+class ReceptionistAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(PatientDetail)
+class PatientDetailAdmin(ModelAdmin):
+    pass

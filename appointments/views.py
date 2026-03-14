@@ -15,9 +15,9 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.models import Patient, PatientDetail, Physician, PhysicianAvailability
+from accounts.models import Patient, PatientDetail, Physician
 from appointments.forms import AppointmentForm
-from appointments.models import Appointment
+from appointments.models import Appointment, PhysicianAvailability
 from clinic.models import Clinic
 
 

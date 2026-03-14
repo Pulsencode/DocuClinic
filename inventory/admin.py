@@ -1,7 +1,24 @@
 from django.contrib import admin
-from .models import Supplier, Medicine, RouteOfAdministration, MedicineSupplier
+from unfold.admin import ModelAdmin
 
-admin.site.register(Supplier)
-admin.site.register(Medicine)
-admin.site.register(RouteOfAdministration)
-admin.site.register(MedicineSupplier)
+from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
+
+
+@admin.register(Supplier)
+class SupplierAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Medicine)
+class MedicineAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(RouteOfAdministration)
+class RouteOfAdministrationAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(MedicineSupplier)
+class MedicineSupplierAdmin(ModelAdmin):
+    pass

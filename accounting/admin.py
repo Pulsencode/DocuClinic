@@ -1,4 +1,5 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 from .models import (
     Account,
@@ -9,9 +10,32 @@ from .models import (
     Invoice,
 )
 
-admin.site.register(Account)
-admin.site.register(GeneralLedgerEntry)
-admin.site.register(AccountsPayable)
-admin.site.register(AccountsReceivable)
-admin.site.register(Asset)
-admin.site.register(Invoice)
+
+@admin.register(Account)
+class AccountAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(GeneralLedgerEntry)
+class GeneralLedgerEntryAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(AccountsPayable)
+class AccountsPayableAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(AccountsReceivable)
+class AccountsReceivableAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Asset)
+class AssetAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(Invoice)
+class InvoiceAdmin(ModelAdmin):
+    pass
