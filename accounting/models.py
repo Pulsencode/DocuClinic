@@ -56,6 +56,19 @@ class AccountsReceivable(models.Model):
         return f"{self.name} - {self.amount}"
 
 
+class Invoice(models.Model):
+    invoice_number = models.CharField(max_length=100)
+    organization_name = models.CharField(max_length=100)
+    date = models.DateField()
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    receivable = models.ForeignKey(
+        AccountsReceivable, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    def __str__(self):
+        return f"{self.invoice_number} - {self.organization_name}"
+
+
 class AccountsPayable(models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
@@ -75,16 +88,6 @@ class AccountsPayable(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.amount}"
-
-
-class Invoice(models.Model):
-    invoice_number = models.CharField(max_length=100)
-    organization_name = models.CharField(max_length=100)
-    date = models.DateField()
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"{self.invoice_number} - {self.organization_name}"
 
 
 class Asset(models.Model):
