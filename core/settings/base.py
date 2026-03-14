@@ -33,6 +33,7 @@ EXTERNAL_APPS = [
     "clinic.apps.ClinicConfig",
     "appointments.apps.AppointmentsConfig",
     "dashboard.apps.DashboardConfig",
+    "django_lumen",  # TODO can be removed in production - for database visualization in admin
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
@@ -119,6 +120,7 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 EMAIL_DEBUG = os.getenv("EMAIL_DEBUG")
 
 UNFOLD = {
+    "DASHBOARD_CALLBACK": "dashboard.views.dashboard_callback",
     "SITE_TITLE": "DocuClinic",
     "SITE_HEADER": "DocuClinic",
     "SITE_SUBHEADER": "Administration",

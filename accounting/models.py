@@ -36,6 +36,7 @@ class GeneralLedgerEntry(models.Model):
 
 
 class AccountsReceivable(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     due_date = models.DateField()
@@ -56,6 +57,7 @@ class AccountsReceivable(models.Model):
 
 
 class AccountsPayable(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     due_date = models.DateField()
@@ -86,6 +88,11 @@ class Invoice(models.Model):
 
 
 class Asset(models.Model):
+    account = models.ForeignKey(
+        Account,
+        on_delete=models.PROTECT,
+        limit_choices_to={"type": "Asset"},
+    )
     name = models.CharField(max_length=100)
     purchase_date = models.DateField()
     purchase_value = models.DecimalField(max_digits=10, decimal_places=2)
