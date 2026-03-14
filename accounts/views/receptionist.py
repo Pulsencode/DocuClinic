@@ -9,8 +9,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from ..forms import ReceptionistForm
-from ..models import Receptionist
+from accounts.forms import ReceptionistForm
+from accounts.models import Receptionist
 
 
 class ReceptionistDashboard(TemplateView):

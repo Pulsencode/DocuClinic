@@ -9,8 +9,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from ..forms import NurseForm
-from ..models import Nurse
+from accounts.forms import NurseForm
+from accounts.models import Nurse
 
 
 class NurseDashboard(LoginRequiredMixin, TemplateView):

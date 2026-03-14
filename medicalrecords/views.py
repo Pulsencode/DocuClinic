@@ -18,9 +18,12 @@ from django.views.generic import (
 from accounts.models import Patient
 from appointments.models import Appointment
 from inventory.models import Medicine
-
-from .forms import DiscountForm, PrescriptionForm, PrescriptionMedicineForm
-from .models import Discount, Prescription, PrescriptionMedicine
+from medicalrecords.forms import (
+    DiscountForm,
+    PrescriptionForm,
+    PrescriptionMedicineForm,
+)
+from medicalrecords.models import Discount, Prescription, PrescriptionMedicine
 
 logger = logging.getLogger(__name__)
 

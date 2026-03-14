@@ -11,13 +11,13 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .forms import (
+from inventory.forms import (
     MedicineForm,
     MedicineSupplierForm,
     RouteOfAdministrationForm,
     SupplierForm,
 )
-from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
+from inventory.models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
 
 
 class InventoryDashboard(TemplateView):

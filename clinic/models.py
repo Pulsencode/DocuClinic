@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -12,3 +13,10 @@ class Clinic(models.Model):
         upload_to="clinic_logo", default="media/default_clinic_logo.webp"
     )
     consultation_duration = models.PositiveIntegerField(null=True)
+
+    def clean(self):
+        if not self.pk and Clinic.objects.exists():
+            raise ValidationError("Only one Clinic instance is allowed.")
+
+    def __str__(self):
+        return self.name

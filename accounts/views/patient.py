@@ -3,9 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
+from accounts.forms import PatientDetailsForm, PatientForm
 from accounts.models import Patient
-
-from ..forms import PatientDetailsForm, PatientForm
 
 
 class PatientListView(LoginRequiredMixin, ListView):

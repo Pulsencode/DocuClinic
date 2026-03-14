@@ -1,7 +1,7 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
+from inventory.models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
 
 
 @admin.register(Supplier)

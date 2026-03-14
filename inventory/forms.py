@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
+from inventory.models import Medicine, MedicineSupplier, RouteOfAdministration, Supplier
 
 
 class SupplierForm(forms.ModelForm):

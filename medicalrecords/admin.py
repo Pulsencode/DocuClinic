@@ -1,7 +1,7 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import Discount, Prescription, PrescriptionMedicine
+from medicalrecords.models import Discount, Prescription, PrescriptionMedicine
 
 
 @admin.register(Prescription)

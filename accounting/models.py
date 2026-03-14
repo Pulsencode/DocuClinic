@@ -32,7 +32,7 @@ class GeneralLedgerEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.date} - {self.description}"
+        return f"{self.date} - {self.amount}"
 
 
 class AccountsReceivable(models.Model):
@@ -51,6 +51,9 @@ class AccountsReceivable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name} - {self.amount}"
+
 
 class AccountsPayable(models.Model):
     name = models.CharField(max_length=100)
@@ -68,12 +71,18 @@ class AccountsPayable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name} - {self.amount}"
+
 
 class Invoice(models.Model):
     invoice_number = models.CharField(max_length=100)
     organization_name = models.CharField(max_length=100)
     date = models.DateField()
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.invoice_number} - {self.organization_name}"
 
 
 class Asset(models.Model):
@@ -83,3 +92,6 @@ class Asset(models.Model):
     current_value = models.DecimalField(max_digits=10, decimal_places=2)
     current_value_date = models.DateField()
     depreciation_rate = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.name} - {self.purchase_value}"

@@ -1,6 +1,13 @@
 from django import forms
 
-from .models import Account, AccountsPayable, AccountsReceivable, Asset, GeneralLedgerEntry, Invoice
+from accounting.models import (
+    Account,
+    AccountsPayable,
+    AccountsReceivable,
+    Asset,
+    GeneralLedgerEntry,
+    Invoice,
+)
 
 
 class AccountCreateUpdateForm(forms.ModelForm):
@@ -46,7 +53,11 @@ class AccountsReceivableForm(forms.ModelForm):
                 attrs={"class": "form-control", "type": "date"}
             ),
             "description": forms.Textarea(
-                attrs={"class": "form-control", "placeholder": "Enter description", "rows": 2}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter description",
+                    "rows": 2,
+                }
             ),
             "status": forms.Select(attrs={"class": "form-select"}),
         }
@@ -67,7 +78,11 @@ class AccountsPayableForm(forms.ModelForm):
                 attrs={"class": "form-control", "type": "date"}
             ),
             "description": forms.Textarea(
-                attrs={"class": "form-control", "placeholder": "Enter description", "rows": 2}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter description",
+                    "rows": 2,
+                }
             ),
             "status": forms.Select(attrs={"class": "form-select"}),
         }
@@ -82,10 +97,17 @@ class InvoiceForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter Invoice Number"}
             ),
             "organization_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter Organization Name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter Organization Name",
+                }
             ),
             "date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date", "placeholder": "Select Date"}
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                    "placeholder": "Select Date",
+                }
             ),
             "total_amount": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "Enter Total Amount"}
@@ -102,7 +124,11 @@ class AssetForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter Asset Name"}
             ),
             "purchase_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date", "placeholder": "Select Purchase Date"}
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                    "placeholder": "Select Purchase Date",
+                }
             ),
             "purchase_value": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "Enter Purchase Value"}
@@ -111,9 +137,16 @@ class AssetForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Enter Current Value"}
             ),
             "current_value_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date", "placeholder": "Select Current Value Date"}
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                    "placeholder": "Select Current Value Date",
+                }
             ),
             "depreciation_rate": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "Enter Depreciation Rate"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter Depreciation Rate",
+                }
             ),
         }

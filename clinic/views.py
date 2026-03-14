@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
-from .forms import ClinicForm
-from .models import Clinic
+from clinic.forms import ClinicForm
+from clinic.models import Clinic
 
 
 class ClinicCreateView(CreateView):

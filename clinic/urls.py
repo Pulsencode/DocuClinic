@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from clinic import views
 
 urlpatterns = [
     path("clinic/create/", views.ClinicCreateView.as_view(), name="clinic_create"),

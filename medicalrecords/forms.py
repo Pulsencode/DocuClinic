@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Discount, Prescription, PrescriptionMedicine
+from medicalrecords.models import Discount, Prescription, PrescriptionMedicine
 
 
 class DiscountForm(forms.ModelForm):

@@ -10,8 +10,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from ..forms import AccountantForm
-from ..models import Accountant
+from accounts.forms import AccountantForm
+from accounts.models import Accountant
 
 
 class AccountantDashboard(TemplateView):

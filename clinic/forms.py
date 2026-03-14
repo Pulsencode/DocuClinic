@@ -1,5 +1,6 @@
 from django import forms
-from .models import Clinic
+
+from clinic.models import Clinic
 
 
 class ClinicForm(forms.ModelForm):

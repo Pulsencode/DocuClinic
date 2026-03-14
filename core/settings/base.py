@@ -117,6 +117,11 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 EMAIL_DEBUG = os.getenv("EMAIL_DEBUG")
 
+UNFOLD = {
+    "SITE_TITLE": "DocuClinic",
+    "SITE_HEADER": "DocuClinic",
+    "SITE_SUBHEADER": "Administration",
+}
 
 LOGGING = {
     "version": 1,

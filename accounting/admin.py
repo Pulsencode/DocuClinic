@@ -1,7 +1,7 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import (
+from accounting.models import (
     Account,
     AccountsPayable,
     AccountsReceivable,

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import Clinic
+from clinic.models import Clinic
 
 
 @admin.register(Clinic)
 class ClinicAdmin(ModelAdmin):
-    pass
+    def has_add_permission(self, request):
+        return not Clinic.objects.exists()
