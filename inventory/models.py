@@ -38,6 +38,10 @@ class Medicine(models.Model):
     minimum_stock_level = models.SmallIntegerField()
     maximum_stock_level = models.SmallIntegerField()
     storage_location = models.TextField()
+    suppliers = models.ManyToManyField(
+        "Supplier",
+        through="MedicineSupplier",
+    )
 
     def __str__(self):
         return f"{self.name} - {self.quantity} units"

@@ -6,7 +6,7 @@ from appointments.models import Appointment, PhysicianAvailability, Weekday
 
 @admin.register(Appointment)
 class AppointmentAdmin(ModelAdmin):
-    list_display = ["id", "created_at"]
+    list_display = ["date", "__str__", "created_at", "status"]
     search_fields = ["id"]
     list_filter = ["created_at"]
 

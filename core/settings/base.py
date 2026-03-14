@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -121,6 +122,178 @@ UNFOLD = {
     "SITE_TITLE": "DocuClinic",
     "SITE_HEADER": "DocuClinic",
     "SITE_SUBHEADER": "Administration",
+    "SIDEBAR": {
+        "show_search": True,
+        "navigation": [
+            {
+                "title": ("Clinic"),
+                "collapsible": True,
+                "separator": True,
+                "items": [
+                    {
+                        "title": ("Clinic Settings"),
+                        "icon": "local_hospital",
+                        "link": reverse_lazy("admin:clinic_clinic_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": ("Users"),
+                "collapsible": True,
+                "separator": True,
+                "items": [
+                    {
+                        "title": ("Admin"),
+                        "icon": "supervisor_account",
+                        "link": reverse_lazy("admin:accounts_administrator_changelist"),
+                    },
+                    {
+                        "title": ("Physicians"),
+                        "icon": "stethoscope",
+                        "link": reverse_lazy("admin:accounts_physician_changelist"),
+                    },
+                    {
+                        "title": ("Nurses"),
+                        "icon": "medical_services",
+                        "link": reverse_lazy("admin:accounts_nurse_changelist"),
+                    },
+                    {
+                        "title": ("Accountants"),
+                        "icon": "calculate",
+                        "link": reverse_lazy("admin:accounts_accountant_changelist"),
+                    },
+                    {
+                        "title": ("Patients"),
+                        "icon": "patient_list",
+                        "link": reverse_lazy("admin:accounts_patient_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": ("Appointments"),
+                "collapsible": True,
+                "separator": True,
+                "items": [
+                    {
+                        "title": ("Appointments"),
+                        "icon": "calendar_month",
+                        "link": reverse_lazy(
+                            "admin:appointments_appointment_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Physician Availability"),
+                        "icon": "event_available",
+                        "link": reverse_lazy(
+                            "admin:appointments_physicianavailability_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Weekdays"),
+                        "icon": "date_range",
+                        "link": reverse_lazy("admin:appointments_weekday_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": ("Medical Records"),
+                "collapsible": True,
+                "separator": True,
+                "items": [
+                    {
+                        "title": ("Prescriptions"),
+                        "icon": "prescriptions",
+                        "link": reverse_lazy(
+                            "admin:medicalrecords_prescription_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Prescription Medicines"),
+                        "icon": "medication",
+                        "link": reverse_lazy(
+                            "admin:medicalrecords_prescriptionmedicine_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Discount"),
+                        "icon": "percent",
+                        "link": reverse_lazy(
+                            "admin:medicalrecords_discount_changelist"
+                        ),
+                    },
+                ],
+            },
+            {
+                "title": ("Inventory"),
+                "collapsible": True,
+                "separator": True,
+                "items": [
+                    {
+                        "title": ("Medicine"),
+                        "icon": "vaccines",
+                        "link": reverse_lazy("admin:inventory_medicine_changelist"),
+                    },
+                    {
+                        "title": ("Route Of Administration"),
+                        "icon": "route",
+                        "link": reverse_lazy(
+                            "admin:inventory_routeofadministration_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Suppliers"),
+                        "icon": "local_shipping",
+                        "link": reverse_lazy(
+                            "admin:inventory_medicinesupplier_changelist"
+                        ),
+                    },
+                ],
+            },
+            {
+                "title": ("Accounting"),
+                "collapsible": True,
+                "separator": True,
+                "items": [
+                    {
+                        "title": ("Invoices"),
+                        "icon": "receipt_long",
+                        "link": reverse_lazy("admin:accounting_invoice_changelist"),
+                    },
+                    {
+                        "title": ("Accounts"),
+                        "icon": "account_balance",
+                        "link": reverse_lazy("admin:accounting_account_changelist"),
+                    },
+                    {
+                        "title": ("Accounts Payable"),
+                        "icon": "payments",
+                        "link": reverse_lazy(
+                            "admin:accounting_accountspayable_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Accounts Receivable"),
+                        "icon": "request_quote",
+                        "link": reverse_lazy(
+                            "admin:accounting_accountsreceivable_changelist"
+                        ),
+                    },
+                    {
+                        "title": ("Assets"),
+                        "icon": "real_estate_agent",
+                        "link": reverse_lazy("admin:accounting_asset_changelist"),
+                    },
+                    {
+                        "title": ("General Ledger Entry"),
+                        "icon": "menu_book",
+                        "link": reverse_lazy(
+                            "admin:accounting_generalledgerentry_changelist"
+                        ),
+                    },
+                ],
+            },
+        ],
+    },
 }
 
 LOGGING = {
