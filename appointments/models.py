@@ -1,6 +1,8 @@
 from django.db import models
 
-from accounts.models import Patient, Physician
+from accounts.models import User
+
+# from accounts.models import Patient, Physician
 from medicalrecords.models import Discount
 
 
@@ -12,8 +14,18 @@ class Appointment(models.Model):
         ("Cancelled", "Cancelled"),
     ]
 
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
+    patient = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="patient_appointments",
+        limit_choices_to={"role": "patient"},
+    )
+    physician = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="physician_appointments",
+        limit_choices_to={"role": "physician"},
+    )
     date = models.DateField(null=True)
     time = models.TimeField(null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
@@ -25,6 +37,8 @@ class Appointment(models.Model):
 
     class Meta:
         ordering = ["date", "time"]
+        verbose_name = "Appointment"
+        verbose_name_plural = "Appointments"
 
     def __str__(self):
         return f"{self.patient.username} with {self.physician.username} on {self.date} {self.time}"
@@ -43,13 +57,20 @@ class Weekday(models.Model):
 
     name = models.CharField(max_length=9, choices=DAY_CHOICES, unique=True)
 
+    class Meta:
+        verbose_name = "Weekday"
+        verbose_name_plural = "Weekdays"
+
     def __str__(self):
         return self.name
 
 
 class PhysicianAvailability(models.Model):
-    physician = models.ForeignKey(
-        Physician, on_delete=models.CASCADE, related_name="availabilities"
+    physician = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="physician_availability",
+        limit_choices_to={"role": "physician"},
     )
     work_days = models.ManyToManyField(Weekday)
     work_time_start = models.TimeField(null=True)
@@ -57,6 +78,10 @@ class PhysicianAvailability(models.Model):
     lunch_start = models.TimeField(null=True, blank=True)
     lunch_end = models.TimeField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Physician Availability"
+        verbose_name_plural = "Physician Availabilities"
+
     def __str__(self):
-        days = ", ".join(day.name for day in self.work_days.all())
-        return f"{self.physician.username} available on {days}"
+        days = ", ".join(day.get_name_display() for day in self.work_days.all())
+        return f"{self.physician} available on {days}"

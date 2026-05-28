@@ -6,28 +6,131 @@ from appointments.models import Appointment, PhysicianAvailability, Weekday
 
 @admin.register(Appointment)
 class AppointmentAdmin(ModelAdmin):
-    list_display = ["date", "__str__", "created_at", "status"]
-    search_fields = ["id"]
-    list_filter = ["created_at"]
+    list_display = (
+        "patient",
+        "physician",
+        "date",
+        "time",
+        "status",
+        "consultation_fee",
+        "discount",
+        "created_at",
+    )
+
+    list_filter = (
+        "status",
+        "date",
+        "physician",
+        "discount",
+    )
+
+    search_fields = (
+        "patient__username",
+        "patient__first_name",
+        "patient__last_name",
+        "patient__registration_id",
+        "physician__username",
+        "physician__first_name",
+        "physician__last_name",
+        "physician__registration_id",
+    )
+
+    autocomplete_fields = (
+        "patient",
+        "physician",
+        "discount",
+    )
+
+    readonly_fields = ("created_at",)
+
+    fieldsets = (
+        (
+            "Appointment Details",
+            {
+                "fields": (
+                    "patient",
+                    "physician",
+                    "date",
+                    "time",
+                    "status",
+                )
+            },
+        ),
+        (
+            "Billing",
+            {
+                "fields": (
+                    "consultation_fee",
+                    "discount",
+                )
+            },
+        ),
+        (
+            "System Info",
+            {"fields": ("created_at",)},
+        ),
+    )
 
 
 @admin.register(Weekday)
 class WeekdayAdmin(ModelAdmin):
-    pass
+    list_display = ("name",)
+
+    search_fields = ("name",)
 
 
 @admin.register(PhysicianAvailability)
 class PhysicianAvailabilityAdmin(ModelAdmin):
     list_display = (
         "physician",
-        "display_work_days",
         "work_time_start",
         "work_time_end",
         "lunch_start",
         "lunch_end",
     )
 
-    def display_work_days(self, obj):
-        return ", ".join([day.name for day in obj.work_days.all()])
+    list_filter = (
+        "work_days",
+        "physician",
+    )
 
-    display_work_days.short_description = "Work Days"
+    search_fields = (
+        "physician__username",
+        "physician__first_name",
+        "physician__last_name",
+        "physician__registration_id",
+    )
+
+    autocomplete_fields = ("physician",)
+
+    filter_horizontal = ("work_days",)
+
+    fieldsets = (
+        (
+            "Physician",
+            {
+                "fields": (
+                    "physician",
+                    "work_days",
+                )
+            },
+        ),
+        (
+            "Working Time",
+            {
+                "fields": (
+                    "work_time_start",
+                    "work_time_end",
+                )
+            },
+        ),
+        (
+            "Lunch Break",
+            {
+                "fields": (
+                    "lunch_start",
+                    "lunch_end",
+                )
+            },
+        ),
+    )

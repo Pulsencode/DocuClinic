@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from accounts.models import Patient, Physician
+# from accounts.models import Patient, Physician
 from inventory.models import Medicine
 
 
@@ -15,10 +15,10 @@ class Discount(models.Model):
 
 
 class Prescription(models.Model):
-    patient = models.ForeignKey(
-        Patient, on_delete=models.CASCADE, related_name="prescriptions"
-    )
-    physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
+    # patient = models.ForeignKey(
+    #     Patient, on_delete=models.CASCADE, related_name="prescriptions"
+    # )
+    # physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
     date_prescribed = models.DateTimeField(default=timezone.now)
     notes = models.TextField(blank=True, null=True)
     diagnosis = models.TextField()

@@ -16,4 +16,8 @@ class PrescriptionMedicineAdmin(ModelAdmin):
 
 @admin.register(Discount)
 class DiscountAdmin(ModelAdmin):
-    pass
+    list_display = (
+        "percentage",
+    )
+
+    search_fields = ("percentage",)
