@@ -16,7 +16,7 @@ class User(AbstractUser):
         ("patient", "Patient"),
     )
 
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="patient")
     registration_id = models.CharField(
         max_length=20,
         unique=True,
@@ -31,7 +31,7 @@ class User(AbstractUser):
         verbose_name_plural = "All Users"
 
     def __str__(self):
-        return f"{self.username} - {self.role}"
+        return f"{self.username} - {self.registration_id}"
 
     def save(self, *args, **kwargs):
         if not self.registration_id:

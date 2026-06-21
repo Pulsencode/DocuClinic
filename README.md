@@ -1,119 +1,173 @@
-<h1 align="center">DocuClinic</h1>
+# DocuClinic
 
-![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
-![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
-![ChartJS](https://img.shields.io/badge/Chart%20js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
-![JQuery](https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white)
-![NGINX](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
-![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white)
-![Warp](https://img.shields.io/badge/warp-01A4FF?style=for-the-badge&logo=warp&logoColor=white)
+A Django-based clinic management system. The application is currently managed through the Django admin interface (django-unfold).
 
+## Overview
 
-## Overview:
-Web app for Clinic Management - A comprehensive Django-based clinic management system for managing patients, appointments, medical records, inventory, and accounting.
+DocuClinic helps a clinic manage users, patients, appointments, prescriptions, medicine inventory, basic accounting, and clinic settings. Staff access the system through the admin panel at `/admin/`.
 
-## Setting up environment
+## Current Features
+
+### User Management
+- Custom user model with roles: Administrator, Physician, Nurse, Receptionist, Accountant, Patient
+- Auto-generated registration IDs (ADM, PHY, NUR, REC, ACC, PAT prefixes)
+- User contact details (phone, address)
+- Django admin login for staff
+
+### Patient Management
+- Patient profile linked to user account
+- Personal details: age, gender, blood type
+- Vital signs: height, weight, BMI (auto-calculated), temperature, pulse, blood pressure
+- Allergies and emergency contact information
+- VIP patient flag
+
+### Appointments
+- Schedule appointments between patients and physicians
+- Status tracking: Scheduled, Pending, Completed, Cancelled
+- Consultation fee and discount support
+- Physician availability (work days, hours, lunch break)
+
+### Medical Records
+- Prescription records with diagnosis, notes, and follow-up date
+- Prescription medicines (dose, frequency, timing, instructions)
+- Discount percentage configuration
+
+### Inventory
+- Medicine stock tracking (quantity, expiry, purchase date, storage location)
+- Minimum and maximum stock levels
+- Suppliers and routes of administration (oral, injection, etc.)
+- Medicine-supplier pricing and supply dates
+
+### Accounting
+- Chart of accounts (Asset, Liability, Expense, Revenue, Equity)
+- General ledger entries (debit/credit)
+- Accounts receivable and accounts payable with status tracking
+- Invoices and asset records
+
+### Clinic Settings
+- Single clinic profile (name, address, contact, GST, license)
+- Clinic logo upload
+- Consultation duration setting
+
+## Basic Features Still Needed
+
+These are the core items needed to make a simple, usable version of the app beyond admin-only data entry:
+
+### Core Workflow
+- Staff-facing web pages (the existing views and templates are not connected to URLs)
+- Link prescriptions to patients and physicians (currently missing from the model)
+- Physician profile fields (specialization, license number, consultation fee)
+- Appointment slot validation based on physician availability
+- One appointment per patient limitation should be reviewed (current model uses OneToOne)
+
+### Users and Access
+- Patient registration and login outside the admin panel
+- Role-based dashboards (templates exist but are not active)
+- Redirect staff to the correct dashboard after login
+
+### Clinic Operations
+- Record payment when an appointment is completed
+- Connect appointment fees to invoices or accounts receivable
+- Low-stock and expired medicine alerts
+- Printable or downloadable prescription
+
+### Data and Setup
+- Update the demo data seeder to match the current user model (`seed_demo_data` command references removed models)
+- Basic reports: daily appointments, patient count, revenue summary
+
+## Tech Stack
+
+- Python 3.12+
+- Django 6
+- django-unfold (admin UI)
+- SQLite (default for local development)
+- Pillow (image uploads)
+- Docker (optional)
+
+## Setup
 
 ### Prerequisites
 
-Before starting, ensure you have the following installed on your system:
+- Python 3.12 or newer
+- pip
+- A virtual environment (recommended)
 
-- Python (preferably version 3.11.7 or above)
-- Pip (Python package installer)
-- Virtual environment (optional but recommended for creating isolated Python environments)
+### Installation
 
-**Create a Virtual Environment**
+1. Clone the repository and enter the project directory.
 
-> [!CAUTION]
-> Not creating a virtual environment can lead to project instability.
+2. Create and activate a virtual environment.
 
-Creating a virtual environment helps isolate your project dependencies from other Python projects on your system. To create a virtual environment, run the following commands in your terminal:
+   Windows:
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate
+   ```
 
-1. Create a virtual environment named 'venv'
-    ```bash
-    python -m venv venv
-    ```
-2. Activating the environment
+   macOS / Linux:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   ```
 
-- For windows
-    ```bash
-    venv\Scripts\activate
-    ```
-- For macOS and Linux
-    ```bash
-    source venv/bin/activate
-    ```
+3. Install dependencies.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-**Installing all the required libraries**
+4. Copy the environment file and adjust values if needed.
+   ```bash
+   cp .env.example .env
+   ```
 
-Now that you have a virtual environment set up, you can install Django and other libraries required within the project:
+5. Run migrations.
+   ```bash
+   python manage.py migrate
+   ```
 
+6. Create a superuser.
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. Start the development server.
+   ```bash
+   python manage.py runserver
+   ```
+
+8. Open http://127.0.0.1:8000/admin/ and sign in with your superuser account.
+
+### Optional: Demo Data
+
+A demo data command exists but needs to be updated for the current models:
 ```bash
-pip install -r requirements.txt
+python manage.py seed_demo_data
 ```
 
-**Setting up mysql database server**
-
-1. Download and install xampp for windows
-2. Run the apache and mysql services
-3. Open the admin panel for mysql
-4. Create a data base named  ***pulse_flow***
-5. Import the sql file to the database
-
-**Running the project in your local system**
-
-Before running ensure that the :
-1. Virtual Environment is activated
-2. Mysql is up and running
-
-Run Migrations
+### Optional: Docker
 
 ```bash
-python manage.py migrate
+docker compose up --build
 ```
 
-Then a super user has to be created
-```bash
-python manage.py createsuperuser
-```
+See `README.Docker.md` for more details.
 
-Then run the program in the development server
-```bash
-python manage.py runserver
-```
+### Optional: MySQL
 
-**Development Requirements**
-1. Needed Extensions
-    1.1. Flake8
-    1.2. mypy
+MySQL settings are available in `core/settings/development.py` and `core/settings/production.py` but are commented out. SQLite is used by default. Uncomment the MySQL database block and set the values in `.env` if you want to use MySQL instead.
 
-2. Running pre commit before a commit
-
-Only Clean when needed
-
-```bash
-pre-commit install
-```
-
-```bash
-pre-commit run --all-files
-```
-
-```bash
-pre-commit clean
-```
-
-## Run Test
+## Run Tests
 
 ```bash
 python manage.py test
 ```
 
-**Generate Fake Data For the Models**
-Documentation of the library
-- https://pypi.org/project/dj-data-generator/
+## Development
+
+Install pre-commit hooks when needed:
 ```bash
-python manage.py generate_data --num-records=1000
+pre-commit install
+pre-commit run --all-files
 ```
+
+Linting uses Flake8 (see `.flake8`).

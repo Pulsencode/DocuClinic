@@ -9,9 +9,6 @@ UNFOLD = {
         "show_search": True,
         "navigation": [
             {
-                "title": "Clinic",
-                "collapsible": True,
-                "separator": True,
                 "items": [
                     {
                         "title": "Clinic Settings",
@@ -119,49 +116,50 @@ UNFOLD = {
                     },
                 ],
             },
-            {
-                "title": "Accounting",
-                "collapsible": True,
-                "separator": True,
-                "items": [
-                    {
-                        "title": "Invoices",
-                        "icon": "receipt_long",
-                        "link": reverse_lazy("admin:accounting_invoice_changelist"),
-                    },
-                    {
-                        "title": "Accounts",
-                        "icon": "account_balance",
-                        "link": reverse_lazy("admin:accounting_account_changelist"),
-                    },
-                    {
-                        "title": "Accounts Payable",
-                        "icon": "payments",
-                        "link": reverse_lazy(
-                            "admin:accounting_accountspayable_changelist"
-                        ),
-                    },
-                    {
-                        "title": "Accounts Receivable",
-                        "icon": "request_quote",
-                        "link": reverse_lazy(
-                            "admin:accounting_accountsreceivable_changelist"
-                        ),
-                    },
-                    {
-                        "title": "Assets",
-                        "icon": "real_estate_agent",
-                        "link": reverse_lazy("admin:accounting_asset_changelist"),
-                    },
-                    {
-                        "title": "General Ledger Entries",
-                        "icon": "menu_book",
-                        "link": reverse_lazy(
-                            "admin:accounting_generalledgerentry_changelist"
-                        ),
-                    },
-                ],
-            },
+            # NOTE this app not needed for the first version of the app, and can be added in later versions if needed
+            # {
+            #     "title": "Accounting",
+            #     "collapsible": True,
+            #     "separator": True,
+            #     "items": [
+            #         {
+            #             "title": "Invoices",
+            #             "icon": "receipt_long",
+            #             "link": reverse_lazy("admin:accounting_invoice_changelist"),
+            #         },
+            #         {
+            #             "title": "Accounts",
+            #             "icon": "account_balance",
+            #             "link": reverse_lazy("admin:accounting_account_changelist"),
+            #         },
+            #         {
+            #             "title": "Accounts Payable",
+            #             "icon": "payments",
+            #             "link": reverse_lazy(
+            #                 "admin:accounting_accountspayable_changelist"
+            #             ),
+            #         },
+            #         {
+            #             "title": "Accounts Receivable",
+            #             "icon": "request_quote",
+            #             "link": reverse_lazy(
+            #                 "admin:accounting_accountsreceivable_changelist"
+            #             ),
+            #         },
+            #         {
+            #             "title": "Assets",
+            #             "icon": "real_estate_agent",
+            #             "link": reverse_lazy("admin:accounting_asset_changelist"),
+            #         },
+            #         {
+            #             "title": "General Ledger Entries",
+            #             "icon": "menu_book",
+            #             "link": reverse_lazy(
+            #                 "admin:accounting_generalledgerentry_changelist"
+            #             ),
+            #         },
+            #     ],
+            # },
         ],
     },
 }

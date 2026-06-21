@@ -28,11 +28,11 @@ EXTERNAL_APPS = [
     "accounts.apps.AccountsConfig",
     "inventory.apps.InventoryConfig",
     "medicalrecords.apps.MedicalrecordsConfig",
-    "accounting.apps.AccountingConfig",
     "clinic.apps.ClinicConfig",
     "appointments.apps.AppointmentsConfig",
     "dashboard.apps.DashboardConfig",
     "django_lumen",  # TODO can be removed in production - for database visualization in admin
+    # "accounting.apps.AccountingConfig",  #NOTE not for the first version of the app
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS

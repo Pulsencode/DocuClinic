@@ -60,13 +60,12 @@ class PatientProfileInline(TabularInline):
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
     warn_unsaved_form = True
+    list_filter_sheet = False
     list_display = (
-        "username",
         "registration_id",
         "role",
+        "username",
         "phone_number",
-        "is_active",
-        "is_staff",
     )
 
     list_filter = (
