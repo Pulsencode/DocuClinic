@@ -6,6 +6,7 @@ from appointments.models import Appointment, PhysicianAvailability, Weekday
 
 @admin.register(Appointment)
 class AppointmentAdmin(ModelAdmin):
+    warn_unsaved_form = True
     list_display = (
         "patient",
         "physician",
@@ -16,14 +17,12 @@ class AppointmentAdmin(ModelAdmin):
         "discount",
         "created_at",
     )
-
     list_filter = (
         "status",
         "date",
         "physician",
         "discount",
     )
-
     search_fields = (
         "patient__username",
         "patient__first_name",
@@ -34,15 +33,12 @@ class AppointmentAdmin(ModelAdmin):
         "physician__last_name",
         "physician__registration_id",
     )
-
     autocomplete_fields = (
         "patient",
         "physician",
         "discount",
     )
-
     readonly_fields = ("created_at",)
-
     fieldsets = (
         (
             "Appointment Details",
@@ -74,13 +70,14 @@ class AppointmentAdmin(ModelAdmin):
 
 @admin.register(Weekday)
 class WeekdayAdmin(ModelAdmin):
+    warn_unsaved_form = True
     list_display = ("name",)
-
     search_fields = ("name",)
 
 
 @admin.register(PhysicianAvailability)
 class PhysicianAvailabilityAdmin(ModelAdmin):
+    warn_unsaved_form = True
     list_display = (
         "physician",
         "work_time_start",
@@ -88,23 +85,18 @@ class PhysicianAvailabilityAdmin(ModelAdmin):
         "lunch_start",
         "lunch_end",
     )
-
     list_filter = (
         "work_days",
         "physician",
     )
-
     search_fields = (
         "physician__username",
         "physician__first_name",
         "physician__last_name",
         "physician__registration_id",
     )
-
     autocomplete_fields = ("physician",)
-
     filter_horizontal = ("work_days",)
-
     fieldsets = (
         (
             "Physician",

@@ -11,6 +11,15 @@ UNFOLD = {
             {
                 "items": [
                     {
+                        "title": "Dashboard",
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "items": [
+                    {
                         "title": "Clinic Settings",
                         "icon": "local_hospital",
                         "link": reverse_lazy("admin:clinic_clinic_changelist"),
@@ -18,21 +27,22 @@ UNFOLD = {
                 ],
             },
             {
-                "title": "Users & Patients",
-                "collapsible": True,
-                "separator": True,
+                "items": [
+                    {
+                        "title": "Patients",
+                        "icon": "personal_injury",
+                        "link": reverse_lazy(
+                            "admin:accounts_patientprofile_changelist"
+                        ),
+                    },
+                ],
+            },
+            {
                 "items": [
                     {
                         "title": "All Users",
                         "icon": "groups",
                         "link": reverse_lazy("admin:accounts_user_changelist"),
-                    },
-                    {
-                        "title": "Patient Profiles",
-                        "icon": "personal_injury",
-                        "link": reverse_lazy(
-                            "admin:accounts_patientprofile_changelist"
-                        ),
                     },
                 ],
             },

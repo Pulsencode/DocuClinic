@@ -137,12 +137,6 @@ These are the core items needed to make a simple, usable version of the app beyo
 
 8. Open http://127.0.0.1:8000/admin/ and sign in with your superuser account.
 
-### Optional: Demo Data
-
-A demo data command exists but needs to be updated for the current models:
-```bash
-python manage.py seed_demo_data
-```
 
 ### Optional: Docker
 

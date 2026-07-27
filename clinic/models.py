@@ -12,7 +12,9 @@ class Clinic(models.Model):
     logo = models.ImageField(
         upload_to="clinic_logo", default="media/default_clinic_logo.webp"
     )
-    consultation_duration = models.PositiveIntegerField(null=True)
+    consultation_duration = models.PositiveIntegerField(
+        null=True, help_text="Duration in minutes"
+    )
 
     def clean(self):
         if not self.pk and Clinic.objects.exists():

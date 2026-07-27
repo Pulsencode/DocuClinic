@@ -6,19 +6,23 @@ from inventory.models import Medicine, MedicineSupplier, RouteOfAdministration, 
 
 @admin.register(Supplier)
 class SupplierAdmin(ModelAdmin):
+    warn_unsaved_form = True
     pass
 
 
 @admin.register(Medicine)
 class MedicineAdmin(ModelAdmin):
+    warn_unsaved_form = True
     pass
 
 
 @admin.register(RouteOfAdministration)
 class RouteOfAdministrationAdmin(ModelAdmin):
+    warn_unsaved_form = True
     pass
 
 
 @admin.register(MedicineSupplier)
 class MedicineSupplierAdmin(ModelAdmin):
+    warn_unsaved_form = True
     pass

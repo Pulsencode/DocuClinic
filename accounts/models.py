@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -12,7 +13,7 @@ class User(AbstractUser):
         ("physician", "Physician"),
         ("nurse", "Nurse"),
         ("receptionist", "Receptionist"),
-        ("accountant", "Accountant"),
+        # ("accountant", "Accountant"),
         ("patient", "Patient"),
     )
 
@@ -46,7 +47,7 @@ class User(AbstractUser):
             "physician": "PHY",
             "nurse": "NUR",
             "receptionist": "REC",
-            "accountant": "ACC",
+            # "accountant": "ACC",
             "patient": "PAT",
         }
         return prefixes.get(self.role, "USR")
@@ -96,9 +97,14 @@ class PatientProfile(models.Model):
         limit_choices_to={"role": "patient"},
     )
 
-    is_vip = models.BooleanField(default=False)
+    is_vip = models.BooleanField(
+        default=False,
+        verbose_name="VIP Status",
+        help_text="Enable for patients who require priority service.",
+    )
 
-    age = models.PositiveIntegerField(blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    # age = models.PositiveIntegerField(blank=True, null=True)
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, blank=True, null=True
     )
@@ -176,6 +182,22 @@ class PatientProfile(models.Model):
                 self.bmi_status = "Overweight"
             else:
                 self.bmi_status = "Obese"
+
+    @property
+    def age(self):
+        if not self.date_of_birth:
+            return None
+
+        today = timezone.localdate()
+
+        return (
+            today.year
+            - self.date_of_birth.year
+            - (
+                (today.month, today.day)
+                < (self.date_of_birth.month, self.date_of_birth.day)
+            )
+        )
 
     def save(self, *args, **kwargs):
         self.calculate_bmi()
