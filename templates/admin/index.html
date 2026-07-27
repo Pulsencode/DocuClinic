@@ -1,12 +1,304 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n unfold humanize static %}
 {% block title %}
     {% if subtitle %}{{ subtitle }} |{% endif %}
     {{ title }} | {{ site_title|default:_("Django site admin") }}
 {% endblock title %}
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'js/apexcharts.min.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock extrahead %}
 {% block branding %}
     {% include "unfold/helpers/site_branding.html" %}
 {% endblock branding %}
 {% block content %}
-    Start creating your own Tailwind components here
+    <div class="flex flex-col gap-6">
+        <!-- Header -->
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">Clinic Dashboard</h1>
+                <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Overview for {{ today|date:"l, F j, Y" }}</p>
+            </div>
+            <div class="flex flex-wrap gap-2 sm:ml-auto">
+                <a href="{% url 'admin:appointments_appointment_add' %}"
+                   class="inline-flex items-center gap-1.5 rounded-default border border-base-200 bg-white px-3 py-1.5 text-sm font-medium text-font-important-light shadow-xs transition hover:bg-base-50 dark:border-base-700 dark:bg-base-900 dark:text-font-important-dark dark:hover:bg-base-800">
+                    <span class="material-symbols-outlined text-base">add</span>
+                    New Appointment
+                </a>
+                <a href="{% url 'admin:accounts_user_add' %}?role=patient"
+                   class="inline-flex items-center gap-1.5 rounded-default border border-base-200 bg-white px-3 py-1.5 text-sm font-medium text-font-important-light shadow-xs transition hover:bg-base-50 dark:border-base-700 dark:bg-base-900 dark:text-font-important-dark dark:hover:bg-base-800">
+                    <span class="material-symbols-outlined text-base">person_add</span>
+                    Add Patient
+                </a>
+            </div>
+        </div>
+        <!-- Charts -->
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div class="xl:col-span-2 rounded-default border border-base-200 bg-white p-4 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="mb-4">
+                    <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">Appointment Activity</h2>
+                    <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Appointments scheduled over the last 5 months</p>
+                </div>
+                <div id="appointment-column-chart"></div>
+                <script id="appointment-chart-labels" type="application/json">{{ appointment_chart_labels|safe }}</script>
+                <script id="appointment-chart-counts" type="application/json">{{ appointment_chart_counts|safe }}</script>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white p-4 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="mb-4">
+                    <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">Appointment Status</h2>
+                    <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Breakdown by current status</p>
+                </div>
+                <div id="appointment-status-chart"></div>
+                <script id="status-chart-labels" type="application/json">{{ status_chart_labels|safe }}</script>
+                <script id="status-chart-counts" type="application/json">{{ status_chart_counts|safe }}</script>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="rounded-default border border-base-200 bg-white p-4 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Today's Appointments</p>
+                        <p class="mt-1 text-3xl font-semibold text-font-important-light dark:text-font-important-dark">{{ stat_today_appointments }}</p>
+                        <p class="mt-1 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+                            {{ stat_scheduled_today }} scheduled · {{ stat_completed_today }} completed
+                        </p>
+                    </div>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-default bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+                        <span class="material-symbols-outlined">calendar_month</span>
+                    </span>
+                </div>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white p-4 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Total Patients</p>
+                        <p class="mt-1 text-3xl font-semibold text-font-important-light dark:text-font-important-dark">{{ stat_total_patients }}</p>
+                        <p class="mt-1 text-xs text-font-subtle-light dark:text-font-subtle-dark">{{ stat_vip_patients }} VIP patients</p>
+                    </div>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-default bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400">
+                        <span class="material-symbols-outlined">groups</span>
+                    </span>
+                </div>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white p-4 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Low Stock Items</p>
+                        <p class="mt-1 text-3xl font-semibold {% if stat_low_stock %}text-amber-600 dark:text-amber-400{% else %}text-font-important-light dark:text-font-important-dark{% endif %}">
+                            {{ stat_low_stock }}
+                        </p>
+                        <p class="mt-1 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+                            {{ stat_expired_medicines }} expired · {{ stat_expiring_soon }} expiring soon
+                        </p>
+                    </div>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-default bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                    </span>
+                </div>
+            </div>
+            <!-- Stat cards -->
+            <div class="rounded-default border border-base-200 bg-white p-4 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Pending Appointments</p>
+                        <p class="mt-1 text-3xl font-semibold text-font-important-light dark:text-font-important-dark">{{ stat_pending_appointments }}</p>
+                        <p class="mt-1 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+                            {{ stat_prescriptions_month }} prescriptions this month
+                        </p>
+                    </div>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-default bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400">
+                        <span class="material-symbols-outlined">pending_actions</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- Secondary stats -->
+        <div class="grid grid-cols-3 gap-4 sm:grid-cols-3">
+            <div class="rounded-default border border-base-200 bg-white px-4 py-3 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <p class="text-xs uppercase tracking-wide text-font-subtle-light dark:text-font-subtle-dark">Physicians</p>
+                <p class="mt-1 text-lg font-semibold text-font-important-light dark:text-font-important-dark">{{ stat_total_physicians }}</p>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white px-4 py-3 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <p class="text-xs uppercase tracking-wide text-font-subtle-light dark:text-font-subtle-dark">Expired Medicines</p>
+                <p class="mt-1 text-lg font-semibold {% if stat_expired_medicines %}text-red-600 dark:text-red-400{% else %}text-font-important-light dark:text-font-important-dark{% endif %}">
+                    {{ stat_expired_medicines }}
+                </p>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white px-4 py-3 shadow-xs dark:border-base-700 dark:bg-base-900">
+                <p class="text-xs uppercase tracking-wide text-font-subtle-light dark:text-font-subtle-dark">Prescriptions This Month</p>
+                <p class="mt-1 text-lg font-semibold text-font-important-light dark:text-font-important-dark">{{ stat_prescriptions_month }}</p>
+            </div>
+        </div>
+        <!-- Today's appointments + Low stock -->
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div class="rounded-default border border-base-200 bg-white shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-center justify-between border-b border-base-200 px-4 py-3 dark:border-base-700">
+                    <div>
+                        <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">Today's Appointments</h2>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ stat_today_appointments }} scheduled for today</p>
+                    </div>
+                    <a href="{% url 'admin:appointments_appointment_changelist' %}?date__day={{ today.day }}&date__month={{ today.month }}&date__year={{ today.year }}"
+                       class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                        View all
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    {% if todays_appointments %}
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-base-50 text-left text-xs uppercase tracking-wide text-font-subtle-light dark:bg-base-800 dark:text-font-subtle-dark">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium">Time</th>
+                                    <th class="px-4 py-3 font-medium">Patient</th>
+                                    <th class="px-4 py-3 font-medium">Physician</th>
+                                    <th class="px-4 py-3 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-base-200 dark:divide-base-700">
+                                {% for appointment in todays_appointments %}
+                                    <tr class="text-font-default-light dark:text-font-default-dark">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            {% if appointment.time %}{{ appointment.time|time:"g:i A" }}{% else %}—{% endif %}
+                                        </td>
+                                        <td class="px-4 py-3">{{ appointment.patient.get_full_name|default:appointment.patient.username }}</td>
+                                        <td class="px-4 py-3">{{ appointment.physician.get_full_name|default:appointment.physician.username }}</td>
+                                        <td class="px-4 py-3">
+                                            {% if appointment.status == "Completed" %}
+                                                <span class="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">Completed</span>
+                                            {% elif appointment.status == "Scheduled" %}
+                                                <span class="inline-flex rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">Scheduled</span>
+                                            {% elif appointment.status == "Pending" %}
+                                                <span class="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Pending</span>
+                                            {% else %}
+                                                <span class="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">Cancelled</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="px-4 py-10 text-center text-sm text-font-subtle-light dark:text-font-subtle-dark">
+                            No appointments scheduled for today.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-center justify-between border-b border-base-200 px-4 py-3 dark:border-base-700">
+                    <div>
+                        <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">Low Stock Inventory</h2>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Medicines at or below minimum level</p>
+                    </div>
+                    <a href="{% url 'admin:inventory_medicine_changelist' %}"
+                       class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                        View all
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    {% if low_stock_medicines %}
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-base-50 text-left text-xs uppercase tracking-wide text-font-subtle-light dark:bg-base-800 dark:text-font-subtle-dark">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium">Medicine</th>
+                                    <th class="px-4 py-3 font-medium">Qty</th>
+                                    <th class="px-4 py-3 font-medium">Min</th>
+                                    <th class="px-4 py-3 font-medium">Location</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-base-200 dark:divide-base-700">
+                                {% for medicine in low_stock_medicines %}
+                                    <tr class="text-font-default-light dark:text-font-default-dark">
+                                        <td class="px-4 py-3 font-medium">{{ medicine.name }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="font-semibold text-amber-600 dark:text-amber-400">{{ medicine.quantity }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">{{ medicine.minimum_stock_level }}</td>
+                                        <td class="px-4 py-3 text-font-subtle-light dark:text-font-subtle-dark">{{ medicine.storage_location|truncatechars:24 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="px-4 py-10 text-center text-sm text-font-subtle-light dark:text-font-subtle-dark">
+                            All medicines are above minimum stock levels.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Expiry alerts + Follow-ups -->
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div class="rounded-default border border-base-200 bg-white shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-center justify-between border-b border-base-200 px-4 py-3 dark:border-base-700">
+                    <div>
+                        <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">Medicine Expiry Alerts</h2>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Expired and expiring within 30 days</p>
+                    </div>
+                </div>
+                <div class="divide-y divide-base-200 dark:divide-base-700">
+                    {% if expired_medicines or expiring_soon_medicines %}
+                        {% for medicine in expired_medicines %}
+                            <div class="flex items-center justify-between gap-4 px-4 py-3">
+                                <div>
+                                    <p class="font-medium text-font-important-light dark:text-font-important-dark">{{ medicine.name }}</p>
+                                    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">Expired {{ medicine.expiration_date|date:"M j, Y" }}</p>
+                                </div>
+                                <span class="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">Expired</span>
+                            </div>
+                        {% endfor %}
+                        {% for medicine in expiring_soon_medicines %}
+                            <div class="flex items-center justify-between gap-4 px-4 py-3">
+                                <div>
+                                    <p class="font-medium text-font-important-light dark:text-font-important-dark">{{ medicine.name }}</p>
+                                    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">Expires {{ medicine.expiration_date|date:"M j, Y" }}</p>
+                                </div>
+                                <span class="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Expiring Soon</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="px-4 py-10 text-center text-sm text-font-subtle-light dark:text-font-subtle-dark">
+                            No expired or soon-to-expire medicines.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="rounded-default border border-base-200 bg-white shadow-xs dark:border-base-700 dark:bg-base-900">
+                <div class="flex items-center justify-between border-b border-base-200 px-4 py-3 dark:border-base-700">
+                    <div>
+                        <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">Upcoming Follow-ups</h2>
+                        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Prescription follow-ups in the next 14 days</p>
+                    </div>
+                    <a href="{% url 'admin:medicalrecords_prescription_changelist' %}"
+                       class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                        View all
+                    </a>
+                </div>
+                <div class="divide-y divide-base-200 dark:divide-base-700">
+                    {% if upcoming_follow_ups %}
+                        {% for prescription in upcoming_follow_ups %}
+                            <div class="flex items-center justify-between gap-4 px-4 py-3">
+                                <div class="min-w-0">
+                                    <p class="truncate font-medium text-font-important-light dark:text-font-important-dark">
+                                        {{ prescription.diagnosis|truncatechars:48 }}
+                                    </p>
+                                    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+                                        Follow-up on {{ prescription.follow_up_date|date:"M j, Y" }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'admin:medicalrecords_prescription_change' prescription.pk %}"
+                                   class="shrink-0 text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                                    Open
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="px-4 py-10 text-center text-sm text-font-subtle-light dark:text-font-subtle-dark">
+                            No follow-ups scheduled in the next two weeks.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
