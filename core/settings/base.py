@@ -33,15 +33,16 @@ EXTERNAL_APPS = [
     "dashboard.apps.DashboardConfig",
     "django_lumen",  # TODO can be removed in production - for database visualization in admin
     # "accounting.apps.AccountingConfig",  #NOTE not for the first version of the app
+    "public_interface.apps.PublicInterfaceConfig",
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
 
 AUTH_USER_MODEL = "accounts.User"
 
-LOGIN_REDIRECT_URL = "user_redirect"
+# LOGIN_REDIRECT_URL = "user_redirect"
 
-LOGOUT_REDIRECT_URL = "login"
+# LOGOUT_REDIRECT_URL = "login"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
