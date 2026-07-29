@@ -12,8 +12,9 @@ class SupplierAdmin(ModelAdmin):
 
 @admin.register(Medicine)
 class MedicineAdmin(ModelAdmin):
+
     warn_unsaved_form = True
-    pass
+    search_fields = ("name",)
 
 
 @admin.register(RouteOfAdministration)

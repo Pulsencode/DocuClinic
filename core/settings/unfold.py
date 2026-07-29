@@ -31,9 +31,7 @@ UNFOLD = {
                     {
                         "title": "Patients",
                         "icon": "personal_injury",
-                        "link": reverse_lazy(
-                            "admin:accounts_patientprofile_changelist"
-                        ),
+                        "link": reverse_lazy("admin:accounts_patient_changelist"),
                     },
                 ],
             },

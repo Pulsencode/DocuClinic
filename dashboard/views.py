@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from django.db.models import Count, F
 from django.utils import timezone
 
-from accounts.models import PatientProfile, User
+from accounts.models import User
 from appointments.models import Appointment
 from inventory.models import Medicine
 from medicalrecords.models import Prescription
@@ -98,7 +98,7 @@ def dashboard_callback(request, context):
             "stat_prescriptions_month": Prescription.objects.filter(
                 prescription_date__date__gte=month_start
             ).count(),
-            "stat_vip_patients": PatientProfile.objects.filter(is_vip=True).count(),
+            # "stat_vip_patients": PatientProfile.objects.filter(is_vip=True).count(),
             "todays_appointments": todays_appointments,
             "low_stock_medicines": low_stock_medicines,
             "expired_medicines": expired_medicines,

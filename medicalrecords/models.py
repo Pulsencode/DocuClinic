@@ -1,7 +1,9 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-# from accounts.models import Patient, Physician
+from accounts.models import Patient
 from inventory.models import Medicine
 
 
@@ -15,10 +17,17 @@ class Discount(models.Model):
 
 
 class Prescription(models.Model):
-    # patient = models.ForeignKey(
-    #     Patient, on_delete=models.CASCADE, related_name="prescriptions"
-    # )
-    # physician = models.ForeignKey(Physician, on_delete=models.CASCADE)
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name="prescriptions",
+    )
+    physician = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="prescriptions",
+        limit_choices_to={"role": "physician"},
+    )
     date_prescribed = models.DateTimeField(default=timezone.now)
     notes = models.TextField(blank=True, null=True)
     diagnosis = models.TextField()
@@ -26,7 +35,15 @@ class Prescription(models.Model):
     follow_up_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"Prescription for {self.patient.get_full_name()} by Dr. {self.physician.get_full_name()} on {self.date_prescribed}"
+        return f"{self.date_prescribed}"
+
+    def clean(self):
+        if self.physician.role != "physician":
+            raise ValidationError({"physician": "Selected user is not a physician."})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class PrescriptionMedicine(models.Model):
@@ -43,4 +60,4 @@ class PrescriptionMedicine(models.Model):
     additional_instructions = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.medicine.name} for {self.prescription.patient.get_full_name()} - {self.dose}, {self.frequency}"
+        return f"{self.medicine.name} {self.dose}, {self.frequency}"
