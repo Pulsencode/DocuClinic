@@ -31,11 +31,15 @@ Keep changes small, understandable, and safe for existing clinic records. These 
 - Keep generated IDs, calculated values, and system timestamps read-only.
 - Use autocomplete for large related lists, and ensure the related admin has valid search fields. Confirm selectable records meet the intended role and active-state rules.
 - Use named URLs with `reverse()`, `reverse_lazy()`, or the template `url` tag. Keep sidebar labels accurate.
+- Give every model link in `core/settings/unfold.py` an Unfold permission callback for the model it actually opens. Allow view or change permission, including permissions granted through groups; active staff superusers see every option. Dashboard is the common staff entry point. Sidebar filtering does not replace page or dashboard-data permission checks.
 - Put dashboard data preparation in `dashboard/views.py`; check permissions before querying and displaying restricted data.
 - Escape user content. Use `format_html()` with substitution arguments, `format_html_join()`, or normal template escaping. Use `json_script` when passing data to JavaScript.
 - Check list, search, add, edit, validation-error, and related-record screens after changes. Include a saved prescription with medicines when checking prescription screens.
 - Check layout in light and dark mode when making visual admin changes. Keep custom JavaScript narrowly scoped and use Django static-file discovery.
 - Preserve the single-clinic intent unless the requested feature changes it.
+- Resetting another user's password requires `is_superuser`, checked on the server. The administrator role label alone is not enough. Keep permission fields protected so a staff editor cannot promote themselves to bypass this rule.
+- Use Django's password forms, validation, hashing, and admin history for resets. Never store or log the entered password. Test denied direct requests, rejected passwords, successful login, and session invalidation.
+- Verify that access-denied pages render correctly when testing permissions; a blocked request must return a working 403 page, not crash because of an obsolete URL.
 
 ## Do not
 
@@ -67,6 +71,8 @@ Run commands with the project's virtual environment. On Windows, replace `python
 | Formatting | Run the configured pre-commit checks on changed files and inspect any edits they make. |
 | Documentation only | Verify claims, paths, and Markdown. No new application tests are needed. |
 
-Use `python manage.py test` for the project suite when relevant, but remember the reviewed snapshot contains no executable tests. Add meaningful regression tests when fixing behavior; do not change unrelated code just to make a check pass.
+Use `python manage.py test` for the project suite when relevant. Password-reset regression tests are in `accounts/tests/test_admin_password_reset.py`; other workflows still need coverage. Add meaningful regression tests when fixing behavior; do not change unrelated code just to make a check pass.
+
+Name Django test files `test_*.py`. Keep the pre-commit test-name hook in Django mode so it agrees with Django's test discovery.
 
 Never run migrations, seeding, or destructive experiments on the existing clinic database as a routine verification step. Use a disposable database and synthetic records. State clearly when a check could not be run.

@@ -1,6 +1,24 @@
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 
+
+def can_view_model(app_label, model_name):
+    # Unfold calls this inner function for the current request, not at startup.
+    def has_permission(request):
+        user = request.user
+        if not user.is_active or not user.is_staff:
+            return False
+
+        # Django also allows users with change permission to view a model's list.
+        return (
+            user.is_superuser
+            or user.has_perm(f"{app_label}.view_{model_name}")
+            or user.has_perm(f"{app_label}.change_{model_name}")
+        )
+
+    return has_permission
+
+
 UNFOLD = {
     "DASHBOARD_CALLBACK": "dashboard.views.dashboard_callback",
     "SITE_TITLE": "DocuClinic",
@@ -18,6 +36,9 @@ UNFOLD = {
                         "title": "Dashboard",
                         "icon": "dashboard",
                         "link": reverse_lazy("admin:index"),
+                        # The admin home is available to every active staff user.
+                        "permission": lambda request: request.user.is_active
+                        and request.user.is_staff,
                     },
                 ],
             },
@@ -27,6 +48,7 @@ UNFOLD = {
                         "title": "Clinic Settings",
                         "icon": "local_hospital",
                         "link": reverse_lazy("admin:clinic_clinic_changelist"),
+                        "permission": can_view_model("clinic", "clinic"),
                     },
                 ],
             },
@@ -36,6 +58,7 @@ UNFOLD = {
                         "title": "Patients",
                         "icon": "personal_injury",
                         "link": reverse_lazy("admin:accounts_patient_changelist"),
+                        "permission": can_view_model("accounts", "patient"),
                     },
                 ],
             },
@@ -45,6 +68,7 @@ UNFOLD = {
                         "title": "All Users",
                         "icon": "groups",
                         "link": reverse_lazy("admin:accounts_user_changelist"),
+                        "permission": can_view_model("accounts", "user"),
                     },
                 ],
             },
@@ -59,6 +83,7 @@ UNFOLD = {
                         "link": reverse_lazy(
                             "admin:appointments_appointment_changelist"
                         ),
+                        "permission": can_view_model("appointments", "appointment"),
                     },
                     {
                         "title": "Physician Availability",
@@ -66,11 +91,15 @@ UNFOLD = {
                         "link": reverse_lazy(
                             "admin:appointments_physicianavailability_changelist"
                         ),
+                        "permission": can_view_model(
+                            "appointments", "physicianavailability"
+                        ),
                     },
                     {
                         "title": "Weekdays",
                         "icon": "date_range",
                         "link": reverse_lazy("admin:appointments_weekday_changelist"),
+                        "permission": can_view_model("appointments", "weekday"),
                     },
                 ],
             },
@@ -85,12 +114,16 @@ UNFOLD = {
                         "link": reverse_lazy(
                             "admin:medicalrecords_prescription_changelist"
                         ),
+                        "permission": can_view_model("medicalrecords", "prescription"),
                     },
                     {
                         "title": "Prescription Medicines",
                         "icon": "medication",
                         "link": reverse_lazy(
                             "admin:medicalrecords_prescriptionmedicine_changelist"
+                        ),
+                        "permission": can_view_model(
+                            "medicalrecords", "prescriptionmedicine"
                         ),
                     },
                     {
@@ -99,6 +132,7 @@ UNFOLD = {
                         "link": reverse_lazy(
                             "admin:medicalrecords_discount_changelist"
                         ),
+                        "permission": can_view_model("medicalrecords", "discount"),
                     },
                 ],
             },
@@ -111,12 +145,16 @@ UNFOLD = {
                         "title": "Medicines",
                         "icon": "vaccines",
                         "link": reverse_lazy("admin:inventory_medicine_changelist"),
+                        "permission": can_view_model("inventory", "medicine"),
                     },
                     {
                         "title": "Routes of Administration",
                         "icon": "route",
                         "link": reverse_lazy(
                             "admin:inventory_routeofadministration_changelist"
+                        ),
+                        "permission": can_view_model(
+                            "inventory", "routeofadministration"
                         ),
                     },
                     {
@@ -125,6 +163,8 @@ UNFOLD = {
                         "link": reverse_lazy(
                             "admin:inventory_medicinesupplier_changelist"
                         ),
+                        # This link opens medicine-supplier records, not Supplier.
+                        "permission": can_view_model("inventory", "medicinesupplier"),
                     },
                 ],
             },

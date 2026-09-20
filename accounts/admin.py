@@ -1,8 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.core.exceptions import PermissionDenied
+from django.urls import reverse
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
 from unfold.decorators import display
+from unfold.forms import AdminPasswordChangeForm
 
 from accounts.models import Patient, User
 
@@ -19,6 +22,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     warn_unsaved_form = True
     save_on_top = True
     list_per_page = 25
+    change_password_form = AdminPasswordChangeForm
 
     list_display = (
         "registration_id",
@@ -58,6 +62,8 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         "registration_id",
         "last_login",
         "date_joined",
+        "password_reset",
+        "password_status",
     )
 
     fieldsets = (
@@ -175,6 +181,57 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
             },
         ),
     )
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        if obj is None:
+            return fieldsets
+
+        password_field = (
+            "password_reset" if request.user.is_superuser else "password_status"
+        )
+        return tuple(
+            (
+                title,
+                {
+                    **options,
+                    "fields": tuple(
+                        password_field if field == "password" else field
+                        for field in options["fields"]
+                    ),
+                },
+            )
+            for title, options in fieldsets
+        )
+
+    def get_readonly_fields(self, request, obj=None):
+        fields = super().get_readonly_fields(request, obj)
+        if not request.user.is_superuser:
+            # A user editor must not be able to grant themselves reset access.
+            fields += ("is_superuser", "is_staff", "groups", "user_permissions")
+        return fields
+
+    def has_change_permission(self, request, obj=None):
+        if obj is not None and obj.is_superuser and not request.user.is_superuser:
+            return False
+        return super().has_change_permission(request, obj)
+
+    def user_change_password(self, request, id, form_url=""):
+        if not request.user.is_superuser:
+            raise PermissionDenied
+        return super().user_change_password(request, id, form_url)
+
+    @display(description="Password")
+    def password_reset(self, obj):
+        return format_html(
+            '<a href="{}" class="text-primary-600 dark:text-primary-500">'
+            "Reset password</a>",
+            reverse(f"{self.admin_site.name}:auth_user_password_change", args=[obj.pk]),
+        )
+
+    @display(description="Password")
+    def password_status(self, obj):
+        return "Only a superadmin can reset this user's password."
 
     def get_queryset(self, request):
         """
