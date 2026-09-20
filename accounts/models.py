@@ -162,9 +162,7 @@ class Patient(models.Model):
         verbose_name_plural = "Patient Profiles"
 
     def __str__(self):
-        full_name = f"{self.first_name} {self.last_name}".strip()
-
-        return full_name or self.registration_id or f"Patient #{self.pk}"
+        return f"{self.first_name} {self.last_name} - {self.registration_id}"
 
     def get_blood_pressure(self):
         if (

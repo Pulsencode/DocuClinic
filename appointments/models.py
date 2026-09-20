@@ -1,6 +1,6 @@
 from django.db import models
 
-from accounts.models import User
+from accounts.models import Patient, User
 
 # from accounts.models import Patient, Physician
 from medicalrecords.models import Discount
@@ -15,10 +15,9 @@ class Appointment(models.Model):
     ]
 
     patient = models.OneToOneField(
-        User,
+        Patient,
         on_delete=models.CASCADE,
         related_name="patient_appointments",
-        limit_choices_to={"role": "patient"},
     )
     physician = models.OneToOneField(
         User,

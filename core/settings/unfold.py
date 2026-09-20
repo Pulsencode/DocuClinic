@@ -1,3 +1,4 @@
+from django.templatetags.static import static
 from django.urls import reverse_lazy
 
 UNFOLD = {
@@ -5,6 +6,9 @@ UNFOLD = {
     "SITE_TITLE": "DocuClinic",
     "SITE_HEADER": "DocuClinic",
     "SITE_SUBHEADER": "Administration",
+    "SCRIPTS": [
+        lambda request: static("js/custom_time_shortcuts.js"),
+    ],
     "SIDEBAR": {
         "show_search": True,
         "navigation": [
