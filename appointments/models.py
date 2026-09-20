@@ -40,7 +40,7 @@ class Appointment(models.Model):
         verbose_name_plural = "Appointments"
 
     def __str__(self):
-        return f"{self.patient.username} with {self.physician.username} on {self.date} {self.time}"
+        return f"{self.patient} with {self.physician} on {self.date} {self.time}"
 
 
 class Weekday(models.Model):

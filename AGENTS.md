@@ -33,6 +33,7 @@ Keep changes small, understandable, and safe for existing clinic records. These 
 - Use named URLs with `reverse()`, `reverse_lazy()`, or the template `url` tag. Keep sidebar labels accurate.
 - Give every model link in `core/settings/unfold.py` an Unfold permission callback for the model it actually opens. Allow view or change permission, including permissions granted through groups; active staff superusers see every option. Dashboard is the common staff entry point. Sidebar filtering does not replace page or dashboard-data permission checks.
 - Put dashboard data preparation in `dashboard/views.py`; check permissions before querying and displaying restricted data.
+- Guard every dashboard card, chart, list, and its queries with the same model view/change permission used by navigation. Check add permissions separately for create buttons. Related patient or staff details need their own permissions. Test that denied data is absent from the context, HTML, chart JSON, and database queries; include a friendly empty state for staff without dashboard access.
 - Escape user content. Use `format_html()` with substitution arguments, `format_html_join()`, or normal template escaping. Use `json_script` when passing data to JavaScript.
 - Check list, search, add, edit, validation-error, and related-record screens after changes. Include a saved prescription with medicines when checking prescription screens.
 - Check layout in light and dark mode when making visual admin changes. Keep custom JavaScript narrowly scoped and use Django static-file discovery.
