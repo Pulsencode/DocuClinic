@@ -1,0 +1,33 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block field_sets %}
+  {% for fieldset in adminform %}
+    {% include 'admin/includes/fieldset.html' %}
+    {% if forloop.first and not original %}
+      <section id="booking-calendar" class="booking-calendar"
+               data-url="{% url 'admin:appointments_appointment_calendar' %}"
+               data-today="{{ calendar_today }}" aria-label="Doctor availability">
+        <div class="booking-heading">
+          <div><span class="booking-eyebrow">APPOINTMENT CALENDAR</span><h2>Find a time to visit</h2></div>
+          <span id="booking-duration" class="booking-duration"></span>
+        </div>
+        <p>Choose a doctor, then click a free time or drag to move your selection. Each selection is one consultation.</p>
+        <div class="booking-toolbar">
+          <div><button type="button" id="booking-prev" aria-label="Previous week">&#8592;</button>
+          <button type="button" id="booking-today">Today</button>
+          <button type="button" id="booking-next" aria-label="Next week">&#8594;</button></div>
+          <strong id="booking-week"></strong>
+          <button type="button" id="booking-refresh">Refresh availability</button>
+        </div>
+        <p id="booking-status" role="status" aria-live="polite">Select a doctor to see their available days and times.</p>
+        {{ adminform.form.date.errors }}
+        {{ adminform.form.time.errors }}
+        <div id="booking-grid" class="booking-scroll"></div>
+        <div id="booking-selection" class="booking-selection" aria-live="polite">No time selected</div>
+        <p class="booking-note">Times use the clinic timezone. A slot is reserved only when you save. After selecting a time, search for a patient or use the + button to create one in a popup.</p>
+        <noscript>The interactive calendar needs JavaScript. Enter a date and time below; availability is checked when you save.</noscript>
+      </section>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

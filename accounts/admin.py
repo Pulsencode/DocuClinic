@@ -242,6 +242,19 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         queryset = super().get_queryset(request)
         return queryset.exclude(role="patient")
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term
+        )
+        if (
+            request.resolver_match.url_name == "autocomplete"
+            and request.GET.get("app_label") == "appointments"
+            and request.GET.get("model_name") == "appointment"
+            and request.GET.get("field_name") == "physician"
+        ):
+            queryset = queryset.filter(role="physician", is_active=True)
+        return queryset, may_have_duplicates
+
     @display(
         description="Full Name",
         ordering="first_name",
@@ -257,6 +270,20 @@ class PatientAdmin(ModelAdmin):
     """
 
     warn_unsaved_form = True
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term
+        )
+        if (
+            request.resolver_match.url_name == "autocomplete"
+            and request.GET.get("app_label") == "appointments"
+            and request.GET.get("model_name") == "appointment"
+            and request.GET.get("field_name") == "patient"
+        ):
+            queryset = queryset.filter(is_active=True)
+        return queryset, may_have_duplicates
+
     save_on_top = True
     list_per_page = 25
     date_hierarchy = "last_updated"

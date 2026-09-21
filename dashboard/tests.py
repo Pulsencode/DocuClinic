@@ -1,4 +1,5 @@
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser, Group, Permission
@@ -10,7 +11,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import Patient
-from appointments.models import Appointment
+from appointments.models import Appointment, PhysicianAvailability, Weekday
+from clinic.models import Clinic
 from dashboard.views import _last_n_months, dashboard_callback
 from inventory.models import Medicine
 from medicalrecords.models import Prescription
@@ -30,13 +32,28 @@ class DashboardPermissionTests(TestCase):
             role="physician",
         )
         cls.patient = Patient.objects.create(first_name="SyntheticPatient", is_vip=True)
-        cls.appointment = Appointment.objects.create(
-            patient=cls.patient,
+        Clinic.objects.create(name="Synthetic Clinic", consultation_duration=30)
+        availability = PhysicianAvailability.objects.create(
             physician=cls.physician,
-            date=cls.today,
-            time="10:00",
-            status="Pending",
+            work_time_start=time(9),
+            work_time_end=time(17),
         )
+        availability.work_days.add(
+            Weekday.objects.create(name=cls.today.strftime("%A"))
+        )
+        # Book this dashboard fixture before its consultation starts, regardless
+        # of the wall-clock time at which the suite runs.
+        with patch(
+            "django.utils.timezone.now",
+            return_value=timezone.make_aware(datetime.combine(cls.today, time(8))),
+        ):
+            cls.appointment = Appointment.objects.create(
+                patient=cls.patient,
+                physician=cls.physician,
+                date=cls.today,
+                time="10:00",
+                status="Pending",
+            )
         for name, quantity, days in [
             ("SyntheticOutOfStock", 0, 10),
             ("SyntheticExpired", 2, -1),
