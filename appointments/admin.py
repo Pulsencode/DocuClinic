@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import OperationalError
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils import timezone
 from unfold.admin import ModelAdmin
@@ -21,7 +22,11 @@ def can_read(user, model):
 
 @admin.register(Appointment)
 class AppointmentAdmin(ModelAdmin):
-    change_form_template = "admin/appointments/appointment/change_form.html"
+    change_form_template = [
+        "admin/appointments/appointment/change_form.html",
+        "admin/change_form.html",
+    ]
+    change_list_template = "admin/appointments/appointment/table.html"
     list_select_related = ("patient", "physician", "discount")
     warn_unsaved_form = True
     list_display = (
@@ -103,11 +108,69 @@ class AppointmentAdmin(ModelAdmin):
     def get_urls(self):
         return [
             path(
+                "events/",
+                self.admin_site.admin_view(self.events),
+                name="appointments_appointment_events",
+            ),
+            path(
+                "list/",
+                self.admin_site.admin_view(self.table_view),
+                name="appointments_appointment_table",
+            ),
+            path(
                 "calendar/",
                 self.admin_site.admin_view(self.calendar),
                 name="appointments_appointment_calendar",
-            )
+            ),
         ] + super().get_urls()
+
+    def table_view(self, request, extra_context=None):
+        return super().changelist_view(
+            request,
+            extra_context={
+                **(extra_context or {}),
+                "calendar_return_url": reverse(
+                    f"{self.admin_site.name}:appointments_appointment_changelist"
+                ),
+            },
+        )
+
+    def changelist_view(self, request, extra_context=None):
+        from .calendar import calendar_context
+
+        if not self.has_view_or_change_permission(request):
+            raise PermissionDenied
+        # Preserve bookmarked Django searches, filters, popup selectors and actions.
+        if request.method == "POST" or set(request.GET) - {"date", "view"}:
+            return self.table_view(request, extra_context)
+        return TemplateResponse(
+            request,
+            "admin/appointments/appointment/calendar.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": "Appointments",
+                "subtitle": None,
+                "opts": self.model._meta,
+                **calendar_context(self, request),
+                **(extra_context or {}),
+            },
+        )
+
+    def events(self, request):
+        from .calendar import calendar_events
+
+        if not self.has_view_or_change_permission(request):
+            raise PermissionDenied
+        try:
+            data = calendar_events(self, request)
+        except ValueError:
+            return JsonResponse(
+                {
+                    "error": "Choose a valid date range of up to 42 days and valid filters."
+                },
+                status=400,
+            )
+        return JsonResponse(data)
 
     def calendar(self, request):
         from accounts.models import User

@@ -1,0 +1,44 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'appointments/calendar.css' %}">{% endblock %}
+{% block extrahead %}{{ block.super }}<script src="{% static 'appointments/calendar.js' %}" defer></script>{% endblock %}
+{% block content %}
+{{ calendar_config|json_script:"appointment-calendar-config" }}
+<section id="appointment-schedule" class="ac" aria-label="Appointment calendar">
+  <header class="ac-toolbar">
+    <div class="ac-brand"><span class="material-symbols-outlined" aria-hidden="true">calendar_month</span><div><p>CLINIC SCHEDULE</p><h2 id="ac-title">Appointments</h2></div></div>
+    <div class="ac-navigation"><button type="button" id="ac-today">Today</button><button type="button" id="ac-prev" aria-label="Previous week">‹</button><button type="button" id="ac-next" aria-label="Next week">›</button></div>
+    <div class="ac-toolbar-end"><label class="ac-sr" for="ac-view">Calendar view</label><select id="ac-view"><option value="week">Week</option><option value="month">Month</option><option value="day">Day</option></select>
+    {% if calendar_add_url %}<a class="ac-create" href="{{ calendar_add_url }}">+ New appointment</a>{% endif %}</div>
+  </header>
+  <div class="ac-layout">
+    <aside class="ac-sidebar">
+      <details open><summary>Calendar &amp; filters</summary>
+        <div class="ac-mini-toolbar"><strong id="ac-mini-title"></strong><div><button type="button" id="ac-mini-prev" aria-label="Previous month">‹</button><button type="button" id="ac-mini-next" aria-label="Next month">›</button></div></div>
+        <div id="ac-mini" class="ac-mini" aria-label="Choose a date"></div>
+        <div class="ac-filters">
+          {% if calendar_can_search %}<label for="ac-search">Find a patient</label><input id="ac-search" type="search" placeholder="Name or registration ID" autocomplete="off">{% endif %}
+          {% if calendar_doctors %}<label for="ac-physician">Physician</label><select id="ac-physician"><option value="">All physicians</option>{% for doctor in calendar_doctors %}<option value="{{ doctor.pk }}">{% firstof doctor.get_full_name doctor.username %}</option>{% endfor %}</select>{% endif %}
+          <label for="ac-status">Appointment status</label><select id="ac-status"><option value="">All statuses</option>{% for value, label in calendar_statuses %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
+          <div class="ac-legend" aria-label="Status colors">{% for value, label in calendar_statuses %}<span><i class="ac-dot ac-{{ value|lower }}"></i>{{ label }}</span>{% endfor %}</div>
+          <button type="button" id="ac-refresh">Refresh calendar</button>
+          <a href="{{ calendar_table_url }}">List tools &amp; bulk actions ↗</a>
+          <p id="ac-zone" class="ac-muted"></p>
+        </div>
+      </details>
+    </aside>
+    <div class="ac-main">
+      <div class="ac-summary"><p id="ac-message" role="status" aria-live="polite">Loading appointments…</p><span id="ac-range"></span></div>
+      <div id="ac-unscheduled" hidden>Some appointments have no date or time. <a href="{{ calendar_table_url }}">Review in list tools</a>.</div>
+      <div id="ac-canvas" class="ac-canvas" aria-label="Scheduled appointments"></div>
+    </div>
+  </div>
+  <noscript><p>Enable JavaScript for the interactive calendar, or <a href="{{ calendar_table_url }}">use the appointment list</a>.</p></noscript>
+  <dialog id="ac-dialog" class="ac-dialog" aria-labelledby="ac-dialog-title">
+    <div class="ac-dialog-heading"><span class="ac-muted">APPOINTMENT DETAILS</span><button type="button" id="ac-close" aria-label="Close appointment details">×</button></div>
+    <h2 id="ac-dialog-title"></h2><span id="ac-dialog-status" class="ac-badge"></span>
+    <dl><dt>Date</dt><dd id="ac-detail-date"></dd><dt>Time</dt><dd id="ac-detail-time"></dd><dt>Type / reason</dt><dd id="ac-detail-reason"></dd><dt>Physician</dt><dd id="ac-detail-physician"></dd></dl>
+    <p id="ac-duration-note" class="ac-muted"></p><a id="ac-edit" class="ac-create">View/Edit Details →</a>
+  </dialog>
+</section>
+{% endblock %}

@@ -242,7 +242,7 @@ class CalendarBookingTests(TestCase):
         self.client.force_login(self.staff)
         add = reverse("admin:appointments_appointment_add")
         response = self.client.get(add)
-        self.assertContains(response, 'id="booking-calendar"')
+        self.assertContains(response, 'id="id_physician"')
         self.assertContains(response, 'id="add_id_patient"')
         response = self.client.post(add, self.post_data() | {"time": "12:00:00"})
         self.assertEqual(response.status_code, 200)
